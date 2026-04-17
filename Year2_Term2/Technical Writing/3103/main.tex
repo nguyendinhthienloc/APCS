@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+
+\author{
+Loc D. T. Nguyen \and
+Nhan T. T. Le \and
+Tai Nguyen \\
+Faculty of Information Technology \\
+VNUHCM -- University of Science, Ho Chi Minh City, Vietnam
+}
+
+\title{Evaluating XAI Metrics in Medical AI:\\
+A Cross-Study Co-occurrence Analysis}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Explainable Artificial Intelligence (XAI) is increasingly required in clinical settings, yet the metrics used to evaluate explanation quality in medical AI remain fragmented and poorly standardised. This paper presents a cross-study co-occurrence analysis of XAI evaluation metrics across an expanded corpus of 52 peer-reviewed studies spanning five medical sub-domains: oncology, cardiology, neurology, radiology, and clinical decision support. Using a four-phase methodology --- corpus collection, criterion extraction and normalisation, cross-domain alignment, and taxonomy construction --- we identify six quantitative metrics in active use and examine their co-occurrence patterns. Faithfulness dominates but is no longer universal, appearing in 47 of 52 studies (90\%), with its absence concentrated in human-centred evaluation studies --- a pattern that itself reveals a structural gap between technical and clinician-oriented XAI research. Sensitivity and Faithfulness co-occur in 33 studies (63\%), while AOPC/MoRF and Pixel Flipping form the most redundant pair ($\rho = 0.51$, $p < 0.001$). Sufficiency remains isolated and underutilised despite its direct clinical relevance. Mapping the corpus onto a three-layer taxonomy of mathematical faithfulness, system robustness, and human-centred trust reveals that evaluation effort remains heavily concentrated in the first layer, with robustness addressed in 18 studies (35\%) and human-centred criteria in only 7 (13\%). We propose a minimal but comprehensive evaluation set covering all three layers and call for shared benchmarks and reporting standards, particularly for underserved sub-domains such as neurology.
+\end{abstract}
+
+% ─────────────────────────────────────────────────────────────
+\input{intro_back}
+\input{related_work}
+\input{methodology}
+\input{results}
+\input{end}
+
+\bibliographystyle{IEEEtran}
+\bibliography{citation}
+% ─────────────────────────────────────────────────────────────
+
+\end{document}

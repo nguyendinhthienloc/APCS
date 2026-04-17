@@ -1,0 +1,313 @@
+---
+title: "22125096_HW08"
+author: "Doan Cong Thanh"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
+```
+
+## Set up
+```{r}
+library(dplyr)
+library(lmtest)
+library(car)
+setwd('D:/STAT/Lab/Lab8')
+data<-read.csv('star.csv')
+head(data)
+attach(data)
+```
+
+## a)
+```{r}
+regular_no_aide <- subset(data, regular == 1 & aide == 0)
+regular_with_aide <- subset(data, regular == 1 & aide == 1)
+smallClass <- subset(data, small == 1)
+```
+The average total score for
+ (i) Students in regular-sized classrooms with full-time teachers, but no aide
+```{r}
+avg_score_regular_no_aide <- mean(regular_no_aide$totalscore)
+avg_score_regular_no_aide
+```
+ (ii) students in regular-sized classrooms with full-time teachers, and an aide
+```{r}
+avg_score_regular_with_aide <- mean(regular_with_aide$totalscore)
+avg_score_regular_with_aide
+```
+ (iii) students in small classrooms
+```{r}
+avg_score_smallClass<- mean(smallClass$totalscore)
+avg_score_smallClass
+
+```
+### Observe about the test score
+There is no student in regular class with an aide. Moreover, the small class has the average of total score higher than this one in regular class with no aide.
+
+## b)
+```{r}
+model_b <- lm(totalscore ~ small + aide)
+summary(model_b)
+```
+Equation for estimated total score: $totalScore=918.0429+13.899\times small + 0.3139 \times aide$
+
+This estimated total score is the same as the sample mean in question a (918.0429 for regular class with no aide, 931.9419 for small class).
+$$
+\begin{cases}
+H_0: \beta_3 = 0\\
+H_1: \beta_3 \neq 0
+\end{cases}
+$$
+
+Apply Student's Test.\
+Assume $\alpha = 0.05$\
+Since n is quite large $\to$ Use p-value instead\
+Since p-value = 0.892 > 0.05\
+$\Rightarrow$ Fail to reject $H_0$\
+Hence, the aide variable is not useful.
+
+## c)
+```{r}
+model_c <- lm(totalscore ~ small + aide + tchexper)
+summary(model_c)
+```
+
+$$
+\begin{cases}
+H_0: \beta_4 = 0\\
+H_1: \beta_4 \neq 0
+\end{cases}
+$$
+
+Apply Student's Test.\
+Assume $\alpha = 0.05$\
+Since n is quite large $\to$ Use p-value instead\
+Since p-value < $2 \times 10^{-16} < 0.05$\
+$\Rightarrow$ Reject $H_0$\
+Hence, tchexper variable is statistically significant.\
+We have:\
+in c) $\beta_2 = 14.0061,\beta_3 = -0.6006$\
+in d) $\beta_2 = 13.896,\beta_3 = 0.6983$\
+The addition of the TCHEXPER variable to the model does affect the estimates of $\beta_2$ and $\beta_3$.\
+Specifically, it causes a slight increase in the estimated of $\beta_2$ and a substantial change in the estimated of $\beta_3$, which changes from positive to negative
+
+## d)
+```{r}
+model_d <- lm(totalscore ~ small + aide + tchexper + boy + freelunch + white_asian)
+summary(model_d)
+```
+
+$$
+\begin{cases}
+H_0: \beta_5 = 0\\
+H_1: \beta_5 \neq 0
+\end{cases}
+$$
+
+Apply Student's Test.\
+Assume $\alpha = 0.05$\
+Since n is quite large $\to$ Use p-value instead\
+Since p-value = $3.19 \times 10^{-14} < 0.05$\
+$\Rightarrow$ Reject $H_0$\
+Hence, boy variable is statistically significant.\
+$$
+\begin{cases}
+H_0: \beta_6 = 0\\
+H_1: \beta_6 \neq 0
+\end{cases}
+$$
+
+Apply Student's Test.\
+Assume $\alpha = 0.05$\
+Since n is quite large $\to$ Use p-value instead\
+Since p-value < $2 \times 10^{-16} < 0.05$\
+$\Rightarrow$ Reject $H_0$\
+Hence, freelunch variable is statistically significant.\
+$$
+\begin{cases}
+H_0: \beta_7 = 0\\
+H_1: \beta_7 \neq 0
+\end{cases}
+$$
+
+Apply Student's Test.\
+Assume $\alpha = 0.05$\
+Since n is quite large $\to$ Use p-value instead\
+Since p-value = $8.92 \times 10^{-8} < 0.05$\
+$\Rightarrow$ Reject $H_0$\
+Hence, white_asian variable is statistically significant.\
+We have:\
+in c) $\beta_2 = 14.0061,\beta_3 = -0.6006$\
+in d) $\beta_2 = 13.896,\beta_3 = 0.6983$\
+These additions to the model do affect the estimates of $\beta_2$ and $\beta_3$.\
+Specifically, it causes a slight decrease in the estimated of $\beta_2$ and a substantial change in the estimated of $\beta_3$, which changes from negative to positive\
+## e)
+```{r}
+model_d <- lm(totalscore ~ small + aide + tchexper + boy + freelunch + white_asian + tchwhite + tchmasters + schurban + schrural)
+summary(model_d)
+```
+
+$$
+\begin{cases}
+H_0: \beta_8 = 0\\
+H_1: \beta_8 \neq 0
+\end{cases}
+$$
+
+Apply Student's Test.\
+Assume $\alpha = 0.05$\
+Since n is quite large $\to$ Use p-value instead\
+Since p-value = 0.00699 < 0.05
+$\Rightarrow$ Reject $H_0$\
+Hence, tchwhite variable is statistically significant.\
+$$
+\begin{cases}
+H_0: \beta_9 = 0\\
+H_1: \beta_9 \neq 0
+\end{cases}
+$$
+
+Apply Student's Test.\
+Assume $\alpha = 0.05$\
+Since n is quite large $\to$ Use p-value instead\
+Since p-value = 0.07798 > 0.05
+$\Rightarrow$ Fail to reject $H_0$\
+Hence, tchmasters variable is not useful\
+$$
+\begin{cases}
+H_0: \beta_{10} = 0\\
+H_1: \beta_{10} \neq 0
+\end{cases}
+$$
+
+Apply Student's Test.\
+Assume $\alpha = 0.05$\
+Since n is quite large $\to$ Use p-value instead\
+Since p-value = 0.04428 < 0.05
+$\Rightarrow$ Reject $H_0$\
+Hence, schurban variable is statistically significant at significant level 95%.\
+$$
+\begin{cases}
+H_0: \beta_{11} = 0\\
+H_1: \beta_{11} \neq 0
+\end{cases}
+$$
+
+Apply Student's Test.\
+Assume $\alpha = 0.05$\
+Since n is quite large $\to$ Use p-value instead\
+Since p-value = 0.00619 < 0.05
+$\Rightarrow$ Reject $H_0$\
+Hence, schrural variable is statistically significant at significant level 95%.\
+We have:\
+in d) $\beta_2 = 13.896,\beta_3 = 0.6983$\
+in d) $\beta_2 = 13.9803,\beta_3 = 1.0023$\
+These additions to the model do affect the estimates of $\beta_2$ and $\beta_3$.\
+Specifically, it causes a slight increase in the estimated of $\beta_2$ and a slight increase in the estimated of $\beta_3$
+
+## f)
+## Part c) Analysis
+In part (c), the variable tchexper (teacher experience) is added to the model:\
+Original model (part b): totalscore ~ small + aide\
+$\beta_2 = 13.899$\
+$\beta_3 = 0.3139$\
+Model with tchexper (part c): totalscore ~ small + aide + tchexper\
+$\beta_2 = 14.0061$\
+$\beta_3 = -0.6006$\
+Importance:\
+The change in $\beta_3$ dicates that the inclusion of teacher experience affects the interpretation of the aide's impact. The previously positive but insignificant effect of having an aide turns slightly negative, though still insignificant.\
+Teacher experience is statistically significant, suggesting that more experienced teachers contribute positively to the total score.
+
+### Part d) Analysis
+In part (d), additional student-related variables (boy, freelunch, and white_asian) are added:\
+Model with tchexper and student-related variables: totalscore ~ small + aide + tchexper + boy + freelunch + white_asian\
+$\beta_2 = 13.896$\
+$\beta_3 = 0.6983$\
+Importance:\
+Including student-related variables like boy, freelunch, and white_asian provides a more comprehensive model that accounts for student demographics and socioeconomic status, which significantly impact total scores.\
+These variables are statistically significant, showing they have a substantial effect on student performance. For instance, being a boy or receiving free lunch (indicative of lower socioeconomic status) negatively affects scores, while being white or Asian has a positive impact.
+
+### Part e) Analysis
+In part (e), additional teacher and school-related variables (tchwhite, tchmasters, schurban, and schrural) are added:\
+Model with all variables: totalscore ~ small + aide + tchexper + boy + freelunch + white_asian + tchwhite + tchmasters + schurban + schrural\
+$\beta_2 = 13.9803$\
+$\beta_3 = 1.0023$\
+Importance:\
+The inclusion of these variables indicates that teacher and school characteristics also play a role in influencing student scores.\
+The statistical significance of these variables highlights their importance in understanding the broader context of student performance. For instance, being in an urban or rural school, or having a white teacher, significantly affects scores.
+
+### Conclusion
+Teacher experience in part (c) significantly impacts student performance and slightly modifies the estimated effect of small classes and aides.\
+Student demographics and socioeconomic status in part (d) provide a more accurate model, showing that these factors have substantial impacts on performance and slightly adjust the treatment effects.\
+Teacher and school characteristics in part (e) further enhance the model, emphasizing the importance of considering a comprehensive set of factors when evaluating educational interventions.
+
+## g)
+```{r}
+# Create a factor variable for school to include fixed effects
+data$school <- as.integer(schrural == 1 | schurban == 1)
+str(data)
+
+# Fit the base model (b) with school fixed effects
+model_b <- lm(totalscore ~ small + aide + school, data = data)
+
+# Fit the model (c) with TCHEXPER and school fixed effects
+model_c <- lm(totalscore ~ small + aide + tchexper + school, data = data)
+
+# Fit the model (d) with additional student variables and school fixed effects
+model_d <- lm(totalscore ~ small + aide + tchexper + boy + freelunch + white_asian + school, data = data)
+
+# Fit the model (e) with additional teacher and school variables and school fixed effects
+model_e <- lm(totalscore ~ small + aide + tchexper + boy + freelunch + white_asian + tchwhite + tchmasters + schurban + schrural + school, data = data)
+
+# Perform joint significance tests for the school fixed effects
+# We use the `anova` function to compare models with and without school fixed effects
+
+# Base model (b) without school fixed effects
+model_b_no_school <- lm(totalscore ~ small + aide, data = data)
+
+# Model (c) without school fixed effects
+model_c_no_school <- lm(totalscore ~ small + aide + tchexper, data = data)
+
+# Model (d) without school fixed effects
+model_d_no_school <- lm(totalscore ~ small + aide + tchexper + boy + freelunch + white_asian, data = data)
+
+# Model (e) without school fixed effects
+model_e_no_school <- lm(totalscore ~ small + aide + tchexper + boy + freelunch + white_asian + tchwhite + tchmasters + schurban + schrural, data = data)
+
+# Coefficient of the model with school
+# The base model (b) with school fixed effects
+coef(model_b)
+# The base model (c) with school fixed effects
+coef(model_c)
+# The base model (d) with school fixed effects
+coef(model_d)
+# The base model (e) with school fixed effects
+coef(model_e)
+# Compare models with and without school fixed effects
+anova_b <- anova(model_b_no_school, model_b)
+anova_c <- anova(model_c_no_school, model_c)
+anova_d <- anova(model_d_no_school, model_d)
+anova_e <- anova(model_e_no_school, model_e)
+
+# Print the results
+# Joint significance test for model (b)
+anova_b
+
+# Joint significance test for model (c)
+anova_c
+
+# Joint significance test for model (d)
+anova_d
+
+# Joint significance test for model (e)
+anova_e
+```
+
+For all models (b, c, d, e), the F-test results show extremely significant p-values (p < 0.05), demonstrating that the inclusion of school fixed effects is statistically significant in every model.\
+Impact on Coefficients $\beta_2$ and $\beta_3$:\
+$\beta_2$: The coefficient for SMALL remains consistently significant and positive across all models, with only slight changes in magnitude after adding fixed effects. This indicates that the impact of being in a smaller class on the total score is strong and significant.\
+$\beta_3$: The coefficient for AIDE remains insignificant in all models, suggesting that having an aide does not significantly influence the total score. The inclusion of school fixed effects does not notably change this estimate.

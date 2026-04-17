@@ -1,0 +1,60 @@
+
+\section{Related Work}
+% ──────────────────────────────────────────────────────────────────────────────
+
+Efforts to taxonomise XAI methods have produced a substantial but fragmented
+body of work. Arrieta et al.~\cite{Arrieta2020XAI} established the foundational
+vocabulary --- distinguishing interpretable-by-design models from post-hoc
+explanation methods, and scoping the core challenges toward responsible AI ---
+that most subsequent taxonomies inherit. Schwalbe and
+Finzel~\cite{schwalbe2024comprehensive} extended this by synthesising more than
+fifty XAI surveys into a unified framework organised around problem definition,
+explanator properties, and evaluation metrics, finding that high-level properties
+such as faithfulness and stability recur broadly but their operationalisations
+diverge sharply by task and model type. Speith~\cite{speith2022review} identified
+a structural reason for this divergence: taxonomies organised around how a method
+works versus what it produces classify the same methods differently, making
+principled cross-study comparison unreliable. Taken together, these works
+establish that the field lacks not just shared metrics but a shared vocabulary
+for organising evaluation criteria --- a problem that is especially acute once
+XAI moves into high-stakes clinical settings.
+
+Taxonomies built specifically for medical AI have begun to address this, but
+remain incomplete. Jin et al.~\cite{jin2023guidelines} proposed clinical
+evaluation guidelines that explicitly separate technical faithfulness from
+clinical usefulness, offering the clearest domain-specific taxonomy to date.
+Holzinger et al.~\cite{holzinger2022information} argued that
+robustness under distributional shift is a persistent gap that existing medical
+XAI taxonomies handle inconsistently. Tjoa and
+Guan~\cite{Tjoa2021MedicalXAI} surveyed the broader landscape of medical XAI
+methods, but without a structured evaluation taxonomy, leaving the question of
+how to assess explanation quality largely open. More recently,
+Varghese et al.~\cite{Varghese2025OnDE} applied Borda count and multiple
+correlation techniques to rank competing XAI metrics for image classification,
+providing empirical grounding for treating faithfulness and sensitivity as
+primary comparison axes --- though their analysis does not extend to
+cross-domain alignment within medicine.
+
+The metrics literature exposes the consequences of this taxonomic gap.
+Rosenfeld~\cite{rosenfeld2021better} showed that most evaluation criteria focus
+too narrowly on algorithmic fidelity, systematically omitting human-centric
+concerns. Kadir et al.~\cite{kadir2023evaluation} confirmed this through a
+PRISMA-based review: sensitivity, faithfulness, and robustness dominate the
+quantitative literature, while human-centred assessment lags behind.
+Without a taxonomy that structures which metrics belong
+at which layer of evaluation, Phuong et al.~\cite{phuong2023benchmarking} found
+that XAI toolkits produce non-comparable results, and Klein et
+al.~\cite{Klein2024NavigatingTM} showed that metric selection remains
+effectively arbitrary even in state-of-the-art benchmarks.
+Mirzaei et al.~\cite{mirzaei2023xai} proposed a top-down
+selection framework as a partial remedy, but without grounding in a medical
+taxonomy, the framework does not transfer cleanly to clinical contexts.
+
+What is missing across all of this work is a taxonomy constructed specifically
+to organise XAI evaluation criteria across medical sub-domains, validated
+against real usage patterns rather than derived deductively from general XAI
+literature. No existing framework jointly covers oncology, cardiology,
+neurology, and radiology, accounts for the three-layer structure of
+mathematical faithfulness, system robustness, and human-centred trust, or
+analyses metric co-occurrence and redundancy at a cross-domain level. The
+present study fills this gap directly.

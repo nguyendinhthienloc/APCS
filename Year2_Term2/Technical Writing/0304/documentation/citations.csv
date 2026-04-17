@@ -1,0 +1,82 @@
+Reference ID,Title,Year,Venue,Contribution Type,NEW
+page2021prisma,The PRISMA 2020 Statement: An Updated Guideline for Reporting Systematic Reviews,2021,BMJ,Methodology (PRISMA),yes
+yeh2019fidelity,On the (In)fidelity and Sensitivity of Explanations,2019,NeurIPS,Metric definition (Faithfulness/Sensitivity/Sufficiency),yes
+samek2017evaluating,Evaluating the Visualization of What a Deep Neural Network Has Learned,2017,IEEE TNNLS,Metric definition (AOPC/Pixel Flipping),yes
+rieger2020irof,IROF: A Low Resource Evaluation Metric for Explanation Methods,2020,ICML WHI Workshop,Metric definition (IROF),yes
+Arrieta2020XAI,Responsible AI: XAI Concepts Taxonomies and Opportunities,2020,Inf. Fusion,XAI taxonomy/foundation,no
+Tjoa2021MedicalXAI,A Survey on Explainable AI: Towards Medical XAI,2021,IEEE TMI,Medical XAI survey,no
+schwalbe2024comprehensive,A Comprehensive Taxonomy for Explainable AI,2024,Various,XAI taxonomy synthesis,no
+speith2022review,A Review of Taxonomies of Explainable AI Methods,2022,FAccT/ACM,Taxonomy inconsistency analysis,no
+jin2023guidelines,Guidelines and Evaluation of Clinical XAI,2023,Med. Image Anal.,Medical XAI guidelines,no
+jin2022explainable,Explainable AI Methods in Healthcare,2022,WIREs Mech. Dis.,Attribution XAI survey,no
+jin2022evaluating,Evaluating XAI Against Clinical Requirements,2022,AAAI,Multi-modal evaluation,no
+holzinger2022information,Information Fusion as an Integrative Cross-Cutting Enabler,2022,Inf. Fusion,Robustness in medical AI,no
+rosenfeld2021better,Better Metrics for Evaluating Explainable AI,2021,IJCAI Workshop,Metric evaluation critique,no
+kadir2023evaluation,Evaluation of XAI Methods: Sensitivity Faithfulness Robustness,2023,Various,Metric prioritisation,no
+mirzaei2023xai,XAI Evaluation Metrics,2023,Various,Evaluation framework,no
+Varghese2025OnDE,On Defining and Evaluating XAI Metrics for Image Classification,2025,Various,Metric ranking (Borda count),yes
+palatnik2021xai,XAI Using Saliency Maps for COVID CT Classifiers,2021,Sensors,Bias-sensitive saliency,no
+lenis2020domain,Domain-Aware Medical Image Classifier Interpretation,2020,MICCAI,Counterfactual impact analysis,no
+reyes2020interpretability,On the Interpretability of AI in Radiology,2020,Radiology: AI,Clinical reasoning alignment,no
+phuong2023benchmarking,Benchmarking XAI Methods,2023,Various,Benchmarking evidence,no
+Klein2024NavigatingTM,Navigating the Metric Maze,2024,Various,Metric navigation,no
+coroama2022evaluation,Evaluation of XAI Methods,2022,Various,Evaluation synthesis,no
+boggust2023saliency,Saliency Evaluation Beyond Average,2023,Various,Saliency critique,no
+chen2022explainable,Explainable AI for Healthcare: Human-Centred Gap,2022,Various,Human-centred gap identification,no
+bauer2025human,Human-Centred Explainability in Clinical Decision-Making,2025,JAMIA,Human-centred review,yes
+dey2022human,Human-Centred XAI Evaluation,2022,Various,Fragmentation documentation,no
+muller2022explainability,Explainability and Causability in Medical AI,2022,Various,Regulatory requirements,no
+houssein2025explainable,Explainable AI in Medical Imaging,2025,Various,Recent survey,yes
+zhang2026comprehensive,Comprehensive Survey of XAI in Healthcare,2026,Various,Recent survey,yes
+Ahmed2026XAI,XAI in Medical Imaging: Challenges and Standards,2026,Various,Standardisation challenges,yes
+groen2022systematic,Systematic Review of XAI in Radiology,2022,Eur. Radiol.,Radiology XAI review,no
+de2023explainable,Explainable AI in Nuclear Medicine,2023,Various,Nuclear medicine review,no
+saw2025current,Current State of XAI in Medical Imaging,2025,Various,Medical imaging survey,yes
+Ghosh2024DemystifyingEC,Demystifying Explainable Counterfactuals,2024,Various,Non-medical XAI evidence,yes
+Nagy2024ImprovingUM,Improving Uncertainty-Aware Metrics,2024,Various,Non-medical XAI evidence,yes
+Zhang2021,Interpretable DL for 12-Lead ECG,2021,iScience,Corpus: Cardiology,no
+Nurmaini2022,Grad-CAM Sensitivity in Prenatal Echocardiography,2022,J. Clin. Med.,Corpus: Cardiology,no
+Vazquez2021,SHAP for Heart-Failure Mortality,2021,Comput. Biol. Med.,Corpus: Cardiology,no
+Piculin2022,Interpretable HCM Progression,2022,JMIR Med. Inform.,Corpus: Cardiology,no
+MorenoSanchez2023,Attribution Stability for HF Survival,2023,Front. Cardiovasc. Med.,Corpus: Cardiology,no
+Sangroya2022,Conceptual Explanation for ECG,2022,FLAIRS,Corpus: Cardiology,no
+Li2020,Feature-Level CHF Explanation,2020,Symmetry,Corpus: Cardiology,no
+shah2025explainable,SHAP-Based CVD Risk Prediction,2025,Sci. Rep.,Corpus: Cardiology,yes
+muneer2025blockchain,XAI Chatbot for CVD Screening,2025,Sci. Rep.,Corpus: Cardiology,yes
+Pertuz2023,Saliency vs Lesion Ground Truth,2023,Sci. Rep.,Corpus: Oncology,no
+saharan2025explainable,Lesion-Focused Breast Cancer Detection,2025,Sci. Rep.,Corpus: Oncology,yes
+11271656,SHAP/Grad-CAM Bias Analysis in Breast Cancer,2024,IEEE Access,Corpus: Oncology,no
+abbas2025explainable,XAI Meta-Analysis for Clinical Decision Support,2025,Healthcare,Corpus: Oncology,yes
+Patricio2024,AOPC + Max-Sensitivity Attribution Maps,2024,Comput. Meth. Prog. Biomed.,Corpus: Oncology,no
+sharma2022covidmanet,Multi-Task Attention for COVID-19 CXR,2022,Pattern Recognit.,Corpus: Oncology,no
+cerekci2024quantitative,Quantitative Saliency in Mammography,2024,Eur. J. Radiol.,Corpus: Oncology,no
+alpsalaz2026explainability,Fuzzy Ensemble for Cervical Cancer,2026,Int. J. Intell. Syst.,Corpus: Oncology,yes
+Lee2021Cardiomegaly,Heatmap Localisation for Cardiomegaly,2021,Sci. Rep.,Corpus: Radiology,no
+lee2020evaluation,COVID-19 CXR Screening Evaluation,2020,J. Pers. Med.,Corpus: Radiology,no
+10051650,Domain-Aware Classifier Interpretation,2023,IEEE TMI,Corpus: Radiology,no
+10440088,Example-Based XAI in Medical Imaging,2024,IEEE Access,Corpus: Radiology,no
+Repetto2025EvaluatingTR,Robustness Under Corruption in Medical Images,2025,Mach. Learn.,Corpus: Radiology,yes
+IhongbeFouad2024,Human-Centred Grad-CAM vs LIME Study,2024,PLoS ONE,Corpus: Radiology,yes
+saporta2022benchmarking,Saliency Benchmarking for CXR,2022,Nat. Mach. Intell.,Corpus: Radiology,no
+arun2021assessing,Saliency Trustworthiness Assessment,2021,Radiology: AI,Corpus: Radiology,no
+wollek2023attention,Attention Saliency for Pneumothorax,2023,Radiology: AI,Corpus: Radiology,no
+sun2023improving,Patch Perturbation for COVID-19 CXR,2023,Sci. Rep.,Corpus: Radiology,no
+brima2024saliency,Visual Explainability with Statistical Analysis,2024,BioData Mining,Corpus: Radiology,yes
+Chmiel2023,Saliency Sensitivity for Brain Tumour,2023,Sensors,Corpus: Neuroimaging,no
+Nazir2024UtilizingCC,XAI-Augmented CNN for Brain Tumour,2024,Heliyon,Corpus: Neuroimaging,yes
+singla2023explaining,Counterfactual Explanation in Medical Imaging,2023,Med. Image Anal.,Corpus: Neuroimaging,no
+Kohan2025,XAI in Intracranial Haemorrhage,2025,WIREs DMKD,Corpus: Neuroimaging,yes
+qin2025consistency,Consistency Benchmarking for Brain MRI,2025,SPIE ICBBE,Corpus: Neuroimaging,yes
+akgundougdu2025explainable,LIME/Grad-CAM/SHAP for Brain Tumour,2025,Med. Eng. Phys.,Corpus: Neuroimaging,yes
+10328849,Trustworthiness Metrics for IoMT Imaging,2025,IEEE J-BHI,Corpus: Clinical,yes
+11355720,Co-Design with Radiologists for Trust,2024,IEEE Access,Corpus: Clinical,yes
+Kukar2011,Explanation Validation in CAD,2011,Artif. Intell. Med.,Corpus: Clinical,no
+Pandey2024,qxAI Faithfulness + Sensitivity,2024,IEEE PerCom Wksp.,Corpus: Clinical,yes
+hicks2022evaluation,Domain-Aware Criteria Evaluation,2022,Sci. Rep.,Corpus: Clinical,no
+rezaeian2026explainability,Explainability Effects on Clinician Trust,2026,Int. J. HCI,Corpus: Clinical,yes
+finzel2024human,Human-Centred Lessons for Medical Decisions,2024,KI-Kunstl. Intell.,Corpus: Clinical,yes
+chien2022usefulness,Grad-CAM Usefulness Across Modalities,2022,Appl. Sci.,Corpus: Clinical,no
+Patricio2023,XAI Survey with Metrics Benchmarking,2023,ACM Comput. Surv.,Corpus: Clinical,no
+lamprou2024evaluation,Systematic Faithfulness Evaluation,2024,Comput. Meth. Prog. Biomed.,Corpus: Clinical,yes
+raghavan2024explainable,XAI Experiments on IR Breast Images,2024,Comput. Intell.,Corpus: Clinical,yes
+jacob2025indian,Perturbation-Based XAI for Wound Healing,2025,Comput. Meth. Prog. Biomed.,Corpus: Clinical,yes

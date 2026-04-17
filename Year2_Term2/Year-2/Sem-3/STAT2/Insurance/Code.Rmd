@@ -1,0 +1,217 @@
+---
+title: "Insurance"
+author: "Doan Cong Thanh"
+date: "2024-07-31"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
+```
+
+## Load Libraries and Data
+```{r}
+# Load necessary libraries
+library(car)
+library(caret)
+library(dplyr)
+library(MASS)
+# Load the data set
+data <- read.csv("insurance.csv")
+```
+## Encode Categorical Variables
+```{r}
+# Encode the data
+# Create pr_sex variable: 0 for female, 1 for male
+data$pr_sex <- ifelse(data$sex == "male", 1, 0)
+
+# Create pr_smoker variable: 0 for non-smoker, 1 for smoker
+data$pr_smoker <- ifelse(data$smoker == "yes", 1, 0)
+
+# Create dummy variables for region, excluding 'northwest' as the reference group
+data$pr_region_northeast <- ifelse(data$region == "northeast", 1, 0)
+data$pr_region_southeast <- ifelse(data$region == "southeast", 1, 0)
+data$pr_region_southwest <- ifelse(data$region == "southwest", 1, 0)
+```
+## Handle data
+```{r}
+# Fit the initial model
+initial_model <- lm(charges ~ pr_sex + pr_smoker + pr_region_northeast + pr_region_southeast + pr_region_southwest + age + bmi + children, data = data)
+
+# Check for normality of residuals using Shapiro-Wilk test
+shapiro_test <- shapiro.test(residuals(initial_model))
+print(shapiro_test)
+
+# Draw boxplots for all numeric columns to visualize outliers
+numeric_columns <- sapply(data, is.numeric)
+par(mfrow=c(2,4))
+for(i in which(numeric_columns)){
+  boxplot(data[,i], main=names(data)[i])
+}
+
+# Calculate Cook's distance
+cooksd <- cooks.distance(initial_model)
+
+# Identify influential points (top 10% by Cook's distance)
+influential <- as.numeric(names(sort(cooksd, decreasing = TRUE)[1:floor(0.1 * length(cooksd))]))
+
+# Remove influential observations
+data_clean <- data[-influential, ]
+
+# Check for NA values and remove them
+if(any(is.na(data_clean))){
+  data_clean <- na.omit(data_clean)
+}
+
+# Draw boxplots for all numeric columns to visualize outliers after cleaning
+numeric_columns <- sapply(data_clean, is.numeric)
+par(mfrow=c(2,4))
+for(i in which(numeric_columns)){
+  boxplot(data_clean[,i], main=names(data_clean)[i])
+}
+
+# Percentage of data removed
+(dim(data)[1] - dim(data_clean)[1]) / dim(data)[1] * 100
+
+# Fit a linear model on the cleaned data to check for normality again
+clean_model <- lm(charges ~ pr_sex + pr_smoker + pr_region_northeast + pr_region_southeast + pr_region_southwest + age + bmi + children, data = data_clean)
+shapiro_test_cleaned <- shapiro.test(residuals(clean_model))
+print(shapiro_test_cleaned)
+```
+## Calculate VIF
+```{r}
+# Calculate VIF
+vif_data <- vif(lm(charges ~ pr_sex + pr_smoker + pr_region_northeast + pr_region_southeast + pr_region_southwest + age + bmi + children, data = data_clean))
+print(vif_data)
+```
+The VIF table indicates that the VIF values of six predictors are nearly close to 1, which means there is no severse multicollinearity problem among this model.
+
+## Split Data into Training and Testing Sets
+```{r}
+# Set seed for reproducibility
+set.seed(123)
+
+# Split data
+train_index <- createDataPartition(data_clean$charges, p = 0.8, list = FALSE)
+train_data <- data_clean[train_index, ]
+test_data <- data_clean[-train_index, ]
+```
+
+## Train Linear Regression Model
+### Define Full and Initial Models
+```{r}
+# Define the full model
+modFull <- lm(charges ~ pr_sex + pr_smoker + pr_region_northeast + pr_region_southeast + pr_region_southwest + age + bmi + children, data = train_data)
+
+# Define the null model
+modZero <- lm(charges ~ 1, data = train_data)
+
+# Define an intermediate model (you can customize the variables as needed)
+modInter <- lm(charges ~ pr_sex + pr_smoker + pr_region_northeast + age + bmi, data = train_data)
+```
+### Apply Step-Wise Method
+```{r}
+# Backward elimination with AIC
+modBest1A <- stepAIC(modFull, direction = "backward", scope = list(lower = modZero, upper = modFull), k = 2)
+
+# Backward elimination with BIC
+modBest1B <- stepAIC(modFull, direction = "backward", scope = list(lower = modZero, upper = modFull), k = log(nrow(data)))
+
+# Forward selection with BIC
+modBest2 <- stepAIC(modZero, direction = "forward", scope = list(lower = modZero, upper = modFull), k = log(nrow(data)))
+
+# Stepwise selection with BIC
+modBest3 <- stepAIC(modInter, direction = "both", scope = list(lower = modZero, upper = modFull), k = log(nrow(data)))
+```
+These 4 models are exactly one. So we choose the modBest1A.
+### Summary of Best Model
+```{r}
+summary(modBest1A)
+```
+## Evaluate Model Performance
+```{r}
+# Predict on test data
+predictions <- predict(modBest1A, newdata = test_data)
+
+# Calculate performance metrics
+actual <- test_data$charges
+mse <- mean((predictions - actual)^2)
+rmse <- sqrt(mse)
+r_squared <- cor(predictions, actual)^2
+
+# MSE
+mse
+# RMSE
+rmse
+# R-squared
+r_squared
+```
+
+### Mean Squared Error (MSE): 14,044,199
+
+Interpretation: MSE is the average of the squares of the errors between predicted and actual values. It gives a rough idea of how large the errors are. In this case, the MSE is quite large, indicating that there are significant differences between the predicted and actual values.
+
+### Root Mean Squared Error (RMSE): 3,747.559
+
+Interpretation: RMSE is the square root of MSE and provides a measure of the average magnitude of the prediction errors in the same units as the response variable. An RMSE of 3,747.559 means that the typical error in predicting the charges is about 3,747.559 units.
+
+### R-squared (R²): 0.9160806
+
+Interpretation: R-squared represents the proportion of the variance in the dependent variable that is predictable from the independent variables. An R-squared value of 0.9160806 means that approximately 91.61% of the variability in the charges can be explained by the model. This is a high value, indicating that the model fits the data well.
+
+## Comments on Model Performance
+
+### High R-squared
+The R-squared value of 0.9160806 suggests that the model explains a large portion of the variance in the response variable (charges). This implies that the predictors used in the model are quite effective in capturing the relationship between the inputs and the output.
+
+### High RMSE
+While the R-squared value is high, the RMSE value of 3,747.559 indicates that there is still a considerable amount of error in the predictions. This suggests that while the model captures the overall trend well, individual predictions may still be off by a significant margin.
+
+### Model Appropriateness
+Given the high R-squared value, the model seems to be a good fit for the data. However, the high RMSE indicates that there might be room for improvement, possibly by refining the model, adding more predictors, or considering non-linear relationships.
+
+# Apply Box-Cox transformation
+```{r}
+# Fit a linear model on the training data
+initial_model <- lm(charges ~ pr_sex + pr_smoker + pr_region_northeast + pr_region_southeast + pr_region_southwest + age + bmi + children, data = train_data)
+
+# Find the optimal lambda for Box-Cox transformation
+boxcox_result <- boxcox(initial_model, lambda = seq(-2, 2, by = 0.1))
+lambda_optimal <- boxcox_result$x[which.max(boxcox_result$y)]
+
+# Apply the Box-Cox transformation
+if(lambda_optimal == 0) {
+  train_data$charges_transformed <- log(train_data$charges)
+  test_data$charges_transformed <- log(test_data$charges)
+} else {
+  train_data$charges_transformed <- (train_data$charges^lambda_optimal - 1) / lambda_optimal
+  test_data$charges_transformed <- (test_data$charges^lambda_optimal - 1) / lambda_optimal
+}
+
+# Fit the model with the transformed response variable
+modBestTransformed <- lm(charges_transformed ~ pr_sex + pr_smoker + pr_region_northeast + pr_region_southeast + pr_region_southwest + age + bmi + children, data = train_data)
+
+# Summary of the transformed model
+summary(modBestTransformed)
+
+# Evaluate model performance on test data with transformed response variable
+predictions_transformed <- predict(modBestTransformed, newdata = test_data)
+actual_transformed <- test_data$charges_transformed
+
+# Calculate performance metrics for transformed model
+mse_transformed <- mean((predictions_transformed - actual_transformed)^2)
+rmse_transformed <- sqrt(mse_transformed)
+r_squared_transformed <- cor(predictions_transformed, actual_transformed)^2
+
+# MSE for transformed model
+mse_transformed
+# RMSE for transformed model
+rmse_transformed
+# R-squared for transformed model
+r_squared_transformed
+```
+

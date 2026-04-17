@@ -1,0 +1,155 @@
+---
+title: "22125096_Two-Way-Anova"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
+```
+
+## Set up the data
+```{r}
+data <- read.csv("insurance.csv")
+dim(data)
+head(data)
+str(data)
+attach(data)
+```
+## Process
+```{r}
+data$sex <- as.factor(data$sex)
+data$smoker <- as.factor(data$smoker)
+levels(data$sex) #the levels() function to extract the levels of a factor variable.
+levels(data$smoker)
+```
+### Interaction plot
+Create interaction plots: to consider the interaction between these factors.\
+If there is an intersection between lines or different lines go in different path $\to$ Interaction.\
+Parallel lines $\to$ No interaction.
+```{r}
+par(mfrow = c(1, 2))
+with(data, interaction.plot(sex, smoker, charges, lwd = 2, col = 1:4))
+with(data, interaction.plot(smoker, sex, charges, lwd = 2, col = 1:3))
+```
+
+Smoking Impact: Smoking has a strong effect on mean charges, with smokers facing higher costs regardless of gender.\
+Sex Impact: The influence of gender on charges is more evident among smokers, where male smokers tend to have higher charges than female smokers.\
+Interaction Effect: There seems to be a moderate interaction between gender and smoking, with male smokers experiencing the highest charges.\
+
+### Fit model
+```{r}
+model_int = aov(charges ~ sex * smoker) # interaction model
+model_add = aov(charges ~ sex + smoker) # additive model
+model_sex = aov(charges ~ sex) # single factor model
+model_smoker = aov(charges ~ smoker) # single factor model
+model_null = aov(charges ~ 1) # null model
+summary(model_int)
+```
+
+From the summary table, we can obtain:\
+sex: The p-value (0.000682) is very small, indicating that sex has a statistically significant effect on charges.\
+smoker: The p-value (< 2e-16) shows that smoker has an extremely significant effect on charges.\
+sex:smoker: The p-value (0.002954) show that the interaction between sex and smoker is also statistically significant, meaning the combined effect of sex and smoker on charges is significant.
+```{r}
+summary(model_add)
+```
+From the summary table of model_add, we observe that:\
+sex is significant with a p-value of 0.000707.\
+smoker remains extremely significant with a p-value of < 2e-16.\
+From both summaries, we notice that the residuals in the interaction model are slightly smaller, suggesting that this model might explain the variation in charges better than the additive model.
+
+### Table of factor
+```{r}
+factor_table = expand.grid(sex = unique(data$sex), smoker = unique(data$smoker))
+factor_table
+```
+
+```{r}
+matrix(paste0(factor_table$sex, "-", factor_table$smoker) , 2, 2, byrow = TRUE)
+```
+
+```{r}
+##Function to perform the prediction.
+get_est_means = function(model, table) {
+mat = matrix(predict(model, table), nrow = 2, ncol = 2, byrow = TRUE)
+colnames(mat) = c("female", "male")
+rownames(mat) = c("smoker", "non-smoker")
+mat
+}
+```
+
+### Prediction from model
+```{r}
+#The estimates from the interaction model
+knitr::kable(get_est_means(model = model_int, table = factor_table))
+```
+
+```{r}
+#The estimates from the additive model.
+knitr::kable(get_est_means(model = model_add, table = factor_table))
+```
+Interaction model:\
+The interaction model indicates that the effect of sex on charges is influenced by smoking status. This is clear from the varying estimated charges between males and females when comparing smokers and non-smokers.\
+Smoking males have higher estimated charges than smoking females, while among non-smokers, the estimated charges for both sexes are more similar and noticeably lower.
+```{r}
+#The estimates from the additive model.
+knitr::kable(get_est_means(model = model_add, table = factor_table))
+```
+Additive model:\
+The additive model implies that the effects of sex and smoking status are independent of each other. Consequently, the estimated charges for males and females within the same smoking category are nearly the same. This indicates that without interaction, the differences due to sex and smoking remain consistent across all groups.
+
+### Effect of gender
+```{r}
+additive_means = get_est_means(model = model_add, table = factor_table)
+additive_means[,"female"] - additive_means[,"male"]
+```
+
+```{r}
+interaction_means = get_est_means(model = model_int, table = factor_table)
+interaction_means[,"female"] - interaction_means[,"male"]
+```
+In the additive model, the difference in the effect of gender between females and males is consistent for each sex, whereas in the interaction model, these differences vary.\
+Estimate of other models
+```{r}
+knitr::kable(get_est_means(model = model_sex, table = factor_table))
+```
+
+```{r}
+knitr::kable(get_est_means(model = model_smoker, table = factor_table))
+```
+
+```{r}
+knitr::kable(get_est_means(model = model_null, table = factor_table))
+```
+
+charge~sex: charges are identical according to same gender.\
+charge~smoker: charges are identical consider the same smoking status.\
+charge~1: all values are the same.
+
+### ANOVA table
+```{r}
+#model hierarchy
+summary(aov(charges ~ sex * smoker, data = data))
+```
+The p-value of the sex, smoker, and sex:smoker are all smaller than 0.003, so both 2 factors and the interaction
+are significant at 0.05 significance level.
+```{r}
+#The interaction is significant, so we use the interaction model here.
+TukeyHSD(aov(charges ~ sex * smoker, data = data))
+plot(TukeyHSD(aov(charges ~ sex * smoker, data = data)))
+```
+The Tukey's HSD test provides pairwise comparisons of means with confidence intervals and adjusted p-values:
+
+Males have higher charges than females by 1,387.172 units.
+Smokers have significantly higher charges than non-smokers by 23,485.03 units.
+For the interaction between sex and smoking status:
+
+Smoking males have significantly higher charges than non-smoking females by 24,279.7087 units.
+Smoking females have significantly higher charges than non-smoking males by 22,591.7915 units.
+Among non-smokers, males have lower charges than females by 675.0926 units.
+Among smokers, males have significantly higher charges than females by 2,363.0097 units.
+Among males, smokers have significantly higher charges than non-smokers by 24,954.8012 units.
+Among females, smokers have significantly higher charges than non-smokers by 21,916.6990 units.

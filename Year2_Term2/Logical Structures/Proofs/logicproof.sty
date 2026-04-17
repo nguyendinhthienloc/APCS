@@ -1,0 +1,177 @@
+% logicproof.sty — Fitch-style box proofs
+% By Alan Davidson (reconstructed from documented source, 20 March 2014)
+
+\RequirePackage{array}
+\RequirePackage{ifthen}
+
+% ── Configurable spacing ─────────────────────────────────────────────────────
+\newlength{\subproofhorizspace}
+\setlength{\subproofhorizspace}{0.5em}
+
+\newlength{\intersubproofvertspace}
+\setlength{\intersubproofvertspace}{0.333em}
+
+% ── Counters ─────────────────────────────────────────────────────────────────
+\newcounter{lp@line}         % current line number
+\newcounter{lp@nested}       % current nesting depth
+\newcounter{lp@total@nests}  % max nesting depth (from \begin{logicproof}{N})
+\newcounter{lp@cline@1}      % left column of \cline for subproof borders
+\newcounter{lp@cline@2}      % right column of \cline for subproof borders
+\newcounter{lp@temp}         % scratch counter
+
+% ── logicproof environment ───────────────────────────────────────────────────
+\newenvironment{logicproof}[1]{%
+  \setcounter{lp@line}{0}%
+  \setcounter{lp@nested}{0}%
+  \setcounter{lp@total@nests}{#1}%
+  \setlength{\tabcolsep}{0mm}%
+  \let\lp@orig@arraycr\@arraycr%
+  \renewcommand{\@arraycr}{\lp@cr}%
+  \renewcommand{\@currentlabel}{\p@lp@line\thelp@line}%
+  \ifthenelse{0=#1}{%
+    \def\lp@tab@format{{r@{~~~}>{$}l<{$}@{~~~~}l}}%
+  }{%
+    \def\lp@tab@format{{r@{~~~}*{#1}{l}@{~}>{$}l<{$}@{~~~~}l@{~}*{#1}{r}}}%
+  }%
+  \center%
+  \expandafter\tabular\lp@tab@format%
+  \lp@start@proof@line%
+}{%
+  \lp@stop@proof@line%
+  \endtabular%
+  \endcenter%
+  \setcounter{lp@total@nests}{0}%
+  \ifthenelse{0=\value{lp@nested}}{}{%
+    \def\@currenvir{subproof}%
+  }%
+}
+
+% ── subproof environment ─────────────────────────────────────────────────────
+\newenvironment{subproof}{%
+  \ifthenelse{\value{lp@total@nests}>\value{lp@nested}}{}{%
+    \PackageError{logicproof}{Too many nested subproofs!}{%
+      Increase the maximum number of nested subproofs allowed
+      in the current logicproof environment.}%
+  }%
+  \endgroup%
+  \lp@stop@proof@line%
+  \lp@orig@arraycr%
+  \lp@add@space%
+  \lp@go@up@a@line%
+  \stepcounter{lp@nested}%
+  \lp@cr@clines%
+  &%
+  \lp@continue@proof@line%
+}{%
+  \ifthenelse{0<\value{lp@nested}}{}{%
+    \PackageError{logicproof}{Cannot end a subproof before it begins}{%
+      You must have a \protect\begin{subproof} before
+      \protect\end{subproof}.}%
+  }%
+  \lp@stop@proof@line%
+  \lp@cr@clines%
+  \addtocounter{lp@nested}{-1}%
+  \lp@extend@space%
+  \lp@start@proof@line%
+  \begingroup%
+  \def\@currenvir{subproof}%
+}
+
+% ── Internal helpers ─────────────────────────────────────────────────────────
+
+% What \\ does inside logicproof
+\newcommand{\lp@cr}{%
+  \lp@stop@proof@line%
+  \lp@orig@arraycr%
+  \lp@extend@space%
+  \lp@start@proof@line%
+}
+
+% Back up one full line height
+\newcommand{\lp@go@up@a@line}{%
+  \vspace{-\ht\@arstrutbox}%
+  \vspace{-\dp\@arstrutbox}%
+  \vspace{-\intersubproofvertspace}%
+}
+
+% Insert a blank spacing row then back up to prevent \cline overlap
+\newcommand{\lp@add@space}{%
+  \lp@extend@space%
+  \vspace{-\ht\@arstrutbox}%
+  \vspace{-\dp\@arstrutbox}%
+}
+
+% Extend vertical subproof lines by \intersubproofvertspace (blank row)
+\newcommand{\lp@extend@space}{%
+  \vspace{-\ht\@arstrutbox}%
+  \vspace{-\dp\@arstrutbox}%
+  \vspace{\intersubproofvertspace}%
+  &%
+  \lp@continue@proof@line%
+  &%
+  \lp@stop@proof@line%
+  \lp@orig@arraycr%
+}
+
+% & token usable inside \whiledo
+\newcommand{\lp@amper}{&}
+
+% Start a proof line: print number, then left vlines
+\newcommand{\lp@start@proof@line}{%
+  \stepcounter{lp@line}%
+  \arabic{lp@line}.%
+  &%
+  \lp@continue@proof@line%
+}
+
+% Left-side vlines (between line number and formula)
+\newcommand{\lp@continue@proof@line}{%
+  \setcounter{lp@temp}{0}%
+  \whiledo{\value{lp@temp}<\value{lp@nested}}{%
+    \vline\hspace*{\subproofhorizspace}%
+    \lp@amper%
+    \stepcounter{lp@temp}%
+  }%
+  \whiledo{\value{lp@temp}<\value{lp@total@nests}}{%
+    \hspace*{\subproofhorizspace}%
+    \lp@amper%
+    \stepcounter{lp@temp}%
+  }%
+}
+
+% Right-side vlines (after justification)
+\newcommand{\lp@stop@proof@line}{%
+  \whiledo{\value{lp@temp}>\value{lp@nested}}{%
+    \addtocounter{lp@temp}{-1}%
+    \lp@amper\hspace*{\subproofhorizspace}%
+  }%
+  \whiledo{\value{lp@temp}>0}{%
+    \addtocounter{lp@temp}{-1}%
+    \lp@amper\hspace*{\subproofhorizspace}\vline%
+  }%
+}
+
+% Helper for counter subtraction via \expandafter
+\newcommand{\lp@subtract@from@counter}[2]{%
+  \addtocounter{#2}{-#1}%
+}
+
+% Compute \cline column range for current nesting level
+% lp@cline@1 = lp@nested + 1
+% lp@cline@2 = 2*lp@total@nests + 4 - lp@nested
+\newcommand{\lp@set@clines}{%
+  \setcounter{lp@cline@1}{\value{lp@nested}}%
+  \stepcounter{lp@cline@1}%
+  \setcounter{lp@cline@2}{\value{lp@total@nests}}%
+  \addtocounter{lp@cline@2}{\value{lp@total@nests}}%
+  \addtocounter{lp@cline@2}{4}%
+  \expandafter\lp@subtract@from@counter\expandafter{%
+    \value{lp@nested}}{lp@cline@2}%
+}
+
+% Draw horizontal border line for subproof start/end
+\newcommand{\lp@cr@clines}{%
+  \lp@set@clines%
+  \lp@orig@arraycr%
+  \cline{\value{lp@cline@1}-\value{lp@cline@2}}%
+}

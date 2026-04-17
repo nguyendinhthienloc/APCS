@@ -1,0 +1,72 @@
+\newpage
+\section{Introduction}
+% ──────────────────────────────────────────────────────────────────────────────
+
+Explainable Artificial Intelligence (XAI) refers to a set of methods that aim
+to make machine learning models understandable to humans by revealing how their
+internal mechanisms work and how decisions are reached~\cite{Arrieta2020XAI}. In medicine, this
+capability is not merely desirable but increasingly required: clinical
+decision-making carries direct consequences for patient safety, and regulatory
+frameworks in many jurisdictions now demand that AI-assisted diagnoses be
+accompanied by interpretable justifications~\cite{jin2023guidelines}. Despite
+this pressure, metrics for measuring the effectiveness of XAI algorithms in
+medical contexts remain poorly established. Current evaluation methodologies
+rely heavily on subjective user studies which, while valuable for understanding
+clinician perception, often suffer from confirmation bias and fail to assess the
+technical fidelity of the explanations provided~\cite{mirzaei2023xai}.
+
+Moreover, many modern XAI approaches are post-hoc in nature, which makes
+evaluating their explanations even more challenging. Because such explanations
+are generated after model training, they may not faithfully reflect the model's
+true decision-making logic. This problem is especially acute in medicine, where
+a persuasive but unfaithful explanation could reinforce a clinician's incorrect
+judgement rather than correct it.
+
+This paper focuses specifically on the medical domain and asks: which
+quantitative evaluation metrics are actually being used, how do they
+co-occur across studies, and where does coverage remain thin? By analysing a
+focused corpus of peer-reviewed medical XAI studies across four sub-domains, including
+oncology, cardiology, neurology, and radiology, we identify redundancies in
+current practice and propose a minimal but comprehensive evaluation set grounded
+in a three-layer taxonomy of mathematical faithfulness, system robustness, and
+human-centred trust.
+
+
+\section{Background}
+% ──────────────────────────────────────────────────────────────────────────────
+
+Artificial intelligence is rapidly being integrated into clinical workflows.
+Yet because complex AI models often operate as a ``black box,'' it is difficult
+for clinicians to understand how diagnostic or prognostic decisions are actually
+being made. This creates a significant need for XAI, which aims to make medical
+AI systems transparent and interpretable~\cite{Tjoa2021MedicalXAI}. XAI has been applied to problems such
+as clinical decision support~\cite{abbas2025explainable}, breast cancer
+diagnosis~\cite{saharan2025explainable}, cardiovascular risk
+prediction~\cite{shah2025explainable}, and responsible cardiovascular disease diagnosis~\cite{muneer2025blockchain}.
+
+A central distinction in XAI is between models that are interpretable by
+design and methods that explain a model after the fact. The latter,
+so-called post-hoc approaches, are appealing because they can be applied to
+virtually any existing clinical system without requiring it to be rebuilt.
+However, this flexibility comes at a cost: there is no guarantee that the
+explanation accurately reflects what the model is doing internally, and this
+gap between appearance and reality is one of the core challenges medical XAI
+continues to grapple with~\cite{holzinger2022information,palatnik2021xai}.
+
+Evaluating explanation quality in medicine has accordingly become a major
+concern. Two broad approaches have emerged. \emph{Technical evaluation} uses
+quantitative metrics, such as faithfulness, sensitivity, robustness, and
+consistency, to assess how well an explanation approximates actual model
+behaviour. \emph{Human-centric evaluation}, by contrast, focuses on the
+clinician, measuring factors such as trust, cognitive load, and practical
+usefulness through observational studies and behavioural experiments~\cite{lenis2020domain}.
+
+While both paradigms have matured considerably, they remain largely
+disconnected in medical practice. A method that scores well on technical
+metrics may produce explanations that are opaque or misleading to clinicians,
+while an explanation that non-specialists find intuitive may not be
+mathematically faithful to the underlying model. This disconnect makes it
+difficult to establish shared evaluation standards or compare results across
+medical sub-domains, a problem this paper directly addresses.
+
+% ──────────────────────────────────────────────────────────────────────────────

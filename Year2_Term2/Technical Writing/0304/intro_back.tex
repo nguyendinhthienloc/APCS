@@ -1,0 +1,93 @@
+\section{Introduction}
+% ──────────────────────────────────────────────────────────────────────────────
+
+Explainable Artificial Intelligence (XAI) encompasses a set of methods designed
+to render machine learning models interpretable by revealing internal
+mechanisms and the reasoning processes underlying their
+decisions~\cite{Arrieta2020XAI}. In clinical medicine, interpretability is not
+merely desirable but increasingly mandated: clinical decision-making carries
+direct consequences for patient safety, and regulatory frameworks across
+multiple jurisdictions now require that AI-assisted diagnoses be accompanied by
+interpretable justifications~\cite{jin2023guidelines}. Despite this regulatory
+momentum, the metrics used to evaluate explanation quality in medical AI remain
+poorly standardised. Current evaluation methodologies rely heavily on
+subjective user studies which, while valuable for assessing clinician
+perception, are susceptible to confirmation bias and frequently fail to assess
+the technical fidelity of the generated
+explanations~\cite{mirzaei2023xai}.
+
+This standardisation deficit is compounded by the prevalence of post-hoc
+explanation methods in clinical AI. Because such explanations are generated
+after model training, they may not faithfully reflect the model's actual
+decision-making logic. In medical contexts, this gap is particularly
+consequential: a persuasive but unfaithful explanation could reinforce a
+clinician's incorrect judgement rather than correct it, potentially
+compromising patient outcomes.
+
+The present study focuses on the medical domain and addresses three
+research questions: (RQ1)~Which quantitative evaluation metrics are
+currently employed to assess XAI explanation quality in medical AI?
+(RQ2)~How do these metrics co-occur across studies, and which pairs
+exhibit potential redundancy? (RQ3)~Where do systematic coverage gaps
+persist across medical sub-domains? By analysing a focused corpus of 52
+peer-reviewed medical XAI studies spanning five sub-domains---oncology,
+cardiology, neuroimaging, radiology, and clinical decision
+support---we quantify metric co-occurrence patterns, identify
+redundancies in current practice, and propose a minimal but comprehensive
+evaluation framework grounded in a three-layer taxonomy of mathematical
+faithfulness, system robustness, and human-centred trust.
+
+The principal contributions of this paper are threefold:
+\begin{enumerate}
+    \item A systematic cross-study co-occurrence analysis quantifying the distribution, pairing patterns, and correlations of XAI evaluation metrics across five medical sub-domains.
+    \item A three-layer evaluation taxonomy---mathematical faithfulness, system robustness, and human-centred trust---grounded in empirical usage patterns and validated against the 52-study corpus.
+    \item A minimal evaluation framework specifying one metric per evaluative dimension, designed to ensure comprehensive coverage without imposing excessive methodological burden.
+\end{enumerate}
+
+
+\section{Background}
+% ──────────────────────────────────────────────────────────────────────────────
+
+Artificial intelligence is being rapidly integrated into clinical workflows
+across diagnostic imaging, prognostic modelling, and therapeutic decision
+support. However, because complex AI models frequently operate as opaque
+systems, clinicians cannot readily ascertain how diagnostic or prognostic
+outputs are generated. This opacity creates a pressing need for XAI methods
+that render medical AI systems transparent and
+interpretable~\cite{Tjoa2021MedicalXAI}. XAI has been applied to domains
+including clinical decision
+support~\cite{abbas2025explainable}, breast cancer
+diagnosis~\cite{saharan2025explainable}, cardiovascular risk
+prediction~\cite{shah2025explainable}, and responsible cardiovascular disease
+screening~\cite{muneer2025blockchain}.
+
+A central distinction in XAI is between models that are interpretable by
+design (intrinsically interpretable models) and methods that generate
+explanations after training (post-hoc methods). Post-hoc approaches are
+appealing because they can be applied to virtually any deployed clinical
+system without requiring architectural modification. However, this
+flexibility entails a fundamental limitation: there is no guarantee that the
+explanation accurately represents the model's internal computations, and
+this fidelity gap remains one of the core unresolved challenges in medical
+XAI~\cite{holzinger2022information,palatnik2021xai}.
+
+Two broad paradigms have emerged for evaluating explanation quality in
+medicine. \emph{Technical evaluation} employs quantitative metrics---such as
+faithfulness, sensitivity, robustness, and consistency---to assess how
+accurately an explanation approximates actual model behaviour.
+\emph{Human-centred evaluation}, by contrast, focuses on the end user,
+measuring constructs such as clinician trust, cognitive load, and practical
+usefulness through observational studies and behavioural
+experiments~\cite{lenis2020domain}.
+
+While both paradigms have matured considerably, they remain largely
+disconnected in medical practice. A method that achieves high scores on
+technical metrics may produce explanations that are opaque or misleading to
+clinicians, while an explanation that non-specialists find intuitive may
+lack mathematical fidelity to the underlying model. This disconnect
+impedes the establishment of shared evaluation standards and limits the
+comparability of results across medical sub-domains---a problem this
+paper directly addresses through cross-domain co-occurrence analysis
+and structured taxonomy construction.
+
+% ──────────────────────────────────────────────────────────────────────────────

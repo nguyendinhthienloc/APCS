@@ -1,0 +1,7 @@
+Control signal includes:
+- write
+- read
+- mux select
+and depends on:
+- Instruction type
+- Processing step (5 steps)

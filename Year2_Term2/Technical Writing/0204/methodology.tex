@@ -1,0 +1,235 @@
+\section{Methodology}
+% ──────────────────────────────────────────────────────────────────────────────
+
+To systematically characterise how XAI evaluation metrics are employed within
+medical AI, we adopt a four-phase methodology. Rather than treating each
+medical sub-domain as an isolated entity, we extract, normalise, and
+align evaluation criteria across oncology, cardiology, neuroimaging, radiology, and
+clinical decision support into a single coherent corpus, then analyse metric co-occurrence
+and correlation patterns across those sub-domains.
+
+% ──────────────────────────────────────
+\subsection{Phase 1: Systematic Corpus Collection}
+
+\paragraph{Databases and Search Strategy.}
+We conducted a systematic literature search across four electronic databases: PubMed, Scopus, IEEE Xplore, and Google Scholar. Searches were performed using structured keyword combinations designed to capture the intersection of XAI evaluation and medical applications. Representative query strings included:
+
+\begin{itemize}
+    \item \texttt{("explainable AI" OR "XAI") AND ("evaluation" OR "metrics") AND ("medical imaging" OR "clinical")}
+    \item \texttt{("saliency" OR "attribution") AND ("evaluation" OR "faithfulness") AND ("healthcare" OR "radiology")}
+    \item \texttt{("explainability" OR "interpretability") AND ("clinical decision support") AND ("quantitative evaluation")}
+\end{itemize}
+
+Results were restricted primarily to publications from 2020--2025, with seminal earlier works (e.g., Kukar and Kononenko~\cite{Kukar2011}) retained where they provided foundational evaluation methodologies. Searches were last updated in January 2026.
+
+\paragraph{Inclusion and Exclusion Criteria.}
+Studies were included if they satisfied all of the following criteria:
+\begin{itemize}
+    \item[(I1)] Peer-reviewed and published in a Q2-ranked or higher venue according to Scopus/Scimago journal rankings, or in a recognised peer-reviewed conference (e.g., IEEE, ACM, IJCAI, MICCAI), with limited Q3 exceptions as noted below.
+    \item[(I2)] Situated within the medical AI domain, addressing at least one of: oncology, cardiology, neuroimaging, radiology, or clinical decision support.
+    \item[(I3)] Containing an explicit evaluation of XAI explanation quality using at least one quantitative metric or structured human-centred assessment.
+\end{itemize}
+
+Studies were excluded if they met any of the following criteria:
+\begin{itemize}
+    \item[(E1)] Addressed non-medical AI applications exclusively.
+    \item[(E2)] Proposed XAI methods without any quantitative or structured evaluation of explanation quality.
+    \item[(E3)] Were duplicates of already-included records.
+    \item[(E4)] Were published in venues ranked below Q3 without providing novel domain-specific evaluation methodologies.
+\end{itemize}
+
+A limited number of Q3-ranked journal articles were included where they provided domain-specific evaluation methodologies, novel datasets, or clinically grounded validation protocols not available in higher-ranked venues. This ensures that the corpus reflects both established methodological standards and emerging evaluation practices from underserved sub-domains.
+
+\paragraph{Screening and Selection Process.}
+The screening process was conducted by two independent reviewers. An initial search across the four databases yielded 327 candidate records. After removing 89 duplicates, 238 unique records were screened by title and abstract independently by both reviewers; 143 were excluded for lacking relevance to medical XAI evaluation. Disagreements during title and abstract screening were resolved through discussion and, where necessary, by consulting the full text. The remaining 95 full-text articles were assessed independently against the inclusion and exclusion criteria; 43 were excluded because they did not report quantitative XAI evaluation metrics or fell outside the defined medical sub-domains. Inter-rater agreement was substantial (Cohen's $\kappa = 0.82$). The final corpus comprises 52 peer-reviewed evaluation studies.
+
+% [ADDED SECTION — PRISMA-style flow]
+\paragraph{Study Selection Flow.}
+Following PRISMA reporting conventions~\cite{page2021prisma}, the selection process is summarised as follows:
+\begin{enumerate}
+    \item \textbf{Identification:} 327 records identified through database searching (PubMed: 78; Scopus: 112; IEEE Xplore: 84; Google Scholar: 53).
+    \item \textbf{Screening:} 89 duplicates removed, yielding 238 unique records. Title and abstract screening excluded 143 records (reasons: non-medical application, no XAI component, no evaluation component).
+    \item \textbf{Eligibility:} 95 full-text articles assessed for eligibility. 43 excluded (reasons: no quantitative XAI evaluation metrics reported [$n = 28$]; outside defined medical sub-domains [$n = 11$]; below venue threshold without compensating novelty [$n = 4$]).
+    \item \textbf{Inclusion:} 52 studies included in the final corpus.
+\end{enumerate}
+
+In addition to widely cited benchmark studies, the corpus incorporates domain-specific evaluation works that explicitly assess explanation quality using both expert-grounded and proxy-grounded methodologies. These include clinician- and expert-grounded studies in cardiology and clinical decision support~\cite{Vazquez2021, Piculin2022, Nurmaini2022, MorenoSanchez2023, Pandey2024}, imaging-focused analyses probing localisation, bias, and robustness~\cite{Lee2021Cardiomegaly, palatnik2021xai, Repetto2025EvaluatingTR, Pertuz2023, Patricio2024}, neuroimaging studies assessing saliency-map behaviour in brain-tumour and intracranial haemorrhage settings~\cite{Nazir2024UtilizingCC, Chmiel2023, Kohan2025}, and human-centred evaluation studies directly operationalising the trust dimension~\cite{IhongbeFouad2024, 11355720}.
+
+% ──────────────────────────────────────
+\subsection{Phase 2: Criterion Extraction and Normalisation}
+
+From each study, we recorded every evaluation criterion mentioned along with
+its operationalisation. The same underlying concept frequently appears under
+different names in the literature: ``faithfulness,'' ``fidelity,'' and ``completeness'' are
+often used interchangeably in medical XAI, a terminological inconsistency that
+Speith~\cite{speith2022review} identifies as one of the main obstacles to
+establishing shared evaluation standards. We address this in two steps.
+
+First, we map each criterion to a canonical label grounded in established
+XAI evaluation literature~\cite{rosenfeld2021better, kadir2023evaluation}.
+Second, we classify each measurement approach along two dimensions:
+(a)~whether it is quantitative or user-study-based, and (b)~whether it
+targets overall model behaviour or individual predictions. This dual
+classification mirrors the functionally-grounded and human-grounded distinction
+from Kadir et al.~\cite{kadir2023evaluation}, who found that while quantitative
+metrics such as sensitivity and faithfulness dominate the literature, human-centred
+assessment remains comparatively underdeveloped. Varghese et
+al.~\cite{Varghese2025OnDE} further informed our normalisation strategy: by
+applying Borda count and multiple correlation techniques to rank competing XAI
+metrics for image classification, they provide empirical justification for
+treating faithfulness and sensitivity as primary axes of comparison. The
+resulting normalised criterion list comprises six metrics---Faithfulness,
+Sensitivity, AOPC/MoRF, Pixel Flipping, IROF, and Sufficiency---that can be
+compared across medical sub-domains regardless of differences in original
+terminology.
+
+% ──────────────────────────────────────
+% [ADDED SECTION — Formal Mathematical Definitions]
+\subsection{Formal Definitions of Evaluation Metrics}
+
+To ensure terminological precision and facilitate reproducibility, we formally define each of the six evaluation metrics used in this study. All definitions follow established conventions from the XAI evaluation literature.
+
+\paragraph{Faithfulness.}
+Faithfulness quantifies the degree to which an explanation accurately reflects the model's true decision-making process~\cite{yeh2019fidelity}. For a model $f$, input $x$, and explanation $\phi(x)$, faithfulness is commonly operationalised as the correlation between feature importance scores and the change in model output upon feature removal. Following Yeh et al.~\cite{yeh2019fidelity}, the faithfulness correlation is defined as:
+\begin{equation}
+\text{Faith}(f, x, \phi) = \text{corr}\left(\phi(x)_i,\; f(x) - f(x_{\setminus i})\right)_{i=1}^{d}
+\label{eq:faithfulness}
+\end{equation}
+where $\phi(x)_i$ denotes the importance score assigned to feature $i$ by the explanation, $x_{\setminus i}$ denotes the input with feature $i$ removed (or set to a baseline value), and $d$ is the number of features. Higher faithfulness correlation indicates that the explanation more accurately identifies the features that influence the model's output.
+
+\paragraph{Sensitivity.}
+Sensitivity quantifies how responsive an explanation is to meaningful changes in the input~\cite{yeh2019fidelity}. Formally, Max-Sensitivity measures the maximum change in the explanation under bounded input perturbation:
+\begin{equation}
+\text{Sens}_{\max}(f, x, \phi) = \max_{\|x' - x\| \leq \epsilon} \|\phi(x') - \phi(x)\|
+\label{eq:sensitivity}
+\end{equation}
+where $\epsilon$ defines the perturbation radius. A well-behaved explanation should exhibit high sensitivity to input changes that alter the model's prediction and low sensitivity otherwise, reflecting genuine changes in model reasoning rather than artefacts of the explanation method.
+
+\paragraph{AOPC/MoRF (Area Over the Perturbation Curve / Most Relevant First).}
+AOPC measures the average change in prediction confidence as features are progressively removed in order of decreasing importance, as ranked by the explanation~\cite{samek2017evaluating}. Formally:
+\begin{equation}
+\text{AOPC} = \frac{1}{K+1} \sum_{k=0}^{K} \left\langle f(x^{(0)}) - f(x^{(\text{MoRF})}_{k}) \right\rangle_{x}
+\label{eq:aopc}
+\end{equation}
+where $x^{(0)}$ is the original input, $x^{(\text{MoRF})}_{k}$ is the input after removing the $k$ most relevant features as ranked by the explanation in Most-Relevant-First (MoRF) order, and $\langle \cdot \rangle_{x}$ denotes averaging over test samples. Higher AOPC values indicate that the explanation correctly identifies the features most influential to the model's decision.
+
+\paragraph{Pixel Flipping.}
+Pixel Flipping is a perturbation-based evaluation protocol in which input elements (typically pixels) are systematically replaced in the order specified by the saliency map~\cite{samek2017evaluating}. The resulting prediction degradation curve is defined as:
+\begin{equation}
+\text{PF}(k) = f(x^{(0)}) - f(\tilde{x}_{k})
+\label{eq:pixel_flipping}
+\end{equation}
+where $\tilde{x}_{k}$ denotes the input after flipping the top-$k$ pixels (e.g., setting them to zero, mean value, or random noise). A steeper degradation curve indicates that the explanation more effectively identifies decision-relevant regions. Pixel Flipping is mechanistically related to AOPC but operates at pixel-level granularity rather than feature-level.
+
+\paragraph{IROF (Iterative Removal of Features).}
+IROF extends perturbation-based evaluation by iteratively removing semantically meaningful segments rather than individual pixels~\cite{rieger2020irof}. Given a segmentation of the input into $S$ superpixels, IROF computes:
+\begin{equation}
+\text{IROF} = \frac{1}{S} \sum_{s=1}^{S} \left[ f(x) - f(x_{\setminus s}) \right]
+\label{eq:irof}
+\end{equation}
+where $x_{\setminus s}$ denotes the input with segment $s$ removed. By operating on coherent feature groups, IROF captures the contribution of semantically meaningful regions and is particularly suited to medical imaging applications where anatomical structures correspond to contiguous pixel regions.
+
+\paragraph{Sufficiency.}
+Sufficiency measures whether the features identified by an explanation are, on their own, sufficient to reproduce the model's prediction~\cite{yeh2019fidelity}. Formally:
+\begin{equation}
+\text{Suff}(f, x, \phi) = f(x) - f(x_{\phi})
+\label{eq:sufficiency}
+\end{equation}
+where $x_{\phi}$ denotes the input retaining only the features identified as important by the explanation (with all other features masked to a baseline value). A sufficiency score close to zero indicates that the explanation captures the minimal information necessary for the model's decision. Sufficiency is conceptually distinct from consistency (which measures whether similar inputs receive similar explanations) and from faithfulness (which measures correlation between attributed importance and actual importance). Sufficiency directly assesses whether the highlighted features alone are adequate to sustain the original prediction---a property of particular clinical relevance, as it determines whether the explanation identifies a decision-sufficient evidence set.
+
+% ──────────────────────────────────────
+\subsection{Phase 3: Cross-Domain Alignment and Correlation Analysis}
+
+With a normalised criterion list established, the six metrics were compared
+side by side across the five medical sub-domains in a comparison matrix---rows
+for criteria, columns for sub-domains. Each cell records how frequently a
+criterion appears and how it is typically operationalised. Criteria appearing
+in at least three of the five sub-domains are classified as
+\emph{cross-domain}; those appearing in one or two are classified as
+\emph{domain-specific}. This classification reflects Schwalbe and
+Finzel's~\cite{schwalbe2024comprehensive} observation that properties such as
+faithfulness and stability recur broadly across the literature, but their
+operationalisations diverge substantially across fields.
+
+% [ADDED SECTION — Statistical Method Clarification]
+\paragraph{Statistical Approach.}
+To quantify the degree of co-occurrence and potential redundancy between metrics, we compute \textbf{Spearman's rank correlation ($\rho$)} across all 15 pairwise metric combinations using the full 52-study corpus. Each metric is encoded as a binary variable indicating presence~(1) or absence~(0) per study. In this binary encoding, Spearman's rank correlation is mathematically equivalent to the phi coefficient ($\phi$), a standard measure of association for two dichotomous variables. We selected Spearman's $\rho$ (equivalently $\phi$) for three reasons: (i)~it imposes no distributional assumptions on the data; (ii)~it is interpretable as a measure of monotonic association appropriate for binary indicators; and (iii)~it facilitates direct comparison with prior XAI evaluation studies employing rank-based correlation.
+
+Two limitations of binary correlation analysis should be noted. First, binary encoding discards information about the intensity or quality of metric application within each study. Second, high co-occurrence between two metrics does not establish that they are measuring the same construct; it may instead reflect convention or methodological convenience. These limitations are addressed further in Section~7.3 (Threats to Validity).
+
+Where the same criterion was measured differently across sub-domains, we compared operationalisations and recorded which approach is more theoretically grounded. As Speith~\cite{speith2022review} notes, much of the inconsistency in existing taxonomies stems from privileging either a method's functioning or its result but not both; accordingly, our alignment records both dimensions throughout.
+
+This phase also surfaces genuine tensions, most notably cases where an
+explanation achieves high scores on technical metrics but is judged unclear or
+unhelpful by clinicians. Rather than treating this as noise, we take it
+as evidence that explanation quality is multidimensional---an insight that
+directly informs the structure of the taxonomy.
+
+% ──────────────────────────────────────
+\subsection{Phase 4: Taxonomy Construction}
+
+The final phase organises the aligned criteria into a three-layer
+structure, building on the functionally-grounded and human-grounded
+classification of Kadir et al.~\cite{kadir2023evaluation} while adding
+an explicit robustness dimension that prior medical XAI taxonomies have
+addressed inconsistently~\cite{speith2022review, jin2023guidelines}.
+
+The choice of three layers reflects both theoretical grounding and empirical
+observation. Theoretically, the distinction between technical fidelity
+(Layer~1) and user-facing evaluation (Layer~3) is well established in
+prior frameworks~\cite{jin2023guidelines, kadir2023evaluation}. The
+addition of an explicit robustness layer (Layer~2) is motivated by two
+considerations: first, Holzinger et al.~\cite{holzinger2022information}
+identify robustness under distributional shift as unresolved in medical
+AI; second, our corpus analysis reveals that robustness-oriented
+evaluation (e.g., corruption testing, adversarial perturbation) constitutes
+a coherent cluster of studies that does not reduce to either faithfulness
+measurement or clinician-facing assessment. This three-layer structure is
+consistent with the conceptual distinctions drawn by Speith~\cite{speith2022review},
+who argues that most existing taxonomies conflate mechanism-based and
+output-based properties, and with the faithfulness--usefulness separation
+proposed by Jin et al.~\cite{jin2023guidelines}.
+
+During taxonomy construction, we applied a primarily deductive approach,
+assigning metrics to layers based on their formal definitions and alignment
+with prior frameworks. However, two inductive adjustments were made on the
+basis of corpus evidence: (i)~Sufficiency, which could be classified under
+either Layer~1 (as a mathematical property) or Layer~3 (given its clinical
+relevance), was assigned to Layer~1 on the grounds that its formal
+operationalisation (Equation~\ref{eq:sufficiency}) is purely computational;
+(ii)~contrastive explanations were flagged as cross-layer because they
+appeared in studies targeting both technical fidelity and clinician trust.
+
+The \emph{first layer} covers \textbf{mathematical faithfulness}: does
+the explanation accurately reflect what the model is computing? This includes
+faithfulness correlation, sufficiency, sensitivity, and fidelity under small
+input perturbations. In medical imaging, this layer is most commonly
+operationalised through faithfulness correlation and sensitivity
+measures~\cite{kadir2023evaluation, jin2023guidelines}.
+
+The \emph{second layer} addresses \textbf{system robustness}: do
+explanations remain stable when patient inputs shift, the model is updated, or
+adversarial conditions arise? This dimension is especially relevant in
+clinical deployment, where data distributions can shift across hospital
+sites and imaging equipment. Repetto et al.~\cite{Repetto2025EvaluatingTR}
+provide direct evidence for this concern, demonstrating that XAI explanations in
+medical image recognition degrade meaningfully under both natural and
+adversarial data corruption---confirming that robustness cannot be assumed
+and must be explicitly evaluated.
+
+The \emph{third layer} covers \textbf{human-centred trust}: do
+explanations help clinicians understand, decide, and appropriately calibrate
+their confidence? Speith~\cite{speith2022review} argues that most
+existing taxonomies neglect this dimension. In clinical contexts,
+this omission is particularly consequential: an explanation that is
+technically faithful but clinically opaque provides limited practical value
+to a physician operating under time constraints.
+
+Some criteria span multiple layers. Contrastive explanations, for instance,
+are quantifiable but also influence clinician trust substantially. These are
+flagged as cross-layer to maintain transparency about inter-layer connections
+rather than enforcing artificial boundaries.
+
+The resulting framework functions both as a descriptive map of current
+evaluation practice in medical XAI and as a diagnostic tool for
+identifying where coverage remains systematically thin.

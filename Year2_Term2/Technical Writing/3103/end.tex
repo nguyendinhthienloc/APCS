@@ -1,0 +1,124 @@
+\newpage
+\section{Discussion}
+% ──────────────────────────────────────────────────────────────────────────────
+
+The results reveal both encouraging convergences and persistent gaps in how
+medical XAI is currently evaluated. We interpret the key findings below,
+discuss limitations of the present study, and identify directions for future
+work.
+
+% ──────────────────────────────────────
+\subsection{Interpretation of Key Findings}
+
+Expanding the corpus to 52 studies introduces an important revision to the
+Faithfulness finding. Rather than appearing universally, Faithfulness is
+now present in 47 of 52 studies (90\%), with the five exceptions
+concentrated in human-centred and consistency-focused
+designs~\cite{rezaeian2026explainability,finzel2024human,bauer2025human,qin2025consistency,alpsalaz2026explainability}.
+This pattern is analytically significant: Faithfulness absence is not
+random but co-occurs with a shift in evaluation layer, signalling a genuine
+conceptual divide between technical-fidelity and clinician-trust research
+paradigms. Because Faithfulness now has non-trivial variance, Spearman
+correlations involving it are computable. The F--S correlation is modest
+but statistically significant ($\rho = 0.33$, $p = 0.016$), confirming
+co-occurrence without implying full redundancy. The strongest pairwise
+relationship in the expanded corpus is between AOPC/MoRF and Pixel
+Flipping ($\rho = 0.51$, $p < 0.001$), which is mechanistically expected:
+both are pixel-level perturbation methods that degrade saliency-ranked
+features and measure the resulting prediction drop. AOPC/MoRF and IROF
+also correlate significantly ($\rho = 0.37$, $p = 0.007$). If these
+perturbation metrics reliably track the same underlying property,
+reporting all three adds little information while increasing methodological
+complexity. A minimal evaluation set anchored on Faithfulness, supplemented
+by one perturbation-based metric such as AOPC, and one sensitivity measure,
+may be sufficient for technical layer assessment in most medical imaging
+contexts.
+
+The isolation of Sufficiency remains equally telling. It appeared in only
+4 of 52 studies (8\%) --- a proportion essentially unchanged from the
+original corpus --- and exhibited negative correlations with all other
+metrics ($\rho$ ranging from $-0.09$ to $-0.15$, all non-significant).
+Its low co-occurrence is not simply a matter of adoption lag; it reflects
+a conceptual gap. Sufficiency asks whether patients with similar clinical
+profiles receive consistent explanations---a question of direct clinical
+relevance---yet the literature has not treated it as a priority. This
+disconnect echoes the broader critique by Kadir et al.~\cite{kadir2023evaluation}
+that human-centered assessment remains underdeveloped relative to
+quantitative metrics.
+
+The sub-domain disparity between oncology and neurology further underscores
+that metric richness is unevenly distributed. Where oncology benefits from
+well-established imaging benchmarks that support diverse evaluation
+protocols, neurology lacks analogous shared resources, which likely
+suppresses both metric diversity and cross-study comparability.
+
+% ──────────────────────────────────────
+\subsection{Limitations}
+
+Several limitations qualify these findings. First, the corpus of 52 studies,
+while spanning all four sub-domains, is modest in absolute size and should be
+treated as a focused scoping review rather than a definitive survey; the
+patterns observed require replication on a larger systematically assembled
+sample. Second, the co-occurrence analysis captures which metrics tend to
+appear together but cannot establish whether two frequently paired metrics
+are genuinely redundant or merely reported together by convention. Third, the taxonomy's three layers
+were constructed deductively from prior literature, and while the corpus
+mapping provides partial validation, a prospective user study with
+clinical practitioners would be needed to confirm that the human-centered
+trust layer captures what domain experts actually require from
+explanations. Finally, restricting scope to medical XAI, while
+analytically necessary, limits the generalizability of the findings
+to other high-stakes domains. Work such as Ghosh et
+al.~\cite{Ghosh2024DemystifyingEC}, who apply novel XAI metrics to
+industrial IC packaging inspection, and Nagy et al.~\cite{Nagy2024ImprovingUM},
+who use XAI metrics to improve accuracy in urban mapping surveys, suggests
+that the metric redundancy and coverage gaps we document in medicine may
+be symptomatic of a broader cross-domain problem worth investigating.
+
+\subsection{Future Work}
+
+Three directions follow directly from the present findings. First,
+a prospective study instrumenting clinicians as they interact with
+SHAP- and Grad-CAM-generated explanations would ground the trust layer
+of the taxonomy in behavioral evidence. Second, developing a standardized
+reporting template for medical XAI evaluations---specifying a minimal
+metric set alongside optional domain-specific additions---could reduce
+the fragmentation this review documents. Third, extending future analyses
+to include user-study metrics such as cognitive load and decision accuracy
+would allow researchers to test empirically whether high Faithfulness
+scores translate into genuine clinical utility, a question the current
+literature leaves largely unanswered.
+\section{Conclusion}
+% ──────────────────────────────────────────────────────────────────────────────
+
+This paper investigated the evaluation landscape of XAI within the medical
+domain, focusing on how quantitative metrics co-occur and distribute
+across oncology, cardiology, neurology, and radiology. Drawing on a
+focused corpus of 35 peer-reviewed studies, we identified a dominant cluster of
+technically-grounded metrics---Faithfulness and Sensitivity---that
+consistently co-occur and collectively account for the majority of evaluation
+activity. Perturbation-based metrics such as AOPC and IROF form a secondary
+cluster, while Sufficiency remains an isolated and underutilised criterion
+despite its direct clinical relevance.
+
+Mapping the corpus onto a three-layer taxonomy of mathematical faithfulness,
+system robustness, and human-centered trust confirmed that current evaluation
+practice is heavily concentrated in the first layer. 47 of 52 studies addressed
+mathematical faithfulness, but only 34\% addressed system robustness and
+9\% included any human-centered criterion,
+leaving significant gaps precisely in the dimensions most consequential
+for clinical deployment.
+
+Taken together, these findings support two main conclusions. First, a
+minimal but comprehensive evaluation set---combining one faithfulness
+measure, one perturbation-based measure, one sufficiency check, and at
+least one human-centered criterion---would cover all three taxonomy layers
+without imposing an unreasonable methodological burden. Second, the field
+needs shared benchmarks and reporting standards that make cross-study
+comparison tractable, particularly for underserved sub-domains such as
+neurology where evaluation practice currently lags. Addressing these gaps
+is a necessary step toward medical AI systems whose explanations are not
+only technically faithful but genuinely trustworthy in clinical practice.
+
+\newpage
+% ─────────────────────────────────────────────────────────────────────────────

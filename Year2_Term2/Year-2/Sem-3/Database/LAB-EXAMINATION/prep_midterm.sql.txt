@@ -1,0 +1,71 @@
+CREATE database LabMidterm_StudentID
+
+go 
+
+use LabMidterm_StudentID;
+
+create table Films (
+	Film_ID int not null primary key,
+	Film_Title nvarchar(100) not null,
+	Film_Year int not null,
+	Film_Language nvarchar(20) not null,
+	Producer_ID int not null
+);
+
+create table Review (
+	Review_ID int not null IDENTITY(1,1),
+	Film_ID int not null,
+	Stars int not null,
+	primary key (Review_ID)
+);
+
+go 
+
+/* PUt YOUR CONSTRAINTS HERE */
+
+ALTER TABLE Review
+ADD CONSTRAINT CK_Review_Stars CHECK (
+   Stars >= 1 AND Stars <= 5 --Inclusive
+);
+
+/* --------------------- */
+
+go 
+
+/* INSERT DATA */
+
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (11, 'War 2', 2017, 'ENGLISH', 201);
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (12, 'Doctor Strange in the Multiverse of Madness', 2022, 'ENGLISH', 204);
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (13, 'Shamshera', 2022, 'HINDI', 203);
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (14, 'The Takedown', 2022, 'FRENCE', 202);
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (15, 'The French Dispatch', 2021, 'FRENCE', 200);
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (16, 'Eiffel', 2021, 'FRENCE', 202);
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (17, 'Moments', 2015, 'HINDI', 203);
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (18, 'The May', 2019, 'ENGLISH', 201);
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (19, 'Venom', 2018, 'ENGLISH', 205);
+INSERT INTO Films (Film_ID, Film_Title, Film_Year, Film_Language, Producer_ID) VALUES (20, 'Iron Man 3', 2013, 'ENGLISH', 204);
+
+INSERT INTO Review (Film_ID, Stars) VALUES (11, 4);
+INSERT INTO Review (Film_ID, Stars) VALUES (12, 4);
+INSERT INTO Review (Film_ID, Stars) VALUES (13, 5);
+INSERT INTO Review (Film_ID, Stars) VALUES (14, 4);
+INSERT INTO Review (Film_ID, Stars) VALUES (14, 3);
+INSERT INTO Review (Film_ID, Stars) VALUES (15, 2);
+INSERT INTO Review (Film_ID, Stars) VALUES (16, 2);
+INSERT INTO Review (Film_ID, Stars) VALUES (17, 1);
+INSERT INTO Review (Film_ID, Stars) VALUES (17, 4);
+INSERT INTO Review (Film_ID, Stars) VALUES (20, 3);
+
+/* --------------------- */
+
+go
+
+/* PUT YOUR QUERIES HERE */
+
+
+
+/* --------------------- */
+
+
+drop table Review;
+drop table Films;

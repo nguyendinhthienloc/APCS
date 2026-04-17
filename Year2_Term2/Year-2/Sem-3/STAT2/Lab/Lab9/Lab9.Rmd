@@ -1,0 +1,190 @@
+---
+title: "Lab09"
+output:
+  pdf_document:
+    latex_engine: lualatex
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Set up
+```{r}
+setwd('D:/STAT/Lab/Lab9')
+data <- read.csv("insurance.csv",header=TRUE)
+attach(data)
+str(data)
+head(data)
+```
+
+## Visualize data
+### Age
+```{r}
+barplot(table(age))
+```
+Độ tuổi tham gia bảo hiểm trải đều từ 18-63 tuồi.\
+Trong đó, số lượng người tham gia bảo hiểm nhiều nhất tập trung ở độ tuổi 18.
+
+### Sex
+```{r}
+pie(table(sex))
+```
+Nhận thấy không có sự chênh lệch về giới tính khách hàng tham gia mua bảo hiểm.
+
+### BMI
+```{r}
+hist(bmi,breaks=30)
+```
+Chỉ số BMI có dạng phân phối chuẩn (Normal), với mean = 30, sd = 12
+
+#### BMI vs AGE
+```{r}
+plot(age,bmi)
+boxplot(bmi~age)
+```
+Chỉ số bmi và age không ảnh hưởng đến nhau.\
+Bmi có thể phụ thuộc vào thói quen sinh hoạt.
+
+#### BMI vs SEX
+```{r}
+boxplot(bmi~sex)
+```
+Chỉ số bmi và sex không ảnh hưởng đến nhau.
+
+### Child
+```{r}
+barplot(table(children))
+```
+Chủ yếu những gia đình có ít trẻ em sẽ tham gia mua bảo hiểm nhiều hơn.\
+Đặc biệt là nhóm không có trẻ em.
+
+### Smoker
+```{r}
+barplot(table(smoker))
+```
+Chủ yếu người tham gia bảo hiểm là những người không hút thuốc.
+
+### Region
+```{r}
+barplot(table(region))
+```
+Khu vực sinh sống của những người đăng kí mua bảo hiểm không có sự chênh lệch.
+
+### Charge
+```{r}
+hist(charges,breaks=30)
+```
+Chi phí bảo hiểm bị lệch về bên phải (lệch về bên nào bên đó ít).\
+Xử lí: lấy log10 trên chi phí.
+
+### ln(charge)
+```{r}
+lncharges <- log10(charges)
+hist(lncharges,breaks=30)
+```
+
+Vẽ boxlpot kiểm tra xem có outlier không.
+```{r}
+boxplot(lncharges)
+boxplot(charges)
+```
+
+### ln(charges) vs age
+```{r}
+boxplot(lncharges~age)
+plot(age,lncharges)
+```
+Tuổi càng cao, chi phí bảo hiểm càng tăng -> Tương quan thuận
+
+### ln(charges) vs sex
+```{r}
+boxplot(lncharges~sex)
+```
+Chi phí đồng bảo hiểm không ảnh hưởng bởi giới tính.
+
+### ln(charges) vs bmi
+```{r}
+plot(bmi,lncharges)
+cor(bmi,lncharges)
+```
+Chỉ số bmi có tương quan thuận đến chi phí nhưng không nhiều.
+
+### ln(charges) vs child
+```{r}
+boxplot(lncharges~children)
+```
+Số trẻ em phụ thuộc vào bền bù bảo hiểm càng nhiều thì chi phí đóng bảo hiểm càng cao. Riêng với 5 trẻ em thì chi phí lại giảm, có thể do dữ liệu cho 5 trẻ em ít, hoặc có chính sách gì đó.
+
+### ln(charges) vs region
+```{r}
+boxplot(lncharges~region)
+```
+Chi phí đóng là như nhau ở các khu vực sinh sống khác nhau.
+
+### bmi vs age
+```{r}
+cor(age,bmi)
+```
+Có thể sử dụng bmi với age để đưa vào mô hình.
+
+## Lập mô hình dự báo chi phí theo các biến bmi,age,smoker,sex,region
+Kiểm định ln(charges) có theo normal không.\
+### Lập mô hình ln(charges) theo bmi
+```{r}
+model1 <- lm(lncharges~bmi)
+summary(model1)
+```
+Vì $R^2$ của mô hình rất thấp nên ta sẽ bổ sung các biến mới vào mô hình.\
+
+### Lập mô hình ln(charges) theo bmi,age
+```{r}
+model2 <- lm(lncharges~bmi+age)
+summary(model2)
+```
+Mô hình cải thiện.\
+Bổ sung thêm các biến smoker,sex.
+
+### Lập mô hình ln(charges) theo bmi,age,smoker,sex
+```{r}
+model3 <- lm(lncharges~bmi+age+smoker+sex)
+summary(model3)
+```
+$R^2$ của mô hình cải thiện hơn nhiều, p-value của các hệ số đều có ý nghĩa.\
+Cân nhắc tới việc thêm các biến tương tác.
+
+### Thêm biến bmi*sex
+```{r}
+gender <- replicate(length(sex),0)
+for(i in 1:length(gender)){
+  if(sex[i]=="male")
+    gender[i]=1
+  else
+    gender[i]=0
+}
+bmi_sex <- bmi*gender
+model4 <- lm(lncharges~bmi+age+gender+smoker+bmi_sex)
+summary(model4)
+```
+### Thêm biến bmi*smoke
+```{r}
+smoke <- replicate(length(smoker),0)
+for(i in 1:length(smoke)){
+  if(smoker[i]=="yes")
+    smoke[i]=1
+  else
+    smoke[i]=0
+}
+
+bmi_smoke <- bmi*smoke
+model5 <- lm(lncharges~bmi+age+gender+smoke+bmi_smoke)
+summary(model5)
+```
+#### 0.00001
+```{r}
+step(model5)
+```
+Sau khi tìm được model tốt nhất, ta đi test với bộ dữ liệu test.\
+

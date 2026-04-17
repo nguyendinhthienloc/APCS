@@ -1,0 +1,126 @@
+\section{Discussion}
+% ──────────────────────────────────────────────────────────────────────────────
+
+The results reveal both encouraging convergences and persistent gaps in medical XAI evaluation. This section interprets key findings, analyses metric redundancy, proposes a minimal evaluation framework, discusses clinical implications, and identifies threats to validity.
+
+% ──────────────────────────────────────
+\subsection{Interpretation of Key Findings}
+
+Expanding the corpus to 52 studies introduces an important revision to the Faithfulness finding. Rather than appearing universally, Faithfulness was present in 47/52 studies (90.4\%), with the five exceptions concentrated in human-centred and consistency-focused designs~\cite{rezaeian2026explainability,finzel2024human,bauer2025human,qin2025consistency,alpsalaz2026explainability}. This pattern is analytically significant: Faithfulness absence is not randomly distributed but co-occurs with a shift in evaluation layer, indicating a genuine conceptual divide between technical-fidelity and clinician-trust research paradigms. Studies prioritising clinician-facing evaluation operate under a distinct evaluative logic in which mathematical fidelity is not the primary concern---consistent with Rosenfeld's~\cite{rosenfeld2021better} observation that technical and human-centred evaluation priorities tend to diverge.
+
+Because Faithfulness exhibits non-trivial variance, Spearman correlations involving it are computable. The Faithfulness--Sensitivity correlation ($\rho = 0.33$, $p = 0.016$) confirms co-occurrence without implying full redundancy: both metrics target Layer~1 but assess complementary properties---Faithfulness measures fidelity of attributed importance scores (Equation~\ref{eq:faithfulness}), while Sensitivity measures explanation stability under input perturbation (Equation~\ref{eq:sensitivity}).
+
+% ──────────────────────────────────────
+% [ADDED SECTION — Metric Redundancy Interpretation]
+\subsection{Metric Redundancy and Complementarity}
+
+The strongest pairwise correlation is between AOPC/MoRF and Pixel Flipping ($\rho = 0.51$, $p < 0.001$), a result that is mechanistically expected: both are perturbation-based methods that degrade saliency-ranked features and measure the resulting prediction drop. Critically, AOPC operates at the feature level (Equation~\ref{eq:aopc}), while Pixel Flipping operates at pixel-level granularity (Equation~\ref{eq:pixel_flipping}). Their high co-occurrence correlation reflects \emph{methodological overlap}---both instantiate the same perturbation-and-measure paradigm---rather than strict \emph{conceptual redundancy}. In practice, this means that reporting both metrics within a single study adds limited incremental information: selecting one perturbation-based metric (AOPC for feature-level; Pixel Flipping for pixel-level) is typically sufficient.
+
+AOPC/MoRF and IROF also correlate significantly ($\rho = 0.37$, $p = 0.007$). This pair exhibits a different relationship: AOPC removes individual features, whereas IROF removes semantically coherent segments (Equation~\ref{eq:irof}). Their correlation thus reflects a shared perturbation paradigm, but IROF captures contributions of anatomically meaningful regions---making it complementary rather than redundant in medical imaging applications where anatomical structures are clinically relevant.
+
+By contrast, Sufficiency exhibited negative correlations with all other metrics ($\rho$ from $-0.09$ to $-0.15$, all non-significant). This isolation reflects a conceptual gap: Sufficiency asks whether the identified features \emph{alone} suffice to reproduce the prediction (Equation~\ref{eq:sufficiency}), a question that the remaining metrics do not address. The negative correlations suggest that studies employing Sufficiency tend to adopt a fundamentally different evaluation philosophy, further supporting the position that Sufficiency captures a non-redundant evaluative dimension.
+
+Figure~\ref{fig:spearman_correlation} presents the full correlation matrix. Figure~\ref{fig:correlation_network} visualises these relationships as a metric correlation network, highlighting the perturbation-based redundancy cluster and the isolation of Sufficiency.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{fig4_spearman_correlation}
+  \caption{Spearman rank correlation ($\rho$) between XAI evaluation metrics across the 52-study corpus (equivalent to the phi coefficient for binary data). Statistical significance: ${}^{*}p < 0.05$, ${}^{**}p < 0.01$, ${}^{***}p < 0.001$. The AOPC/MoRF--Pixel Flipping pair exhibits the strongest correlation ($\rho = 0.51$), while Sufficiency shows negative correlations with all other metrics.}
+  \label{fig:spearman_correlation}
+\end{figure}
+
+% ── Figure: Metric Correlation Network ──
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{fig7_metric_correlation_network}
+  \caption{Metric correlation network derived from Spearman's $\rho$ across the 52-study corpus. Nodes represent evaluation metrics; edge thickness and colour encode correlation strength. The dashed boundary highlights the perturbation-based redundancy cluster (AOPC/MoRF, Pixel Flipping, IROF). Sufficiency is visually isolated, confirming its non-redundant evaluative role. Only statistically significant correlations ($p < 0.05$) are shown as edges.}
+  \label{fig:correlation_network}
+\end{figure}
+
+The sub-domain disparity between oncology and neuroimaging further underscores that metric richness is unevenly distributed. Oncology benefits from well-established imaging benchmarks supporting diverse evaluation protocols, whereas neuroimaging lacks analogous shared resources, constraining both metric diversity and cross-study comparability. Targeted benchmark development for underserved sub-domains could have a disproportionately positive effect on standardisation.
+
+% ──────────────────────────────────────
+% [ADDED SECTION — Minimal Evaluation Framework with Table]
+\subsection{Toward a Minimal Evaluation Framework}
+
+Building on the co-occurrence patterns, correlation analysis, and taxonomy mapping, we propose a minimal evaluation framework that spans all three taxonomy layers while imposing a tractable methodological burden. To our knowledge, this is the first such framework empirically grounded in cross-domain usage patterns rather than purely conceptual design. The framework specifies five evaluation dimensions, each addressed by at least one metric. Table~\ref{tab:minimal_framework} presents the framework in compact form; Figure~\ref{fig:minimal_framework} illustrates the three-layer structure.
+
+% ── Table V: Minimal Evaluation Framework (full-width) ──
+\begin{table*}[htbp]
+\centering
+\caption{Proposed minimal evaluation framework for medical XAI. Each row specifies one required evaluation dimension, its taxonomy layer, evaluative role, and rationale. \textdagger~indicates that the metric may be omitted under resource constraints if the omission is explicitly justified.}
+\label{tab:minimal_framework}
+\renewcommand{\arraystretch}{1.15}
+\small
+\begin{tabularx}{\textwidth}{@{}p{3.8cm}ccX@{}}
+\toprule
+\textbf{Metric} & \textbf{Layer} & \textbf{Req.} & \textbf{Rationale} \\
+\midrule
+Faithfulness & L1 & Req. & Foundation of technical credibility; reported in 90.4\% of corpus \\
+\addlinespace[3pt]
+Perturbation (AOPC \emph{or} PF \emph{or} IROF) & L1 & Req. & Validates that removal of attributed features degrades prediction; one metric sufficient given redundancy ($\rho = 0.51$) \\
+\addlinespace[3pt]
+Sensitivity & L1/L2 & Req.\textdagger & Bridges faithfulness and robustness; captures responsiveness to input change \\
+\addlinespace[3pt]
+Sufficiency & L1 & Req.\textdagger & Only metric assessing whether explanation identifies decision-sufficient evidence; currently at 7.7\% adoption \\
+\addlinespace[3pt]
+Human-centred (trust / cognitive load / decision accuracy) & L3 & Req. & Essential for deployment; only 13.5\% of corpus addresses this layer \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+% ── Figure: Minimal Evaluation Framework Diagram ──
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{fig6_minimal_framework}
+  \caption{Proposed minimal evaluation framework organised by taxonomy layer. Layer~1 (Mathematical Faithfulness) requires Faithfulness, one perturbation metric, Sensitivity, and Sufficiency. Layer~2 (System Robustness) is partially addressed by Sensitivity. Layer~3 (Human-Centred Trust) requires at least one clinician-facing measure. Arrows indicate cross-layer bridging by Sensitivity.}
+  \label{fig:minimal_framework}
+\end{figure}
+
+This five-component framework ensures coverage of all three taxonomy layers without requiring simultaneous application of all six metrics, several of which exhibit partial redundancy. Researchers operating under resource constraints may prioritise Faithfulness, one perturbation metric, and one human-centred measure as a minimum viable set, provided that the omission of Sensitivity and Sufficiency is explicitly acknowledged and justified.
+
+% ──────────────────────────────────────
+% [ADDED SECTION — Clinical Implications]
+\subsection{Clinical Implications}
+
+The structural imbalance documented by the taxonomy mapping carries direct clinical consequences. Two omission risks are particularly concerning.
+
+\paragraph{Risk of missing Sufficiency.}
+When Sufficiency is not evaluated, there is no guarantee that the features highlighted by an explanation are, on their own, adequate to sustain the model's prediction. In clinical practice, this means a clinician may act on an explanation that identifies \emph{correlated} but not \emph{causally sufficient} features---potentially leading to diagnostic decisions based on incomplete evidence. For example, a saliency map highlighting peri-lesion tissue rather than the lesion itself may achieve high Faithfulness scores (the model \emph{does} attend to that region) while failing Sufficiency (the highlighted region alone does not reproduce the prediction). Without Sufficiency evaluation, such failure modes remain undetected.
+
+\paragraph{Risk of missing Robustness.}
+When robustness is not evaluated (absent in 65.4\% of corpus studies), explanations may be valid only under the specific data distribution on which they were generated. In multi-site clinical deployment---where imaging equipment, patient demographics, and acquisition protocols vary across hospitals---an explanation that is faithful under training conditions may become unstable or misleading under distributional shift. Repetto et al.~\cite{Repetto2025EvaluatingTR} provide empirical evidence that XAI explanations degrade meaningfully under both natural and adversarial corruption, confirming that robustness cannot be assumed but must be explicitly tested prior to clinical deployment.
+
+% ──────────────────────────────────────
+\subsection{Threats to Validity}
+
+\paragraph{Internal Validity.}
+Metric classification into canonical categories requires interpretive judgement. Although we followed established normalisation procedures~\cite{rosenfeld2021better,kadir2023evaluation}, different coding decisions could alter metric distribution. Binary encoding discards information about depth or quality of metric application: a study reporting Faithfulness as its central axis is coded identically to one mentioning it peripherally. The screening process, while conducted by two independent reviewers with substantial agreement (Cohen's $\kappa = 0.82$), is not immune to selection bias.
+
+\paragraph{External Validity.}
+The corpus of 52 studies spans five sub-domains but remains modest in absolute size. Observed patterns should be interpreted as indicative of current trends rather than definitive characterisations, requiring replication on larger samples. The restriction to medical XAI limits generalisability to other high-stakes domains. Evidence from non-medical applications~\cite{Ghosh2024DemystifyingEC,Nagy2024ImprovingUM} suggests similar fragmentation may exist elsewhere.
+
+\paragraph{Construct Validity.}
+Co-occurrence analysis captures which metrics tend to appear together but cannot establish whether co-occurring metrics are genuinely redundant (measuring the same construct) or merely reported together by convention. Spearman correlations measure association in usage patterns, not agreement in evaluation outcomes. Establishing true redundancy would require applying multiple metrics to the same explanation--dataset pairs---a task outside this review's scope. The taxonomy's three layers were constructed primarily through deductive reasoning; prospective clinical practitioner studies would be needed to confirm that the trust layer captures what domain experts actually require.
+
+% ──────────────────────────────────────
+\subsection{Limitations}
+
+Several additional limitations qualify these findings. First, the corpus size of 52 studies limits statistical power for low-frequency metrics such as IROF and Sufficiency (each $n = 4$); correlations involving these metrics should be interpreted with caution. Second, the study does not include direct clinician validation of the proposed taxonomy or minimal framework; prospective user studies are needed to confirm practical utility. Third, metric redundancy inferred from co-occurrence patterns remains uncertain without head-to-head comparisons on shared datasets. Fourth, the corpus prioritises English-language publications in indexed venues, potentially underrepresenting evaluation practices in non-English research communities.
+
+% ──────────────────────────────────────
+\subsection{Future Work}
+
+Three directions follow from these findings. First, a prospective study instrumenting clinicians as they interact with SHAP- and Grad-CAM-generated explanations would ground the trust layer in behavioural evidence. Second, developing a standardised reporting template---specifying the minimal metric set proposed in Section~6.3 alongside optional domain-specific additions---could reduce the documented fragmentation. Third, extending analyses to include user-study metrics such as cognitive load and decision accuracy would enable testing whether high Faithfulness scores translate into genuine clinical utility.
+
+
+\section{Conclusion}
+% ──────────────────────────────────────────────────────────────────────────────
+
+This paper investigated the evaluation landscape of XAI within medical AI through a systematically assembled corpus of 52 peer-reviewed studies spanning five sub-domains. To our knowledge, this constitutes the first cross-domain co-occurrence analysis of XAI evaluation metrics in medical AI. We identified a dominant cluster of technically grounded metrics---Faithfulness and Sensitivity---that consistently co-occur. Perturbation-based metrics form a correlated secondary cluster ($\rho = 0.51$, $p < 0.001$), exhibiting partial methodological redundancy, while Sufficiency remains isolated (7.7\%) despite direct relevance to clinical decision adequacy.
+
+Mapping the corpus onto a three-layer taxonomy confirmed that evaluation is heavily concentrated in mathematical faithfulness (90.4\%), with system robustness (34.6\%) and human-centred trust (13.5\%) substantially underrepresented---leaving the dimensions most consequential for clinical deployment systematically underserved.
+
+These findings support two conclusions. First, a minimal evaluation framework---combining one faithfulness measure, one perturbation-based measure, one sensitivity metric, one sufficiency check, and at least one human-centred criterion---covers all three taxonomy layers without unreasonable methodological burden. Second, the field requires shared benchmarks and reporting standards, particularly for underserved sub-domains such as neuroimaging. Addressing these gaps is necessary for medical AI systems whose explanations are not only technically faithful but genuinely trustworthy in clinical practice.
+
+% ─────────────────────────────────────────────────────────────────────────────

@@ -1,0 +1,14 @@
+v3.0 hex words addressed
+000: 24 14 12 34 # li r20, 0x1234 // put constant 0x1234 into r20, same as addiu r20, r0, 0x1234
+
+004: 24 02 00 03 # li r2, 3 // put constant 3 into r2, same as addiu r2, r0, 3
+
+008: 02 82 18 20 # add r3, r20, r2 // computes r20 + r2, put result in r3
+
+00C: 00 63 20 20 # add r4, r3, r3 // computes r3 + r3, put result in r4
+
+010: 00 84 28 20 # add r5, r4, r4 // computes r4 + r4, put result in r5
+
+014: 24 42 00 21 # addiu r2, r2, 33 // computes r2 + 21, put result in r2 (note: 33 decimal = 0x21)
+
+018: 08 00 00 02 # j 0x8 //jump to 0x8

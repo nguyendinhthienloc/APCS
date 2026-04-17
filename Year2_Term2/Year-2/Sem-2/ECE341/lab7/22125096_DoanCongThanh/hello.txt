@@ -1,0 +1,50 @@
+v3.0 hex words addressed
+000: 24 01 00 30 # li r1, 48 // put constant 48 into r1, same as addiu r1, r0, 0x30
+
+004: 24 02 00 48 # li r2, 72 // put constant 72 (character H) into r2, same as addiu r2, r0, 0x48
+
+008: a0 22 00 00 # sb r2,0x0(r1) // store character at r2 to address (r1+0x0)
+
+00c: 24 02 00 65 # li r2, 101 // put constant 101 (character e) into r2, same as addiu r2, r0, 0x65
+
+010: a0 22 00 01 # sb r2,0x1(r1) // store character at r2 to address (r1+0x1)
+
+014: 24 02 00 6c # li r2, 108 // put constant 108 (character l) into r2, same as addiu r2, r0, 0x6c
+
+018: a0 22 00 02 # sb r2,0x2(r1) // store character at r2 to address (r1+0x2)
+
+01c: 24 02 00 6c # li r2, 108 // put constant 108 (character l) into r2, same as addiu r2, r0, 0x6c
+
+020: a0 22 00 03 # sb r2,0x3(r1) // store character at r2 to address (r1+0x3)
+
+024: 24 02 00 6f # li r2, 108 // put constant 111 (character o) into r2, same as addiu r2, r0, 0x6f
+
+028: a0 22 00 04 # sb r2,0x4(r1) // store character at r2 to address (r1+0x4)
+
+02c: 24 02 00 20 # li r2, 108 // put constant 32 (character 'space') into r2, same as addiu r2, r0, 0x20
+
+030: a0 22 00 05 # sb r2,0x5(r1) // store character at r2 to address (r1+0x5)
+
+034: 24 02 00 54 # li r2, 84 // put constant 84 (character T) into r2, same as addiu r2, r0, 0x54
+
+038: a0 22 00 06 # sb r2,0x6(r1) // store character at r2 to address (r1+0x6)
+
+03c: 24 02 00 48 # li r2, 72 // put constant 72 (character H) into r2, same as addiu r2, r0, 0x48
+
+040: a0 22 00 07 # sb r2,0x7(r1) // store character at r2 to address (r1+0x7)
+
+044: 24 02 00 41 # li r2, 65 // put constant 65 (character A) into r2, same as addiu r2, r0, 0x41
+
+048: a0 22 00 08 # sb r2,0x8(r1) // store character at r2 to address (r1+0x8)
+
+04c: 24 02 00 4e # li r2, 78 // put constant 78 (character N) into r2, same as addiu r2, r0, 0x4e
+
+050: a0 22 00 09 # sb r2,0x9(r1) // store character at r2 to address (r1+0x9)
+
+054: 24 02 00 48 # li r2, 72 // put constant 72 (character H) into r2, same as addiu r2, r0, 0x48
+
+058: a0 22 00 0a # sb r2,0xa(r1) // store character at r2 to address (r1+0xa)
+
+05c: 24 02 00 00 # li r2, 0 // put constant 0 (character 'null') into r2, same as addiu r2, r0, 0x0
+
+060: a0 22 00 0b # sb r2,0xb(r1) // store character at r2 to address (r1+0xb)

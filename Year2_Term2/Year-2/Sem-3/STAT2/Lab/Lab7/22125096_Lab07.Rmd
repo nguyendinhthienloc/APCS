@@ -1,0 +1,353 @@
+---
+title: "Lab07"
+author: "Doan Cong Thanh - 22125096"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
+```
+## Question 5
+
+### Set up
+External library
+```{r}
+library(car)
+```
+
+Data set
+```{r}
+data5 <- read.csv("manuf.csv", header = TRUE)
+```
+```{r echo=FALSE}
+str(data5)
+```   
+
+Model: $Y=\alpha K^{\beta_2} L^{\beta_3} E^{\beta_4} M^{\beta_5} exp\{\}$
+$\\ \Rightarrow ln{Y} = ln{A}+\beta_2ln{K}+\beta_3ln{L}+\beta_4ln{E}+\beta_5ln{M}+e$
+
+```{r}
+log_y <- log(data5$y)
+log_k <- log(data5$k)
+log_l <- log(data5$l)
+log_e <- log(data5$e)
+log_m <- log(data5$m)
+model5 <- lm(log_y ~ log_k + log_l + log_e + log_m)
+```
+
+Summary
+```{r,echo=FALSE}
+summary(model5)
+```
+
+### a)
+$$
+\begin{cases}
+H_0:\beta_2=0
+\\H_1:\beta_2 \neq 0
+\end{cases}
+$$
+Apply Student's test:  
+Assume $\alpha=0.05$  
+From the table of summary, we obtain $p-value = 0.8310$  
+Since $p-value > \alpha$ $(0.8310 > 0.05)$  
+$\Rightarrow$ Fail to reject $H_0$
+
+### b)
+$$
+\begin{cases}
+H_0:\beta_2=\beta_3=0
+\\H_1: \exists i|\beta_i \neq 0
+\end{cases}
+$$
+When $H_0$ is true, we have reduced model:
+$ln{Y} = ln{A}+\beta_4ln{E}+\beta_5ln{M}+e$
+
+```{r}
+model_reduce5b <- lm(log_y ~ log_e + log_m)
+anova(model_reduce5b, model5)
+```
+
+Apply the Partial Fisher test:\
+Assume $\alpha=0.05$\
+From the ANNOVA table, we obtain: $p-value=0.8616417$\
+Since $p-value>\alpha$ $(0.8616417>0.05)$
+$\Rightarrow$ Fail to reject $H_0$
+
+### c)
+$$
+\begin{cases}
+H_0:\beta_2=\beta_4=0
+\\H_1: \exists i|\beta_i \neq 0
+\end{cases}
+$$
+When $H_0$ is true, we have reduced model:
+$ln{Y} = ln{A}+\beta_3ln{L}+\beta_5ln{M}+e$
+
+```{r}
+model_reduce5c <- lm(log_y ~ log_l + log_m)
+anova(model_reduce5c, model5)
+```
+
+Apply the Partial Fisher test:\
+Assume $\alpha=0.05$\
+From the ANNOVA table, we obtain: $p-value=0.8810752$\
+Since $p-value>\alpha$ $(0.8810752>0.05)$
+$\Rightarrow$ Fail to reject $H_0$
+
+### d)
+$$
+\begin{cases}
+H_0:\beta_2=\beta_3=\beta_4=0
+\\H_1: \exists i|\beta_i \neq 0
+\end{cases}
+$$
+When $H_0$ is true, we have reduced model:
+$ln{Y} = ln{A}+\beta_5ln{M}+e$
+
+```{r}
+model_reduce5d <- lm(log_y ~ log_m)
+anova(model_reduce5d, model5)
+```
+
+Apply the Partial Fisher test:\
+Assume $\alpha=0.05$\
+From the ANNOVA table, we obtain: $p-value=0.9077512$\
+Since $p-value>\alpha$ $(0.9077512>0.05)$
+$\Rightarrow$ Fail to reject $H_0$
+
+### e)
+$$
+\begin{cases}
+H_0:\beta_2+\beta_3+\beta_4+\beta_5=1
+\\H_1: \beta_2+\beta_3+\beta_4+\beta_5 \neq  1
+\end{cases}
+$$
+
+```{r}
+coef <- coef(model5)
+vcov <- vcov(model5)
+R <- c(0, 1, 1, 1, 1)
+k <- 1
+Rb <- sum(coef[2:5])
+SE <- sqrt(vcov[2, 2] + vcov[3, 3] + vcov[4, 4] + vcov[5, 5]
+ + 2 * (vcov[2, 3] + vcov[2, 4] + vcov[2, 5]
+ + vcov[3, 4] + vcov[3, 5] + vcov[4, 5]))
+t_0 <- (sum(coef[2:5]) - k) / SE
+t_crit <- qt(0.975, 20)
+```
+
+```{r}
+t_0
+```
+
+```{r}
+t_crit
+```
+
+Apply Student's test:\
+We obtain $t_{crit} = 2.085963, t_0=-0.0254$\
+Since $|t_0|<t_{crit}$\
+$\Rightarrow$Reject $H_0$
+
+### f)
+
+```{r}
+vif(model5)
+```
+ From the VIF table, we observe significant high values of all the variables, which indicates severe multicollinearity in this model.\
+ High multicollinearity makes our estimate unpredictable and unstable, moreover, the model becomes highly sensitive with a small change in data. Therefore, we need to eliminate some variables, starting from the largest one, then calculate and reconsider again the VIF table.
+ 
+```{r}
+model_5f1 <- lm(log_y ~ log_k + log_l + log_m)
+vif(model_5f1)
+```
+
+```{r}
+model_5f2 <- lm(log_y ~ log_k + log_l)
+vif(model_5f2)
+```
+In this case, we compare two simple model (model with only 1 variable).
+
+```{r}
+model_5f3 <- lm(log_y ~ log_k)
+summary(model_5f3)
+```
+
+```{r}
+model_5f4 <- lm(log_y ~ log_l)
+summary(model_5f4)
+```   
+
+Since model_5f4 hold the large values for Multiple $R^2$ and Adjusted $R^2$. So this is the best model.
+
+## Question 6
+### a)
+```{r}
+data6 <- read.csv("stockton4.csv", header = TRUE)
+str(data6)
+attach(data6)
+```
+
+$$
+SPRICE = \beta_1 + \beta_2 LIVAREA + \beta_3 AGE + \beta_3 BEDS + \beta_4 BATHS + e
+$$
+```{r}
+model6 <- lm(sprice ~ livarea + age + beds + baths)
+summary(model6)
+```
+
+Interpret coefficient:
+
+$\beta_1$: In an ideal condition, when all independent varibles equal 0. The the selling price of home will remain 11154.29 dollars.\
+$\beta_2$: The selling price of home will increase 10680 dollars corresponding to an increasing of 1 hundred of square feet of the living area.\
+$\beta_3$: The selling price of home will decrease 11.33 corresponding to an increasing of 1 year of the home age at time of sale.\
+$\beta_4$: The selling price of home will decrease 15552.44 corresponding to an increasing of 1 bed of the home.\
+$\beta_5$: The selling price of home will decrease 7019.3 corresponding to an increasing of 1 bath of the home.
+
+### b)
+$SPRICE(AGE=10) - SPRICE(AGE=2) = \beta_3 \times 8$
+
+First, we need to calculate the $95\%$ CI for $\beta_3$
+```{r}
+confint(model6, 3)
+```
+Hence $95\%$ interval estimate of the difference (in dollar) is:
+$8 \times [-169.2429,146.575] =  [-1353.94, 1172.6]$
+
+### c)
+Expected increase in price she will get from this extension:
+$SPRICE(LIVAREA = 22) - SPRICE(LIVAREA = 20) = \hat\beta_3 \times 2 = 10680 \times 2 = 21360$ dollars
+
+$$
+\begin{cases}
+H_0:2 \times \beta_2=20000 \Rightarrow \beta_2=10000
+\\H_1: \beta_2<10000
+\end{cases}
+$$
+Apply Student's test:
+Calculate T-statistic:
+$$
+T_0 = \frac{\hat{\beta_2}-10000} {S_{\hat{\beta_2}}} = 2.4895
+$$
+Assume $\alpha = 0.05$, with $n=1500$, which is quite large, so we can use $z-statistic$ instead.
+We have $t_{crit} = t_{0.05,1495} = z_0.05 = 1.645$
+
+We reject $H_0$ if $T_0 < -t_{crit}$\
+$\Rightarrow$ Fail to reject $H_0$\
+Hence, there is enough evidence that the price will be at least $20000.
+
+### d)
+Expected increase in price she will get from this extension:\
+$2 \times \hat\beta_2 + \hat\beta_4 = 5807.56$\
+Expected price increase: $2 \times \beta_2 + \beta_4$\
+```{r}
+df = 1495
+t_crit = qt(1-0.05/2, df)
+se = sqrt(4*vcov(model6)["livarea", "livarea"] + vcov(model6)["beds", "beds"] + 2*2*vcov(model6)["livarea","beds"])
+
+lower_bound = 5807.56 - t_crit * se
+upper_bound = 5807.56 + t_crit * se
+```
+
+```{r}
+lower_bound
+```
+
+```{r}
+upper_bound
+```
+
+$95\%$ interval estimate for the expected price: $[2139.593, 9475.527]$
+
+## Question 7
+### a)
+```{r}
+data7 <- read.csv("stockton4.csv", header = TRUE)
+str(data7)
+detach(data6)
+attach(data7)
+```
+
+Model:
+$ln(SPRICE) = \beta_1 + \beta_2 LIVAREA + \beta_3 LIVAREA^2 + \beta_4 AGE + \beta_5 AGE^2 + \beta_6 BEDS + \beta_7(LIVAREA \times BEDS) + \beta_8(LIVAREA^2 \times BEDS) + \beta_9(AGE \times BEDS) + \beta_{10}(AGE^2 \times BEDS) + e$
+```{r}
+model7 <- lm(I(log(sprice)) ~ livarea + I(livarea^2) + age + I(age^2) + beds 
+ + I(livarea*beds) + I(livarea^2 * beds) + I(age * beds) + I(age^2 * beds))
+summary(model7)
+```
+
+Estimated relationship between $ln(SPRICE), LIVAREA, and AGE$:\
+For 2 bedrooms:\
+$ln(SPRICE) = \beta_1 + \beta_2 LIVAREA + \beta_3 LIVAREA^2 + \beta_4 AGE + \beta_5 AGE^2 + 2 \beta_6 + 2 \beta_7 LIVAREA + 2 \beta_8 LIVAREA^2 + 2 \beta_9 AGE^2 + 2 \beta_{10} AGE^2$\
+For 3 bedrooms:\
+$ln(SPRICE) = \beta_1 + \beta_2 LIVAREA + \beta_3 LIVAREA^2 + \beta_4 AGE + \beta_5 AGE^2 + 3 \beta_6 + 3 \beta_7 LIVAREA + 3 \beta_8 LIVAREA^2 + 3 \beta_9 AGE^2 + 3 \beta_{10} AGE^2$\
+For 4 bedrooms:\
+$ln(SPRICE) = \beta_1 + \beta_2 LIVAREA + \beta_3 LIVAREA^2 + \beta_4 AGE + \beta_5 AGE^2 + 4 \times \beta_6 + 4 \beta_7 LIVAREA + 4 \beta_8 LIVAREA^2 + 4 \beta_9 AGE^2 + 4 \beta_{10} AGE^2$\
+
+### b)
+$$
+\begin{cases}
+H_0: \beta_6 = \beta_8 = \beta_9 = \beta_{10} = 0\\
+H_1: \exists i | \beta_i \neq 0
+\end{cases}
+$$
+When $H_0$ is true, we have reduced model:\
+$ln(SPRICE) = \beta_1 + \beta_2 LIVAREA + \beta_3 LIVAREA^2 + \beta_4 AGE + \beta_5 AGE^2 + \beta_7(LIVAREA \times BEDS) + e$
+```{r}
+reduced_model7 <- lm(I(log(sprice)) ~ livarea + I(livarea^2) + age + I(age^2) + I(livarea*beds))
+anova(reduced_model7, model7)
+```
+
+Apply the Partial Fisher-testing:
+Assume $\alpha = 0.05$\
+From the table, we obtain $p-value = 0.32$
+Since $p-value > \alpha$\
+$\Rightarrow$ Fail to reject $H_0$
+
+### c)
+```{r}
+model7c <- reduced_model7
+summary(model7c)
+```
+
+Estimated relationship between ln(sprice), livarea, and age:\
+For 2 bedrooms:\
+$ln(SPRICE) = \beta_1 + \beta_2 LIVAREA + \beta_3 LIVAREA^2 + \beta_4 AGE + \beta_5 AGE^2 + 2 \beta_7 LIVAREA$\
+For 3 bedrooms:\
+$ln(SPRICE) = \beta_1 + \beta_2 LIVAREA + \beta_3 LIVAREA^2 + \beta_4 AGE + \beta_5 AGE^2 + 3 \beta_7 LIVAREA$\
+For 4 bedrooms:\
+$ln(SPRICE) = \beta_1 + \beta_2 LIVAREA + \beta_3 LIVAREA^2 + \beta_4 AGE + \beta_5 AGE^2 + 4 \beta_7 LIVAREA$\
+
+
+### d)
+```{r}
+fullModel <- model7
+reducedModel <- model7c
+```
+
+#### 1) AIC
+```{r}
+AIC(fullModel)
+```
+
+```{r}
+AIC(reducedModel)
+```
+
+A lower AIC value indicates a model that has a better balance between goodness of fit and complexity.
+Since the reduced model has a lower AIC (-342.5015) compared to the full model (-339.2205), the reduced model is chosen.
+
+#### 2) BIC
+```{r}
+BIC(fullModel)
+```
+
+```{r}
+BIC(reducedModel)
+```
+
+Since the reduced model has a lower BIC (-305.309) compared to the full model (-280.7751), the reduced model is preferred according to the BIC criterion as well.

@@ -1,0 +1,122 @@
+\section{Methodology}
+% ──────────────────────────────────────────────────────────────────────────────
+
+To systematically characterise how XAI evaluation metrics are used within
+medical AI, we adopt a four-phase methodology. Rather than treating each
+medical sub-domain as an isolated artefact, we extract, normalise, and
+align evaluation criteria across oncology, cardiology, neurology, and
+radiology into a single coherent corpus, then analyse metric co-occurrence
+and correlation patterns across those sub-domains.
+
+% ──────────────────────────────────────
+
+\subsection{Phase 1: Medical Corpus Collection}
+To ensure quality and relevance, we apply an additional filtering step based on venue ranking and recency. Specifically, we prioritise studies published in Q2 or higher journals according to established indexing systems (e.g., Scopus/Scimago) or in recognised peer-reviewed conferences (e.g., IEEE, ACM, IJCAI). 
+
+In parallel, we include recent works (primarily 2021–2025) identified through keyword-driven search expansion, using targeted combinations such as ``XAI evaluation medical imaging'', ``explainability clinical decision support'', and ``saliency evaluation healthcare''. This allows us to capture emerging evaluation practices that may not yet be highly cited but reflect current methodological trends.
+
+This dual strategy ensures that the final corpus balances methodological maturity (via Q2+ venues) with recency and domain-specific innovation. 
+
+In addition to widely cited benchmark studies, we incorporate a set of domain-specific evaluation works from cardiology and neurology that explicitly assess explanation quality using both expert-grounded and proxy-grounded methodologies. Representative dataset papers include clinician- and expert-grounded studies in cardiology and clinical decision support \cite{Vazquez2021, Piculin2022, Nurmaini2022, MorenoSanchez2023, Pandey2024}, imaging-focused analyses that probe localisation, bias, and robustness \cite{Lee2021Cardiomegaly, palatnik2021xai, Repetto2025EvaluatingTR, Pertuz2023, Patricio2024}, neuroimaging papers that assess saliency-map behaviour in brain-tumour and intracranial haemorrhage settings \cite{Nazir2024UtilizingCC, Chmiel2023, Kohan2025}, and human-centred evaluation studies that directly operationalise the trust dimension \cite{IhongbeFouad2024, 11355720}.
+
+The final corpus consists of 35 peer-reviewed dataset papers spanning oncology, cardiology, neurology, radiology, and broader clinical decision-support settings, ensuring representation across both imaging and non-imaging modalities while capturing diverse evaluation strategies.
+% ──────────────────────────────────────
+\subsection{Phase 2: Criterion Extraction and Normalisation}
+
+From each paper, we record every evaluation criterion mentioned along with
+how it is measured. The same underlying concept frequently appears under
+different names: ``faithfulness,'' ``fidelity,'' and ``completeness'' are
+often used interchangeably in the medical XAI literature, a problem
+Speith~\cite{speith2022review} identifies as one of the main obstacles to
+building shared evaluation standards. We address this in two steps.
+
+First, we map each criterion to a canonical label grounded in established
+XAI evaluation literature~\cite{rosenfeld2021better, kadir2023evaluation}.
+Second, we classify each measurement approach along two dimensions:
+(a) whether it is quantitative or user-study-based, and (b) whether it
+targets overall model behaviour or individual predictions. This mirrors
+the functionally-grounded and human-grounded distinction from Kadir et
+al.~\cite{kadir2023evaluation}, who found that while quantitative metrics
+like sensitivity and faithfulness dominate the literature, human-centred
+assessment remains underdeveloped. Varghese et al.~\cite{Varghese2025OnDE}
+further informed our normalisation strategy: by applying Borda count and
+multiple correlation techniques to rank competing XAI metrics for image
+classification, they provide empirical grounding for treating faithfulness
+and sensitivity as primary axes of comparison. The result is a normalised criterion
+list of six metrics --- Faithfulness, Sensitivity, AOPC/MoRF, Pixel
+Flipping, IROF, and Sufficiency --- that can be compared across medical
+sub-domains regardless of differences in original terminology.
+
+% ──────────────────────────────────────
+\subsection{Phase 3: Cross-Sub-domain Alignment and Correlation Analysis}
+
+With a normalised criterion list in hand, we lay all six metrics side by
+side across the four medical sub-domains in a comparison matrix --- rows
+for criteria, columns for sub-domains. Each cell records how frequently a
+criterion appears and how it is typically measured. Criteria appearing in
+at least three of the four sub-domains are classified as
+\emph{universal}; those appearing in one or two are
+\emph{domain-specific}. This reflects Schwalbe and
+Finzel's~\cite{schwalbe2024comprehensive} observation that properties like
+faithfulness and stability recur broadly at the surface level, but their
+operationalisations diverge once you look at how different fields actually
+measure them.
+
+To quantify the degree of redundancy between metrics, we compute
+\textbf{Spearman's rank correlation ($\rho$)} across all 15 pairwise
+metric combinations. Where the same criterion is measured differently
+across sub-domains, we compare approaches and note which operationalisation
+is more theoretically grounded. As Speith~\cite{speith2022review} notes,
+much of the inconsistency in existing taxonomies comes from privileging
+either a method's functioning or its result but not both --- so our
+alignment records both dimensions throughout.
+
+This phase also surfaces genuine tensions, most notably cases where an
+explanation scores well on technical metrics but is judged unclear or
+unhelpful by clinicians. Rather than treating this as noise, we take it
+as evidence that explanation quality is multidimensional, an insight that
+directly informs the structure of the taxonomy.
+
+% ──────────────────────────────────────
+\subsection{Phase 4: Taxonomy Construction}
+
+The final phase organises the aligned criteria into a three-layer
+structure, building on the functionally-grounded and human-grounded
+classification of Kadir et al.~\cite{kadir2023evaluation} while adding
+an explicit robustness dimension that prior medical XAI taxonomies have
+handled inconsistently~\cite{speith2022review, jin2023guidelines}.
+
+The \emph{first layer} covers \textbf{mathematical faithfulness}: does
+the explanation actually reflect what the model is doing? This includes
+comprehensiveness, sufficiency, and fidelity under small input changes.
+In medical imaging, this layer is most commonly operationalised through
+faithfulness correlation and sensitivity
+measures~\cite{kadir2023evaluation, jin2023guidelines}.
+
+The \emph{second layer} addresses \textbf{system robustness}: do
+explanations hold up when patient inputs shift, the model is updated, or
+adversarial conditions arise? This dimension is especially relevant in
+clinical deployment, where data distributions can shift across hospital
+sites and imaging equipment. Repetto et al.~\cite{Repetto2025EvaluatingTR}
+provide direct evidence for this concern, showing that XAI explanations in
+medical image recognition degrade meaningfully under both natural and
+adversarial data corruption---confirming that robustness cannot be assumed
+and must be explicitly evaluated.
+
+The \emph{third layer} covers \textbf{human-centred trust}: do
+explanations actually help clinicians understand, decide, and calibrate
+their confidence? Speith~\cite{speith2022review} argues that most
+existing taxonomies neglect this dimension. In the medical context,
+neglecting it is particularly consequential: an explanation that is
+technically faithful but clinically opaque offers little practical value
+to a physician under time pressure.
+
+Some criteria span multiple layers naturally. Contrastive explanations,
+for instance, are quantifiable but also heavily shape clinician trust.
+We flag these as cross-layer to keep the taxonomy honest about the
+connections rather than forcing artificial boundaries.
+
+The result is a framework that functions both as a map of current
+evaluation practice in medical XAI and as a diagnostic tool for
+identifying where coverage remains thin.
+

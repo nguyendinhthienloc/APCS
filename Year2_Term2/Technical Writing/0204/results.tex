@@ -1,0 +1,175 @@
+\section{Results}
+% ──────────────────────────────────────────────────────────────────────────────
+
+The following sections report the findings of our four-phase methodology applied
+to the 52-study corpus, organised by corpus composition, metric co-occurrence,
+cross-domain alignment, and taxonomy validation. Interpretive analysis of these
+findings is deferred to the Discussion (Section~6).
+
+% ──────────────────────────────────────
+\subsection{Corpus Composition and Metric Distribution}
+
+The corpus spans 52 evaluation studies distributed across five medical
+sub-domains: oncology ($n = 9$), radiology ($n = 12$), cardiology ($n = 9$),
+neuroimaging ($n = 7$), and clinical decision support ($n =
+15$).\footnote{Throughout this analysis, studies categorised under Clinical AI,
+Clinical ML, Healthcare ML, and Medical Imaging are grouped under the
+``Clinical'' label for cross-domain comparison. This grouping consolidates
+studies that address general clinical evaluation methodology or span multiple
+imaging modalities without being specific to a single anatomical sub-domain.}
+Imaging-heavy applications contribute the largest share.
+Table~\ref{tab:dataset_papers} provides a structured summary of the
+studies included in the corpus.
+
+Across all studies, six quantitative evaluation metrics were identified:
+Faithfulness, Sensitivity, AOPC/MoRF, Pixel Flipping, IROF, and Sufficiency.
+Figure~\ref{fig:metric_frequency} presents the distribution of these metrics
+across the corpus. Faithfulness was the most frequently reported metric,
+appearing in 47 of 52 studies (90.4\%), followed by Sensitivity in 34 studies
+(65.4\%), Pixel Flipping in 14 studies (26.9\%), and AOPC/MoRF in 13 studies
+(25.0\%). IROF and Sufficiency each appeared in 4 studies (7.7\%).
+
+The five studies in which Faithfulness was absent comprise three human-centred
+evaluation
+designs~\cite{rezaeian2026explainability,finzel2024human,bauer2025human} and
+two consistency-focused
+benchmarks~\cite{qin2025consistency,alpsalaz2026explainability}. The
+concentration of Faithfulness absence in these study types is addressed in
+the Discussion.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{fig1_metric_frequency}
+  \caption{Distribution of XAI evaluation metrics across the 52-study corpus.
+  Faithfulness is the most prevalent metric (47/52; 90.4\%), followed by
+  Sensitivity (34/52; 65.4\%). IROF and Sufficiency are each reported in only
+  4 studies (7.7\%).}
+  \label{fig:metric_frequency}
+\end{figure}
+
+% ── Table I: summary of medical XAI literature
+\input{tables_I}
+
+% ──────────────────────────────────────
+\subsection{Metric Co-occurrence and Correlation}
+
+Pairwise co-occurrence analysis revealed three distinct patterns, as
+illustrated in Figures~\ref{fig:pairwise_cooccurrence}
+and~\ref{fig:cooccurrence_heatmap}.
+
+First, Faithfulness and Sensitivity co-occurred in 33 of the 47 studies
+reporting Faithfulness (70.2\% of Faithfulness-reporting studies; 63.5\% of
+the full corpus). In the five studies lacking Faithfulness, Sensitivity
+appeared in one case~\cite{qin2025consistency}.
+Table~\ref{tab:sensitivity_methods} lists the studies in which sensitivity
+analysis formed a primary evaluation method.
+
+Second, AOPC/MoRF and Pixel Flipping co-occurred in 7 studies and produced
+the strongest Spearman correlation in the corpus ($\rho = 0.51$, $p < 0.001$).
+AOPC/MoRF and IROF also exhibited a statistically significant correlation
+($\rho = 0.37$, $p = 0.007$). The Faithfulness--Sensitivity correlation was
+modest but significant ($\rho = 0.33$, $p = 0.016$).
+
+Third, Sufficiency exhibited negligible co-occurrence with all other metrics
+and produced negative correlations ranging from $\rho = -0.09$ to
+$\rho = -0.15$ (all non-significant at $\alpha = 0.05$).
+
+% ── Table II: sensitivity analysis studies
+
+\input{tables_II} 
+
+% ──────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{fig2_cooccurrence_heatmap}
+  \caption{Metric usage across medical sub-domains. Each cell reports the
+  number of studies within a given sub-domain that employ a given metric.
+  Faithfulness and Sensitivity appear across all five sub-domains, while
+  IROF and Sufficiency are concentrated in radiology and clinical settings.}
+  \label{fig:cooccurrence_heatmap}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{fig3_pairwise_cooccurrence}
+  \caption{Pairwise metric co-occurrence across 52 studies. Diagonal entries
+  indicate total metric frequency. Off-diagonal entries indicate the number
+  of studies in which both metrics are jointly reported. The
+  Faithfulness--Sensitivity pair shows the highest absolute co-occurrence
+  ($n = 33$).}
+  \label{fig:pairwise_cooccurrence}
+\end{figure}
+
+\subsection{Cross-Domain Alignment Within Medical Sub-domains}
+
+Comparison of the normalised criterion list across the five medical
+sub-domains revealed both cross-domain and domain-specific patterns.
+Faithfulness and Sensitivity qualified as near-cross-domain criteria,
+appearing in at least four of the five sub-domains with broadly comparable
+operationalisations. Table~\ref{tab:faithfulness_metrics} summarises studies
+that explicitly report Faithfulness Correlation or Faithfulness Estimate as
+their primary evaluation metric.
+
+IROF and Pixel Flipping were predominantly concentrated in radiology and
+oncology, where saliency-map explanations are standard practice. The
+expanded radiology sub-corpus---including benchmarking studies such as
+Saporta et al.~\cite{saporta2022benchmarking} in \textit{Nature Machine
+Intelligence} and Wollek et al.~\cite{wollek2023attention} in
+\textit{Radiology: AI}---exhibited the highest metric diversity among all
+sub-domains. Neuroimaging studies relied predominantly on Sensitivity, with
+notably fewer metrics per study than other sub-domains; Qin~\cite{qin2025consistency}
+represents an emerging exception, applying consistency and stability
+benchmarking to brain MRI classification. Oncology studies were the most
+metrically diverse, combining technical and, in several cases, user-study-based
+criteria, with contributions such as Cerekci et al.~\cite{cerekci2024quantitative}
+providing dedicated quantitative evaluation of saliency methods in mammography.
+The clinical sub-domain expanded most substantially, incorporating
+human-centred studies~\cite{rezaeian2026explainability,bauer2025human,finzel2024human}
+that operationalise Layer~3 trust criteria.
+
+% ── Table III: faithfulness correlation studies
+\input{tables_III} 
+
+% ──────────────────────────────────────
+\clearpage
+\subsection{Taxonomy Validation Against the Corpus}
+
+Mapping the 52 studies onto the three-layer taxonomy yielded the following
+distribution: 47 of 52 studies (90.4\%) reported at least one mathematical
+faithfulness criterion (Layer~1); 18 studies (34.6\%) addressed system
+robustness through multi-metric perturbation analyses (Layer~2); and 7
+studies (13.5\%) included any human-centred trust measure or sufficiency
+check (Layer~3). Figure~\ref{fig:taxonomy_diagram} illustrates the taxonomy
+structure alongside the empirical distribution of studies across layers.
+
+Ihongbe and Fouad~\cite{IhongbeFouad2024}, Fouad et al.~\cite{11355720},
+Rezaeian et al.~\cite{rezaeian2026explainability}, Bauer and
+Michalowski~\cite{bauer2025human}, and Finzel~\cite{finzel2024human}
+represent the most explicit operationalisations of the trust layer,
+collectively demonstrating that cognitive load, clinician comprehension, and
+diagnostic confidence are measurable constructs.
+
+Table~\ref{tab:perturbation_methods} lists perturbation-based and
+pixel-flipping studies, which collectively represent the most common
+operationalisation of the faithfulness layer in medical imaging contexts.
+Cross-layer criteria, most notably contrastive explanations, appeared in
+several studies and were flagged accordingly. Among studies employing Grad-CAM
+as the primary explanation method, Faithfulness scores tended to be higher
+in several sub-domains, although a systematic comparative evaluation of
+explanation methods was outside the scope of this review.
+
+% ── Table IV: pixel flipping / perturbation studies
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{fig5_taxonomy_diagram}
+  \caption{Three-layer taxonomy of XAI evaluation in medical AI. Layer~1
+  (Mathematical Faithfulness) is addressed by 47/52 studies (90.4\%),
+  Layer~2 (System Robustness) by 18/52 (34.6\%), and Layer~3 (Human-Centred
+  Trust) by 7/52 (13.5\%). The decreasing coverage from Layer~1 to Layer~3
+  quantifies the current imbalance in medical XAI evaluation practice.}
+  \label{fig:taxonomy_diagram}
+\end{figure}
+
+\input{tables_IV}
+% ─────────────────────────────────────────────────────────────────────────────

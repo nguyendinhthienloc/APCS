@@ -1,0 +1,25 @@
+
+insert into Wallets values(1, '0xf3298c3d8aecb82acd77e9218d3dd6', '2014-07-29', 'BSC', 59.492397)
+insert into Wallets values(2, '0x9166d66f4057107fec18acfffd9e73cb', '2016-10-22', 'ETH', 1.702557)
+insert into Wallets values(3, '0x4335A6DCcb02F7Ab429aeDC01B802', '2020-11-05', 'ETH', 2.026917)
+insert into Wallets values(4, '0x3487a7e19345eabe99a491c08abf86c', '2018-03-07', 'TRC', 289855.072464)
+insert into Wallets values(5, '0xf55e931365a1b7b696fbad08dfc817e', '2018-03-26', 'BSC', 300.00)
+insert into Wallets values(6, '0xd204270a8124c0d4d621dacbb6079e', '2022-01-22', 'SBC', 10)
+insert into Wallets values(7, '0xafb8c11849c848a6ebd000486a41231', '2017-02-11', 'POL', 100000000)
+
+
+insert into Networks values('Ethereum Mainnet', 'ETH', 'ETH', 1480.08)
+insert into Networks values('Binance Smart Chain', 'BSC', 'BNB', 278.17)
+insert into Networks values('Polygon Mainnet', 'POL', 'MATIC', 0.8852)
+insert into Networks values('Smart Bitcoin Cash', 'SBC', 'BCH', 156.09)
+insert into Networks values('Tronix', 'TRC', 'TRX', 0.069)
+
+
+insert into Transactions values(1, '2021-10-10 05:35:31', 1, 1, 'USD', 'BNB', 100000)
+insert into Transactions values(2, '2022-04-15 12:18:20', 2, 2, 'USD', 'ETH', 4000)
+insert into Transactions values(3, '2022-05-16 23:11:33', 3, 3, 'USD', 'ETH', 3000)
+insert into Transactions values(4, '2022-06-11 07:30:39', 4, 4, 'USD', 'TRX', 20000)
+insert into Transactions values(5, '2022-06-11 07:30:39', 1, 5, 'BNB', 'BNB', 300)
+insert into Transactions values(6, '2022-07-29 02:17:55', 2, 6, 'ETH', 'BCH', 1)
+
+

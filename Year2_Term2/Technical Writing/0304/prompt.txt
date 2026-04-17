@@ -1,0 +1,224 @@
+You are reviewing and fixing a LaTeX manuscript for a two-column IEEE-style paper.
+
+Files involved:
+
+* main.tex
+* intro_back.tex
+* related_work.tex
+* methodology.tex
+* results.tex
+* end.tex
+* tables_I.tex
+* tables_II.tex
+* tables_III.tex
+* tables_IV.tex
+* figure_descriptions.md
+
+Your goal is to fix formatting, compilation errors, and structural inconsistencies WITHOUT changing the scientific content, arguments, or citations.
+
+---
+
+## 🔴 CRITICAL UPDATE (FIGURE PATHS)
+
+All figure files have been moved into a subdirectory:
+
+```
+figures/
+```
+
+You MUST:
+
+1. Scan the ENTIRE project and update ALL figure paths.
+
+2. Replace every instance of:
+   \includegraphics{figX_...}
+   with:
+   \includegraphics{figures/figX_...}
+
+3. Ensure:
+
+   * No mixed usage (do NOT leave any old paths)
+   * All figure paths consistently use `figures/`
+   * Filenames exactly match actual files (including underscores)
+
+4. If LaTeX cannot resolve extensions automatically, explicitly use:
+   \includegraphics{figures/filename.png}
+
+5. Fix all current errors such as:
+
+   * File `figures/fig6_minimal_framework` not found
+   * File `figures/fig7_metric_correlation_network` not found
+   * File `figures/fig8_evaluation_gap` not found
+
+---
+
+## 🔴 LATEX ERRORS TO FIX
+
+### 1. longtable in two-column mode
+
+Errors:
+Package longtable Error: longtable not in 1-column mode.
+
+Fix by:
+
+* Replacing `longtable` with:
+
+  * `table*` + `tabularx`, OR
+  * standard `table` if possible
+
+Do NOT use longtable in two-column layout.
+
+---
+
+### 2. Broken table layout (critical)
+
+The minimal evaluation framework table is currently unreadable:
+
+* text wrapping vertically
+* columns too narrow
+
+Fix by:
+
+* Redesigning table structure
+* Using `table*` (full-width) if needed
+* Reducing column count OR simplifying content layout
+* Ensuring readable horizontal text flow
+
+---
+
+### 3. tabularx overflow warning
+
+Error:
+X Columns too narrow (table too wide)
+
+Fix by:
+
+* Adjusting column widths
+* Using fewer X columns
+* Introducing fixed-width `p{}` columns where needed
+
+---
+
+### 4. multicol conflict
+
+Warning:
+multicol may not work with twocolumn
+
+Fix by:
+
+* Removing `multicol` usage OR replacing with proper two-column LaTeX structure
+
+---
+
+### 5. Syntax error in figure_descriptions.md
+
+There is a broken LaTeX line:
+
+```
+\end{figure>
+```
+
+Fix to:
+\end{figure}
+
+Ensure no such syntax errors remain.
+
+---
+
+## 🟡 FIGURE CONSISTENCY & NUMBERING
+
+1. Ensure figure numbering is consistent with actual order of appearance.
+
+2. Fix mismatches between:
+
+   * figure_descriptions.md labels (Figure 6–8)
+   * actual LaTeX float order
+
+3. Ensure:
+
+   * Labels match references (\label / \ref)
+   * No duplicate or skipped numbering
+
+---
+
+## 🟡 FLOAT MANAGEMENT (IMPORTANT)
+
+The document currently has float congestion (figures + tables clustered).
+
+Fix by:
+
+* Improving float placement ([htbp] tuning if needed)
+* Avoiding large blocks of consecutive floats
+* Ensuring proper text–figure balance
+* Preventing large whitespace gaps
+
+---
+
+## 🟡 REVIEW OF NEW FIGURES (IMPORTANT)
+
+Critically evaluate whether these new figures are necessary or redundant:
+
+* Figure 6: Minimal framework
+* Figure 7: Correlation network
+* Figure 8: Evaluation gap
+
+Specifically:
+
+1. Check if Figure 8 duplicates information already in:
+
+   * taxonomy figure
+   * textual percentages
+
+2. Check if Figure 6 duplicates Table 8
+
+3. Check if Figure 7 adds meaningful insight beyond the correlation heatmap
+
+If any figure is redundant:
+
+* Recommend REMOVE, MERGE, or SIMPLIFY
+
+Do NOT blindly keep all figures.
+
+---
+
+## 🟢 GENERAL CLEANUP
+
+* Ensure consistent LaTeX style across files
+* Fix spacing, captions, and formatting inconsistencies
+* Ensure compatibility with IEEE two-column format
+* Ensure the document compiles cleanly with:
+
+  * no missing files
+  * no fatal errors
+  * minimal warnings
+
+---
+
+## ✅ OUTPUT REQUIREMENTS
+
+Provide:
+
+1. A concise list of ALL problems found
+2. Exact LaTeX fixes (with code snippets)
+3. Corrected versions of:
+
+   * figure includes
+   * problematic tables
+   * any broken environments
+4. A summary of figure decisions:
+
+   * keep / revise / remove (with justification)
+5. Confirmation that:
+
+   * all figure paths are fixed
+   * document compiles cleanly
+
+---
+
+## 🚫 CONSTRAINTS
+
+* Do NOT rewrite scientific content
+* Do NOT alter arguments or citations
+* Only modify formatting, structure, and LaTeX correctness
+
+Focus on precision, consistency, and compile stability.

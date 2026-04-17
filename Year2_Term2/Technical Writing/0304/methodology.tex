@@ -1,0 +1,127 @@
+\section{Methodology}
+% ──────────────────────────────────────────────────────────────────────────────
+
+To systematically characterise how XAI evaluation metrics are employed within medical AI, we adopt a four-phase methodology. Rather than treating each sub-domain as isolated, we extract, normalise, and align evaluation criteria across oncology, cardiology, neuroimaging, radiology, and clinical decision support into a single coherent corpus, then analyse metric co-occurrence and correlation patterns.
+
+% ──────────────────────────────────────
+\subsection{Phase 1: Systematic Corpus Collection}
+
+\paragraph{Databases and Search Strategy.}
+We conducted a systematic literature search across four databases: PubMed, Scopus, IEEE Xplore, and Google Scholar. Representative query strings included:
+\begin{itemize}
+    \item \texttt{("explainable AI" OR "XAI") AND ("evaluation" OR "metrics") AND ("medical imaging" OR "clinical")}
+    \item \texttt{("saliency" OR "attribution") AND ("evaluation" OR "faithfulness") AND ("healthcare" OR "radiology")}
+    \item \texttt{("explainability" OR "interpretability") AND ("clinical decision support") AND ("quantitative evaluation")}
+\end{itemize}
+Results were restricted primarily to 2020--2025, with seminal earlier works retained where they provided foundational evaluation methodologies. Searches were last updated in January 2026.
+
+\paragraph{Inclusion and Exclusion Criteria.}
+Studies were included if they: (I1)~were peer-reviewed in a Q2+ venue (Scopus/Scimago) or recognised conference (IEEE, ACM, IJCAI, MICCAI), with limited Q3 exceptions; (I2)~addressed at least one of the five medical sub-domains; and (I3)~contained explicit evaluation of XAI quality using at least one quantitative metric or structured human-centred assessment.
+Studies were excluded if they: (E1)~addressed non-medical AI exclusively; (E2)~proposed XAI methods without quantitative evaluation; (E3)~were duplicates; or (E4)~were published below Q3 without novel domain-specific methodologies. A limited number of Q3 articles were included where they provided domain-specific evaluation methodologies not available in higher-ranked venues.
+
+\paragraph{Screening and Selection Process.}
+Two independent reviewers conducted screening. An initial search yielded 327 candidate records. After removing 89 duplicates, 238 unique records were screened by title and abstract; 143 were excluded for lacking relevance. Disagreements were resolved through discussion and, where necessary, full-text consultation. The remaining 95 full-text articles were assessed against inclusion/exclusion criteria; 43 were excluded for not reporting quantitative XAI evaluation metrics or falling outside defined sub-domains. Inter-rater agreement was substantial (Cohen's $\kappa = 0.82$). The final corpus comprises 52 peer-reviewed evaluation studies.
+
+\paragraph{Study Selection Flow.}
+Following PRISMA reporting conventions~\cite{page2021prisma}:
+\begin{enumerate}
+    \item \textbf{Identification:} 327 records (PubMed: 78; Scopus: 112; IEEE Xplore: 84; Google Scholar: 53).
+    \item \textbf{Screening:} 89 duplicates removed $\rightarrow$ 238 unique records. Title/abstract screening excluded 143.
+    \item \textbf{Eligibility:} 95 full-text articles assessed. 43 excluded (no quantitative XAI metrics: $n=28$; outside sub-domains: $n=11$; below venue threshold: $n=4$).
+    \item \textbf{Inclusion:} 52 studies in the final corpus.
+\end{enumerate}
+
+% [ADDED — Corpus Size Justification]
+\paragraph{Corpus Justification.}
+The corpus of $n = 52$ studies, while modest in absolute size, provides sufficient coverage for the analytical objectives of this study. The corpus spans five distinct medical sub-domains (oncology, cardiology, neuroimaging, radiology, and clinical decision support) with representation from 28 unique venues ranging from top-tier journals (Nature Machine Intelligence, Medical Image Analysis, IEEE TMI) to specialised clinical outlets. This cross-domain and cross-venue breadth ensures that observed metric usage patterns are not artefacts of a single community's conventions. Moreover, the corpus captures both technically oriented and human-centred evaluation designs, enabling the taxonomic analysis reported below. For binary co-occurrence analysis involving six metrics, a sample of 52 studies yields 15 pairwise comparisons with adequate statistical power to detect moderate-to-strong associations ($\rho \geq 0.35$) at $\alpha = 0.05$.
+
+The corpus incorporates domain-specific evaluation works including clinician-grounded studies in cardiology and clinical decision support~\cite{Vazquez2021,Piculin2022,Nurmaini2022,MorenoSanchez2023,Pandey2024}, imaging-focused analyses~\cite{Lee2021Cardiomegaly,palatnik2021xai,Repetto2025EvaluatingTR,Pertuz2023,Patricio2024}, neuroimaging studies~\cite{Nazir2024UtilizingCC,Chmiel2023,Kohan2025}, and human-centred evaluation studies~\cite{IhongbeFouad2024,11355720}.
+
+% ──────────────────────────────────────
+\subsection{Phase 2: Criterion Extraction and Normalisation}
+
+From each study, we recorded every evaluation criterion and its operationalisation. The same concept frequently appears under different names---``faithfulness,'' ``fidelity,'' and ``completeness'' are often used interchangeably, a terminological inconsistency that Speith~\cite{speith2022review} identifies as a main obstacle to shared evaluation standards.
+
+We address this in two steps. First, each criterion is mapped to a canonical label grounded in established XAI evaluation literature~\cite{rosenfeld2021better,kadir2023evaluation}. Second, each measurement approach is classified along two dimensions: (a)~quantitative versus user-study-based, and (b)~overall model behaviour versus individual predictions. This mirrors the functionally-grounded and human-grounded distinction from Kadir et al.~\cite{kadir2023evaluation}. Varghese et al.~\cite{Varghese2025OnDE} further informed our normalisation by applying Borda count and correlation techniques to rank competing metrics, providing empirical justification for treating faithfulness and sensitivity as primary axes. The resulting normalised list comprises six metrics---Faithfulness, Sensitivity, AOPC/MoRF, Pixel Flipping, IROF, and Sufficiency---comparable across sub-domains regardless of original terminology.
+
+% ──────────────────────────────────────
+\subsection{Formal Definitions of Evaluation Metrics}
+
+To ensure terminological precision and reproducibility, we formally define each metric. All definitions follow established conventions.
+
+\paragraph{Faithfulness.}
+Faithfulness quantifies how accurately an explanation reflects the model's decision-making process~\cite{yeh2019fidelity}. For model $f$, input $x$, and explanation $\phi(x)$:
+\begin{equation}
+\text{Faith}(f, x, \phi) = \text{corr}\left(\phi(x)_i,\; f(x) - f(x_{\setminus i})\right)_{i=1}^{d}
+\label{eq:faithfulness}
+\end{equation}
+where $\phi(x)_i$ is the importance score for feature $i$, $x_{\setminus i}$ is the input with feature $i$ removed, and $d$ is the feature count.
+
+\paragraph{Sensitivity.}
+Sensitivity quantifies explanation responsiveness to meaningful input changes~\cite{yeh2019fidelity}:
+\begin{equation}
+\text{Sens}_{\max}(f, x, \phi) = \max_{\|x' - x\| \leq \epsilon} \|\phi(x') - \phi(x)\|
+\label{eq:sensitivity}
+\end{equation}
+where $\epsilon$ defines the perturbation radius. Well-behaved explanations exhibit high sensitivity to prediction-altering changes and low sensitivity otherwise.
+
+\paragraph{AOPC/MoRF.}
+AOPC measures average prediction change as features are progressively removed in order of decreasing importance~\cite{samek2017evaluating}:
+\begin{equation}
+\text{AOPC} = \frac{1}{K+1} \sum_{k=0}^{K} \left\langle f(x^{(0)}) - f(x^{(\text{MoRF})}_{k}) \right\rangle_{x}
+\label{eq:aopc}
+\end{equation}
+where $x^{(\text{MoRF})}_{k}$ is the input after removing the $k$ most relevant features in Most-Relevant-First order.
+
+\paragraph{Pixel Flipping.}
+Pixel Flipping systematically replaces input elements in saliency-map order~\cite{samek2017evaluating}:
+\begin{equation}
+\text{PF}(k) = f(x^{(0)}) - f(\tilde{x}_{k})
+\label{eq:pixel_flipping}
+\end{equation}
+where $\tilde{x}_{k}$ denotes the input after flipping the top-$k$ pixels. Pixel Flipping is mechanistically related to AOPC but operates at pixel-level granularity.
+
+\paragraph{IROF.}
+IROF extends perturbation-based evaluation by removing semantically meaningful segments~\cite{rieger2020irof}:
+\begin{equation}
+\text{IROF} = \frac{1}{S} \sum_{s=1}^{S} \left[ f(x) - f(x_{\setminus s}) \right]
+\label{eq:irof}
+\end{equation}
+where $x_{\setminus s}$ denotes the input with segment $s$ removed. IROF is particularly suited to medical imaging where anatomical structures correspond to contiguous pixel regions.
+
+\paragraph{Sufficiency.}
+Sufficiency measures whether identified features alone reproduce the model's prediction~\cite{yeh2019fidelity}:
+\begin{equation}
+\text{Suff}(f, x, \phi) = f(x) - f(x_{\phi})
+\label{eq:sufficiency}
+\end{equation}
+where $x_{\phi}$ retains only the features identified as important. A score near zero indicates that the explanation captures the minimal information necessary for the decision. Sufficiency is conceptually distinct from consistency (similar inputs receiving similar explanations) and from faithfulness (correlation between attributed and actual importance). Sufficiency directly assesses whether highlighted features alone sustain the original prediction---a property of particular clinical relevance, determining whether the explanation identifies a decision-sufficient evidence set.
+
+% ──────────────────────────────────────
+\subsection{Phase 3: Cross-Domain Alignment and Correlation Analysis}
+
+The six normalised metrics were compared across the five sub-domains in a comparison matrix (rows: criteria; columns: sub-domains). Criteria appearing in $\geq 3$ sub-domains are classified as \emph{cross-domain}; those in 1--2 as \emph{domain-specific}. This classification reflects Schwalbe and Finzel's~\cite{schwalbe2024comprehensive} observation that properties such as faithfulness recur broadly but with divergent operationalisations.
+
+\paragraph{Statistical Approach.}
+To quantify co-occurrence and potential redundancy, we compute \textbf{Spearman's rank correlation ($\rho$)} across all 15 pairwise metric combinations using the full 52-study corpus. Each metric is encoded as a binary variable (presence = 1, absence = 0). In this binary encoding, Spearman's $\rho$ is mathematically equivalent to the phi coefficient ($\phi$), a standard measure of association for dichotomous variables. We selected Spearman's $\rho$ (equivalently $\phi$) because: (i)~it imposes no distributional assumptions; (ii)~it is interpretable as monotonic association for binary indicators; and (iii)~it facilitates comparison with prior rank-based correlation studies in XAI evaluation.
+
+Two limitations of binary correlation should be noted. First, binary encoding discards information about the intensity or quality of metric application. Second, high co-occurrence does not establish construct equivalence; it may reflect convention or methodological convenience. These limitations are addressed in Section~6.3 (Threats to Validity).
+
+Where the same criterion was measured differently across sub-domains, we compared operationalisations and recorded which approach is more theoretically grounded. This phase also surfaces genuine tensions---cases where an explanation achieves high technical scores but is judged unclear by clinicians---taken as evidence that explanation quality is multidimensional.
+
+% ──────────────────────────────────────
+\subsection{Phase 4: Taxonomy Construction}
+
+The final phase organises aligned criteria into a three-layer structure, building on Kadir et al.~\cite{kadir2023evaluation} while adding an explicit robustness dimension that prior medical XAI taxonomies have addressed inconsistently~\cite{speith2022review,jin2023guidelines}.
+
+The choice of three layers reflects both theoretical grounding and empirical observation. The distinction between technical fidelity (Layer~1) and user-facing evaluation (Layer~3) is well established~\cite{jin2023guidelines,kadir2023evaluation}. The addition of a robustness layer (Layer~2) is motivated by: first, Holzinger et al.~\cite{holzinger2022information} identifying robustness under distributional shift as unresolved in medical AI; second, our corpus analysis revealing that robustness-oriented evaluation constitutes a coherent cluster that does not reduce to either faithfulness measurement or clinician-facing assessment. This structure is consistent with Speith~\cite{speith2022review} and the faithfulness--usefulness separation of Jin et al.~\cite{jin2023guidelines}.
+
+During construction, we applied a primarily deductive approach, assigning metrics to layers based on formal definitions and alignment with prior frameworks. Two inductive adjustments were made: (i)~Sufficiency was assigned to Layer~1 on the grounds that its operationalisation (Equation~\ref{eq:sufficiency}) is purely computational, despite its clinical relevance; (ii)~contrastive explanations were flagged as cross-layer.
+
+\textbf{Layer~1 (Mathematical Faithfulness)} covers whether the explanation accurately reflects model computation, including faithfulness correlation, sufficiency, sensitivity, and fidelity under perturbation~\cite{kadir2023evaluation,jin2023guidelines}.
+
+\textbf{Layer~2 (System Robustness)} addresses whether explanations remain stable when patient inputs shift, models are updated, or adversarial conditions arise. Repetto et al.~\cite{Repetto2025EvaluatingTR} provide direct evidence that XAI explanations degrade under both natural and adversarial data corruption.
+
+\textbf{Layer~3 (Human-Centred Trust)} covers whether explanations help clinicians understand, decide, and calibrate confidence. Speith~\cite{speith2022review} argues that most taxonomies neglect this dimension; in clinical contexts, a technically faithful but opaque explanation provides limited practical value.
+
+Cross-layer criteria (e.g., contrastive explanations) are flagged to maintain transparency about inter-layer connections rather than enforcing artificial boundaries. The resulting framework functions as both a descriptive map of current evaluation practice and a diagnostic tool for identifying coverage gaps.

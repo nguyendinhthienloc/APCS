@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{ltablex}
+\usepackage{array}
+\usepackage{booktabs}
+
+\setlength{\emergencystretch}{3em}
+
+\author{
+Loc D. T. Nguyen \and
+Nhan T. T. Le \and
+Tai Nguyen \\
+Faculty of Information Technology \\
+VNUHCM -- University of Science, Ho Chi Minh City, Vietnam
+}
+
+\title{Evaluating XAI Metrics in Medical AI:\\
+A Cross-Study Co-occurrence Analysis and Evaluation Taxonomy}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+% [REVISED ABSTRACT — Q1 STYLE]
+\begin{abstract}
+Explainable Artificial Intelligence (XAI) is increasingly required in clinical settings to support transparent decision-making. However, the metrics used to evaluate explanation quality in medical AI remain fragmented, inconsistently defined, and rarely compared across clinical sub-domains---creating a significant barrier to reproducible and trustworthy deployment. This paper addresses this gap through a systematic cross-study co-occurrence analysis of XAI evaluation metrics, examining 52 peer-reviewed studies spanning five medical sub-domains: oncology, cardiology, neuroimaging, radiology, and clinical decision support. We employ a four-phase methodology comprising corpus collection via systematic search across PubMed, Scopus, IEEE Xplore, and Google Scholar; criterion extraction and normalisation; cross-domain alignment with pairwise correlation analysis; and taxonomy construction. Six quantitative metrics in active use are identified and analysed. Faithfulness is the most prevalent metric, appearing in 47 of 52 studies (90.4\%), while its absence is concentrated in human-centred evaluation designs---a pattern revealing a structural divide between technical and clinician-oriented XAI research. Sensitivity co-occurs with Faithfulness in 33 studies (63.5\%). Among perturbation-based metrics, AOPC/MoRF and Pixel Flipping exhibit the strongest pairwise correlation ($\rho = 0.51$, $p < 0.001$), suggesting partial redundancy. Sufficiency remains isolated and underutilised (4 of 52 studies; 7.7\%) despite its direct relevance to clinical decision adequacy. Mapping the corpus onto a three-layer taxonomy---mathematical faithfulness, system robustness, and human-centred trust---reveals that evaluation effort is heavily concentrated in the first layer (90.4\%), with robustness addressed in 18 studies (34.6\%) and human-centred criteria in only 7 (13.5\%). Building on these findings, we propose a minimal evaluation framework spanning all three layers, comprising one faithfulness metric, one perturbation-based metric, one sensitivity metric, one sufficiency metric, and one human-centred metric. We further contribute a structured taxonomy grounded in empirical usage patterns rather than purely conceptual design, and identify standardisation priorities for underserved sub-domains such as neuroimaging.
+\end{abstract}
+
+% ─────────────────────────────────────────────────────────────
+\input{intro_back}
+\input{related_work}
+\input{methodology}
+\input{results}
+\input{end}
+
+\bibliographystyle{IEEEtran}
+\bibliography{citation}
+% ─────────────────────────────────────────────────────────────
+
+\end{document}
