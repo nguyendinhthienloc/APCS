@@ -1,0 +1,397 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{logicproof}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+\geometry{a4paper, margin=0.8in}
+
+% Custom Colors (Teal Blue Flare)
+\definecolor{tealblue}{HTML}{0EA5A4}
+\definecolor{lightteal}{HTML}{E6F6F6}
+
+\tcbset{
+    colback=lightteal,
+    colframe=tealblue,
+    fonttitle=\bfseries,
+    arc=3pt
+}
+
+\title{\color{tealblue} Homework 2}
+\author{\textbf{Nguyen Dinh Thien Loc} \\ Student ID: 24125093}
+
+\begin{document}
+\maketitle
+
+\section*{Question 6}
+
+\subsection*{(a) $\forall x\,P(x) \vdash \forall y\,P(y)$}
+\begin{logicproof}{2}
+  \forall x\,P(x) & premise \\
+  \begin{subproof}
+    y_0 & fresh variable \\
+    P(y_0) & $\forall$e, 1
+  \end{subproof}
+  \forall y\,P(y) & $\forall$i, 2--3
+\end{logicproof}
+
+\bigskip
+
+\subsection*{(b) $\forall x\,(P(x) \to Q(x)) \vdash (\forall x\,\lnot Q(x)) \to (\forall x\,\lnot P(x))$}
+\begin{logicproof}{3}
+  \forall x\,(P(x) \to Q(x)) & premise \\
+  \begin{subproof}
+    \forall x\,\lnot Q(x) & assumption \\
+    \begin{subproof}
+      x_0 & fresh variable \\
+      P(x_0) \to Q(x_0) & $\forall$e, 1 \\
+      \lnot Q(x_0) & $\forall$e, 2 \\
+      \begin{subproof}
+        P(x_0) & assumption \\
+        Q(x_0) & $\to$e, 4, 6 \\
+        \bot & $\lnot$e, 5, 7
+      \end{subproof}
+      \lnot P(x_0) & $\lnot$i, 6--8
+    \end{subproof}
+    \forall x\,\lnot P(x) & $\forall$i, 3--9
+  \end{subproof}
+  (\forall x\,\lnot Q(x)) \to (\forall x\,\lnot P(x)) & $\to$i, 2--10
+\end{logicproof}
+
+\bigskip
+
+\subsection*{(c) $\forall x\,(P(x) \to \lnot Q(x)) \vdash \lnot(\exists x\,(P(x) \land Q(x)))$}
+\begin{logicproof}{3}
+  \forall x\,(P(x) \to \lnot Q(x)) & premise \\
+  \begin{subproof}
+    \exists x\,(P(x) \land Q(x)) & assumption \\
+    \begin{subproof}
+      x_0 & fresh variable \\
+      P(x_0) \land Q(x_0) & assumption \\
+      P(x_0) \to \lnot Q(x_0) & $\forall$e, 1 \\
+      P(x_0) & $\land$e$_1$, 4 \\
+      Q(x_0) & $\land$e$_2$, 4 \\
+      \lnot Q(x_0) & $\to$e, 5, 6 \\
+      \bot & $\lnot$e, 7, 8
+    \end{subproof}
+    \bot & $\exists$e, 2, 3--9
+  \end{subproof}
+  \lnot(\exists x\,(P(x) \land Q(x))) & $\lnot$i, 2--10
+\end{logicproof}
+
+\section*{Question 9}
+
+\subsection*{(b) $S \to \exists x\,Q(x) \vdash \exists x\,(S \to Q(x))$}
+\begin{logicproof}{4}
+  S \to \exists x\,Q(x) & premise \\
+  S \lor \lnot S & LEM \\
+  \begin{subproof}
+    S & assumption \\
+    \exists x\,Q(x) & $\to$e, 1, 3 \\
+    \begin{subproof}
+      x_0 & fresh variable \\
+      Q(x_0) & assumption \\
+      \begin{subproof}
+        S & assumption \\
+        Q(x_0)
+      \end{subproof}
+      S \to Q(x_0) & $\to$i, 7--8 \\
+      \exists x\,(S \to Q(x)) & $\exists$i, 9
+    \end{subproof}
+    \exists x\,(S \to Q(x)) & $\exists$e, 4, 5--10
+  \end{subproof}
+  \begin{subproof}
+    \lnot S & assumption \\
+    \begin{subproof}
+      x_0 & fresh variable \\
+      \begin{subproof}
+        S & assumption \\
+        \bot & $\lnot$e, 12, 14 \\
+        Q(x_0) & $\bot$e, 15
+      \end{subproof}
+      S \to Q(x_0) & $\to$i, 14--16 \\
+      \exists x\,(S \to Q(x)) & $\exists$i, 17
+    \end{subproof}
+    \exists x\,(S \to Q(x))
+  \end{subproof}
+  \exists x\,(S \to Q(x)) & $\lor$e, 2, 3--11, 12--19
+\end{logicproof}
+
+\bigskip
+
+\subsection*{(e) $\forall x\,(P(x) \lor Q(x)) \vdash \forall x\,P(x) \lor \exists x\,Q(x)$}
+\begin{logicproof}{3}
+  \forall x\,(P(x) \lor Q(x)) & premise \\
+  \forall x\,P(x) \lor \lnot \forall x\,P(x) & LEM \\
+  \begin{subproof}
+    \forall x\,P(x) & assumption \\
+    \forall x\,P(x) \lor \exists x\,Q(x) & $\lor$i$_1$, 3
+  \end{subproof}
+  \begin{subproof}
+    \lnot \forall x\,P(x) & assumption \\
+    \lnot \forall x\,P(x) \to \exists x\,\lnot P(x) & quantifier equivalence \\
+    \exists x\,\lnot P(x) & $\to$e, 5, 6 \\
+    \begin{subproof}
+      x_0 & fresh variable \\
+      \lnot P(x_0) & assumption \\
+      P(x_0) \lor Q(x_0) & $\forall$e, 1 \\
+      \begin{subproof}
+        P(x_0) & assumption \\
+        \bot & $\lnot$e, 9, 11 \\
+        Q(x_0) & $\bot$e, 12
+      \end{subproof}
+      \begin{subproof}
+        Q(x_0) & assumption \\
+        Q(x_0)
+      \end{subproof}
+      Q(x_0) & $\lor$e, 10, 11--13, 14--15 \\
+      \exists x\,Q(x) & $\exists$i, 16 \\
+      \forall x\,P(x) \lor \exists x\,Q(x) & $\lor$i$_2$, 17
+    \end{subproof}
+    \forall x\,P(x) \lor \exists x\,Q(x) & $\exists$e, 7, 8--18
+  \end{subproof}
+  \forall x\,P(x) \lor \exists x\,Q(x) & $\lor$e, 2, 3--4, 5--19
+\end{logicproof}
+
+\bigskip
+
+\subsection*{(i) $\exists x\,(\lnot P(x) \land \lnot Q(x)) \vdash \exists x\,(\lnot(P(x) \land Q(x)))$}
+\begin{logicproof}{3}
+  \exists x\,(\lnot P(x) \land \lnot Q(x)) & premise \\
+  \begin{subproof}
+    x_0 & fresh variable \\
+    \lnot P(x_0) \land \lnot Q(x_0) & assumption \\
+    \lnot P(x_0) & $\land$e$_1$, 3 \\
+    \begin{subproof}
+      P(x_0) \land Q(x_0) & assumption \\
+      P(x_0) & $\land$e$_1$, 5 \\
+      \bot & $\lnot$e, 4, 6
+    \end{subproof}
+    \lnot(P(x_0) \land Q(x_0)) & $\lnot$i, 5--7 \\
+    \exists x\,(\lnot(P(x) \land Q(x))) & $\exists$i, 8
+  \end{subproof}
+  \exists x\,(\lnot(P(x) \land Q(x))) & $\exists$e, 1, 2--9
+\end{logicproof}
+
+\section*{Question 11}
+
+\subsection*{(b) $P(b),\ \forall x\forall y\,(P(x) \land P(y) \to x=y) \vdash \forall x\,(P(x) \leftrightarrow x=b)$}
+\begin{logicproof}{4}
+  P(b) & premise \\
+  \forall x\forall y\,(P(x) \land P(y) \to x=y) & premise \\
+  \begin{subproof}
+    x_0 & fresh variable \\
+    \forall y\,(P(x_0) \land P(y) \to x_0=y) & $\forall$e, 2 \\
+    P(x_0) \land P(b) \to x_0=b & $\forall$e, 4 \\
+    \begin{subproof}
+      P(x_0) & assumption \\
+      P(x_0) \land P(b) & $\land$i, 6, 1 \\
+      x_0=b & $\to$e, 5, 7
+    \end{subproof}
+    P(x_0) \to x_0=b & $\to$i, 6--8 \\
+    \begin{subproof}
+      x_0=b & assumption \\
+      P(x_0) & $=$e, 10, 1
+    \end{subproof}
+    x_0=b \to P(x_0) & $\to$i, 10--11 \\
+    (P(x_0) \to x_0=b) \land (x_0=b \to P(x_0)) & $\land$i, 9, 12
+  \end{subproof}
+  \forall x\,(P(x) \leftrightarrow x=b) & $\forall$i, 3--13
+\end{logicproof}
+
+\bigskip
+
+\subsection*{(d) $\forall x\,(P(x) \leftrightarrow x=b) \vdash P(b) \land \forall x\forall y\,(P(x) \land P(y) \to x=y)$}
+\begin{logicproof}{4}
+  \forall x\,(P(x) \leftrightarrow x=b) & premise \\
+  (P(b) \to b=b) \land (b=b \to P(b)) & $\forall$e, 1 \\
+  b=b \to P(b) & $\land$e$_2$, 2 \\
+  b=b & $=$i \\
+  P(b) & $\to$e, 3, 4 \\
+  \begin{subproof}
+    x_0 & fresh variable \\
+    \begin{subproof}
+      y_0 & fresh variable \\
+      \begin{subproof}
+        P(x_0) \land P(y_0) & assumption \\
+        P(x_0) & $\land$e$_1$, 8 \\
+        P(y_0) & $\land$e$_2$, 8 \\
+        (P(x_0) \to x_0=b) \land (x_0=b \to P(x_0)) & $\forall$e, 1 \\
+        (P(y_0) \to y_0=b) \land (y_0=b \to P(y_0)) & $\forall$e, 1 \\
+        P(x_0) \to x_0=b & $\land$e$_1$, 11 \\
+        P(y_0) \to y_0=b & $\land$e$_1$, 12 \\
+        x_0=b & $\to$e, 13, 9 \\
+        y_0=b & $\to$e, 14, 10 \\
+        x_0=y_0 & $=$e, 15, 16
+      \end{subproof}
+      P(x_0) \land P(y_0) \to x_0=y_0 & $\to$i, 8--17
+    \end{subproof}
+    \forall y\,(P(x_0) \land P(y) \to x_0=y) & $\forall$i, 7--18
+  \end{subproof}
+  \forall x\forall y\,(P(x) \land P(y) \to x=y) & $\forall$i, 6--19 \\
+  P(b) \land \forall x\forall y\,(P(x) \land P(y) \to x=y) & $\land$i, 5, 20
+\end{logicproof}
+
+\section*{Question 13}
+
+\subsection*{(e) $\forall x\,(P(x) \lor Q(x)),\ \exists x\,\lnot Q(x),\ \forall x\,(R(x) \to \lnot P(x)) \vdash \exists x\,\lnot R(x)$}
+\begin{logicproof}{4}
+  \forall x\,(P(x) \lor Q(x)) & premise \\
+  \exists x\,\lnot Q(x) & premise \\
+  \forall x\,(R(x) \to \lnot P(x)) & premise \\
+  \begin{subproof}
+    x_0 & fresh variable \\
+    \lnot Q(x_0) & assumption \\
+    P(x_0) \lor Q(x_0) & $\forall$e, 1 \\
+    \begin{subproof}
+      P(x_0) & assumption \\
+      P(x_0)
+    \end{subproof}
+    \begin{subproof}
+      Q(x_0) & assumption \\
+      \bot & $\lnot$e, 5, 9 \\
+      P(x_0) & $\bot$e, 10
+    \end{subproof}
+    P(x_0) & $\lor$e, 6, 7--8, 9--11 \\
+    R(x_0) \to \lnot P(x_0) & $\forall$e, 3 \\
+    \begin{subproof}
+      R(x_0) & assumption \\
+      \lnot P(x_0) & $\to$e, 13, 14 \\
+      \bot & $\lnot$e, 12, 15
+    \end{subproof}
+    \lnot R(x_0) & $\lnot$i, 14--16 \\
+    \exists x\,\lnot R(x) & $\exists$i, 17
+  \end{subproof}
+  \exists x\,\lnot R(x) & $\exists$e, 2, 4--18
+\end{logicproof}
+
+\bigskip
+
+\subsection*{(f) $\forall x\,(P(x) \to (Q(x) \lor R(x))),\ \lnot\exists x\,(P(x) \land R(x)) \vdash \forall x\,(P(x) \to Q(x))$}
+\begin{logicproof}{4}
+  \forall x\,(P(x) \to (Q(x) \lor R(x))) & premise \\
+  \lnot\exists x\,(P(x) \land R(x)) & premise \\
+  \begin{subproof}
+    x_0 & fresh variable \\
+    P(x_0) \to (Q(x_0) \lor R(x_0)) & $\forall$e, 1 \\
+    \begin{subproof}
+      P(x_0) & assumption \\
+      Q(x_0) \lor R(x_0) & $\to$e, 4, 5 \\
+      \begin{subproof}
+        R(x_0) & assumption \\
+        P(x_0) \land R(x_0) & $\land$i, 5, 7 \\
+        \exists x\,(P(x) \land R(x)) & $\exists$i, 8 \\
+        \bot & $\lnot$e, 2, 9 \\
+        Q(x_0) & $\bot$e, 10
+      \end{subproof}
+      \begin{subproof}
+        Q(x_0) & assumption \\
+        Q(x_0)
+      \end{subproof}
+      Q(x_0) & $\lor$e, 6, 7--11, 12--13
+    \end{subproof}
+    P(x_0) \to Q(x_0) & $\to$i, 5--14
+  \end{subproof}
+  \forall x\,(P(x) \to Q(x)) & $\forall$i, 3--15
+\end{logicproof}
+
+\bigskip
+
+\subsection*{(g) $\exists x\exists y\,(S(x,y) \lor S(y,x)) \vdash \exists x\exists y\,S(x,y)$}
+\begin{logicproof}{4}
+  \exists x\exists y\,(S(x,y) \lor S(y,x)) & premise \\
+  \begin{subproof}
+    x_0 & fresh variable \\
+    \exists y\,(S(x_0,y) \lor S(y,x_0)) & assumption \\
+    \begin{subproof}
+      y_0 & fresh variable \\
+      S(x_0,y_0) \lor S(y_0,x_0) & assumption \\
+      \begin{subproof}
+        S(x_0,y_0) & assumption \\
+        \exists y\,S(x_0,y) & $\exists$i, 6 \\
+        \exists x\exists y\,S(x,y) & $\exists$i, 7
+      \end{subproof}
+      \begin{subproof}
+        S(y_0,x_0) & assumption \\
+        \exists y\,S(y_0,y) & $\exists$i, 9 \\
+        \exists x\exists y\,S(x,y) & $\exists$i, 10
+      \end{subproof}
+      \exists x\exists y\,S(x,y) & $\lor$e, 5, 6--8, 9--11
+    \end{subproof}
+    \exists x\exists y\,S(x,y) & $\exists$e, 3, 4--12
+  \end{subproof}
+  \exists x\exists y\,S(x,y) & $\exists$e, 1, 2--13
+\end{logicproof}
+
+\bigskip
+
+\subsection*{(h) $\exists x\,(P(x) \land Q(x)),\ \forall y\,(P(y) \to R(y)) \vdash \exists x\,(R(x) \land Q(x))$}
+\begin{logicproof}{4}
+  \exists x\,(P(x) \land Q(x)) & premise \\
+  \forall y\,(P(y) \to R(y)) & premise \\
+  \begin{subproof}
+    x_0 & fresh variable \\
+    P(x_0) \land Q(x_0) & assumption \\
+    P(x_0) & $\land$e$_1$, 4 \\
+    Q(x_0) & $\land$e$_2$, 4 \\
+    P(x_0) \to R(x_0) & $\forall$e, 2 \\
+    R(x_0) & $\to$e, 5, 7 \\
+    R(x_0) \land Q(x_0) & $\land$i, 8, 6 \\
+    \exists x\,(R(x) \land Q(x)) & $\exists$i, 9
+  \end{subproof}
+  \exists x\,(R(x) \land Q(x)) & $\exists$e, 1, 3--10
+\end{logicproof}
+\newpage
+\section*{Question 14}
+
+Let $T(x)$ mean ``$x$ is a tax payer,'' $P(x)$ mean ``$x$ is a politician,'' and $H(x)$ mean ``$x$ is a philanthropist.''
+
+\[
+(\exists x\,T(x) \to \forall x\,(P(x) \to T(x))),\ (\exists x\,H(x) \to \forall x\,(T(x) \to H(x)))
+\vdash (\exists x\,(T(x) \land H(x)) \to \forall x\,(P(x) \to H(x))).
+\]
+
+\begin{logicproof}{4}
+  \exists x\,T(x) \to \forall x\,(P(x) \to T(x)) & premise \\
+  \exists x\,H(x) \to \forall x\,(T(x) \to H(x)) & premise \\
+  \begin{subproof}
+    \exists x\,(T(x) \land H(x)) & assumption \\
+    \begin{subproof}
+      x_0 & fresh variable \\
+      T(x_0) \land H(x_0) & assumption \\
+      T(x_0) & $\land$e$_1$, 5 \\
+      H(x_0) & $\land$e$_2$, 5 \\
+      \exists x\,T(x) & $\exists$i, 6 \\
+      \exists x\,H(x) & $\exists$i, 7
+    \end{subproof}
+    \exists x\,T(x) & $\exists$e, 3, 4--8 \\
+    \begin{subproof}
+      x_1 & fresh variable \\
+      T(x_1) \land H(x_1) & assumption \\
+      T(x_1) & $\land$e$_1$, 11 \\
+      H(x_1) & $\land$e$_2$, 11 \\
+      \exists x\,T(x) & $\exists$i, 12 \\
+      \exists x\,H(x) & $\exists$i, 13
+    \end{subproof}
+    \exists x\,H(x) & $\exists$e, 3, 10--14 \\
+    \forall x\,(P(x) \to T(x)) & $\to$e, 1, 9 \\
+    \forall x\,(T(x) \to H(x)) & $\to$e, 2, 15 \\
+    \begin{subproof}
+      y_0 & fresh variable \\
+      P(y_0) \to T(y_0) & $\forall$e, 16 \\
+      T(y_0) \to H(y_0) & $\forall$e, 17 \\
+      \begin{subproof}
+        P(y_0) & assumption \\
+        T(y_0) & $\to$e, 19, 21 \\
+        H(y_0) & $\to$e, 20, 22
+      \end{subproof}
+      P(y_0) \to H(y_0) & $\to$i, 21--23
+    \end{subproof}
+    \forall x\,(P(x) \to H(x)) & $\forall$i, 18--24
+  \end{subproof}
+  \exists x\,(T(x) \land H(x)) \to \forall x\,(P(x) \to H(x)) & $\to$i, 3--25
+\end{logicproof}
+
+\end{document}
