@@ -1,0 +1,87 @@
+\documentclass{article}
+\usepackage{logicproof}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\begin{document}
+
+\section*{Question 2: Natural Deduction Proofs}
+
+\subsection*{a) $\forall x (P(x) \rightarrow Q(x)), \exists x P(x) \vdash \exists x Q(x)$}
+
+\begin{logicproof}{2}
+    \forall x (P(x) \rightarrow Q(x)) & premise \\
+    \exists x P(x) & premise \\
+    \begin{subproof}
+        x_0 \quad P(x_0) & assume \\
+        P(x_0) \rightarrow Q(x_0) & $\forall e$ 1 \\
+        Q(x_0) & $\rightarrow e$ 4, 3 \\
+        \exists x Q(x) & $\exists i$ 5
+    \end{subproof}
+    \exists x Q(x) & $\exists e$ 2, 3--6
+\end{logicproof}
+
+\subsection*{b) $\forall x P(x) \lor \forall x Q(x) \vdash \forall x (P(x) \vee Q(x))$}
+
+\begin{logicproof}{3} %3 is the number of assumptions
+    \forall x P(x) \lor \forall x Q(x) & premise \\
+    \begin{subproof}
+        \forall x P(x) & assume \\
+        \begin{subproof}
+            x_0 & arbitrary \\
+            P(x_0) & $\forall e$ 2 \\
+            P(x_0) \lor Q(x_0) & $\lor i_1$ 4
+        \end{subproof}
+        \forall x (P(x) \lor Q(x)) & $\forall i$ 3--5
+    \end{subproof}
+    \begin{subproof}
+        \forall x Q(x) & assume \\
+        \begin{subproof}
+            y_0 & arbitrary \\
+            Q(y_0) & $\forall e$ 7 \\
+            P(y_0) \lor Q(y_0) & $\lor i_2$ 9
+        \end{subproof}
+        \forall x (P(x) \lor Q(x)) & $\forall i$ 8--10
+    \end{subproof}
+    \forall x (P(x) \lor Q(x)) & $\lor e$ 1, 2--6, 7--11
+\end{logicproof}
+
+\newpage
+\section*{Question 3: Model Finding}
+\subsection*{a) $\forall x \exists y P(f(x), y)$}
+\textbf{Model that satisfies ($\mathcal{M} \models \phi$):}
+\begin{itemize}
+    \item Domain $D = \mathbb{Z}$ (integers).
+    \item $f(x) = x$ (identity function).
+    \item $P(x, y)$ is defined as the relation $x < y$.
+    \item \textbf{Explanation:} For every integer $x$, there exists an integer $y$ (such as $y = x+1$) such that $x < y$ holds.
+\end{itemize}
+
+\textbf{Model that does not satisfy ($\mathcal{M} \not\models \phi$):}
+\begin{itemize}
+    \item Domain $D = \{1, 2\}$.
+    \item $f(x) = 1$ for all $x$.
+    \item $P(x, y)$ is always \textit{false}.
+    \item \textbf{Explanation:} Since $P(1, 1)$ and $P(1, 2)$ are both false, there is no $y$ that satisfies the relation for any $x$.
+\end{itemize}
+
+\subsection*{b) $(\forall x P(x) \rightarrow S) \vdash \exists x (P(x) \rightarrow S)$}
+\textbf{Model that satisfies:}
+\begin{itemize}
+    \item Domain $D = \{1\}$.
+    \item $P(1) = \text{true}$.
+    \item $S = \text{true}$.
+    \item \textbf{Explanation:} The premise $(\forall x P(x) \rightarrow S)$ is $\text{true} \rightarrow \text{true}$, which is true. The conclusion $\exists x (P(x) \rightarrow S)$ is true because $P(1) \rightarrow S$ is true.
+\end{itemize}
+
+\textbf{Model that does not satisfy (Counterexample):}
+\begin{itemize}
+    \item Domain $D = \emptyset$ (The Empty Set).
+    \item \textbf{Explanation:} In standard first-order logic, the domain must be non-empty. However, if we consider a non-empty domain $D=\{1\}$ where:
+    \item $P(1) = \text{false}$ and $S = \text{false}$.
+    \item The premise $(\forall x P(x) \rightarrow S)$ becomes $(\text{false} \rightarrow \text{false})$, which is \textbf{true}.
+    \item The conclusion $\exists x (P(x) \rightarrow S)$ becomes $(\text{false} \rightarrow \text{false})$, which is also \textbf{true}.
+    \item \textit{Note:} This specific sequent is actually a valid logical principle in classical logic with non-empty domains, meaning a counterexample would only exist if the domain were empty, which is usually disallowed.
+\end{itemize}
+
+\end{document}

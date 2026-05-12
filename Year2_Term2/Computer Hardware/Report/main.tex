@@ -1,0 +1,218 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{circuitikz}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{caption}
+
+\geometry{margin=0.75in}
+
+\lstdefinestyle{mips}{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{gray!10},
+  frame=single,
+  breaklines=true,
+  keepspaces=true,
+  columns=fullflexible,
+  commentstyle=\color{gray},
+  morecomment=[l]{\#},
+}
+
+\title{Lab 9: RISC Advanced I/O}
+\author{Name: \textbf{Loc D. T. Nguyen} \\ Student ID: \textbf{24125093}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% ============================================================
+\section{Exercise 3: Button-Controlled Switch Display (\texttt{Prog3})}
+% ============================================================
+
+\subsection{Overview}
+This program uses the three hardware buttons (B0, B1, B2) as commands that transform the current 10-bit switch field and display the result on the LED bank. The Button/Switch register at \texttt{0x80000010} packs 13 bits: bits [9:0] hold the switch value and bits [12:10] hold the state of B2, B1, and B0 respectively.
+
+\subsection{Algorithm and Implementation}
+The main loop continuously polls \texttt{0x80000010}. Each iteration extracts the relevant button bit with a logical right shift followed by an \texttt{andi} mask, and branches to the appropriate handler.
+
+\begin{lstlisting}[style=mips, caption={Button Detection and Raw Display (B0 handler)}]
+loop:
+    lw   $11, 0($9)          # read Button/Switch register
+    srl  $12, $11, 10
+    andi $13, $12, 1         # isolate B0 (bit 10)
+    bne  $13, $0, b0_pressed
+
+b0_pressed:
+    andi $14, $11, 0x3FF     # mask to 10-bit switch field
+    sw   $14, 0($10)         # write to LED bank (0x8000000C)
+    j    loop
+\end{lstlisting}
+
+B1 additionally left-shifts the switch value by one and re-masks to 10 bits. B2 performs bitwise inversion by XOR-ing with a mask of \texttt{0x3FF}:
+
+\begin{lstlisting}[style=mips, caption={Shift and Invert Handlers (B1 and B2)}]
+b1_pressed:
+    andi $14, $11, 0x3FF
+    sll  $14, $14, 1
+    andi $14, $14, 0x3FF     # keep result within 10 bits
+    sw   $14, 0($10)
+    j    loop
+
+b2_pressed:
+    andi $14, $11, 0x3FF
+    ori  $15, $0,  0x3FF     # all-ones mask
+    xor  $14, $14, $15       # flip all 10 bits
+    sw   $14, 0($10)
+    j    loop
+\end{lstlisting}
+
+\subsection{Simulation Observations}
+\begin{itemize}
+    \item The program consists of \textbf{27 instructions}. Because all three handlers return directly to \texttt{loop}, only the most recently pressed button determines the displayed value.
+    \item The shift-left operation requires a post-mask \texttt{andi} to prevent overflow into unused LED bits above bit 9.
+    \item The bitwise inversion uses an intermediate register loaded with \texttt{ori \$15, \$0, 0x3FF} rather than an \texttt{xori} immediate, keeping the code compatible with the custom Logisim ALU.
+\end{itemize}
+
+% ============================================================
+\newpage
+\section{Exercise 4: RAM Counter with LED Display (\texttt{Prog4})}
+% ============================================================
+
+\subsection{Overview}
+A 32-bit signed counter is maintained in data RAM at address \texttt{0x00000000}. Button B0 increments it, B1 decrements it, and B2 resets it to zero. The current counter value is displayed on the 10-bit LED bank after every change.
+
+\subsection{Algorithm and Implementation}
+Each button handler loads the counter, modifies it with \texttt{addiu}, stores the new value back to RAM, and also writes it directly to the LED MMIO register. A release-wait loop is inserted after each action to prevent a single button press from triggering multiple increments.
+
+\begin{lstlisting}[style=mips, caption={Increment Handler with Release-Wait (B0)}]
+b0_inc:
+    lw    $14, 0($0)         # load counter from RAM[0x0]
+    addiu $14, $14, 1
+    sw    $14, 0($0)         # store updated counter
+    sw    $14, 0($10)        # display on LEDs (0x8000000C)
+wait_b0:
+    lw   $11, 0($9)
+    srl  $12, $11, 10
+    andi $13, $12, 1
+    bne  $13, $0, wait_b0   # spin until B0 released
+    j    loop
+\end{lstlisting}
+
+The reset handler uses \texttt{\$0} directly as the store source, avoiding the need to load a zero constant:
+
+\begin{lstlisting}[style=mips, caption={Reset Handler (B2)}]
+b2_reset:
+    sw   $0, 0($0)           # RAM[0] = 0
+    sw   $0, 0($10)          # LED = 0
+\end{lstlisting}
+
+\subsection{Simulation Observations}
+\begin{itemize}
+    \item The program is \textbf{39 instructions}. The counter is stored as a full 32-bit signed word, so it can represent both positive and negative values as displayed on the LEDs in two's complement binary.
+    \item Since \texttt{\$0} is always zero, both the RAM store and the LED store for the reset case require no prior load, saving two instructions.
+    \item The release-wait idiom prevents rapid repeated firing when a button is held down.
+\end{itemize}
+
+% ============================================================
+\newpage
+\section{Exercise 5: Two-Digit 7-Segment Display Counter (\texttt{Prog5})}
+% ============================================================
+
+\subsection{Overview}
+A two-digit 7-segment display block is added to the Southbridge and mapped to address \texttt{0x80000014}. The program maintains the same counter-in-RAM structure as Exercise 4, but button assignments are reversed (B0 decrements, B1 increments) and the output is directed to the 7-segment display instead of the LED bank.
+
+\subsection{Memory-Mapped I/O Extension}
+The new 7-segment display peripheral is wired into the Southbridge at \texttt{0x80000014}. Writing a binary value $v$ to this address causes the display controller to render the decimal representation on two digits. The MIPS processor treats it identically to any other MMIO store:
+
+\begin{lstlisting}[style=mips, caption={Initialisation and 7-Segment Store}]
+    ori  $16, $8, 0x0014     # $16 = 0x80000014 (7-seg address)
+    ...
+b1_inc:
+    lw    $14, 0($0)
+    addiu $14, $14, 1
+    sw    $14, 0($0)
+    sw    $14, 0($16)        # write value to 7-segment display
+\end{lstlisting}
+
+\subsection{Simulation Observations}
+\begin{itemize}
+    \item The program is structurally identical to Prog4 (also \textbf{39 instructions}); the only differences are the button polarity (B0/B1 swapped) and the output register (\texttt{\$16} replaces \texttt{\$10}).
+    \item The 7-segment display decodes the binary counter value internally, so no software BCD conversion is required.
+    \item Release-wait loops prevent repeated triggering, consistent with Exercise 4.
+\end{itemize}
+
+% ============================================================
+\newpage
+\section{Exercise 6: 8$\times$8 LED Matrix Arrow Symbols (\texttt{Prog6})}
+% ============================================================
+
+\subsection{Overview}
+An 8$\times$8 LED matrix is added to the Southbridge. Its eight row registers are mapped to consecutive word addresses starting at \texttt{0x80000018} (row 0) through \texttt{0x80000034} (row 7). Each press of button B1 advances through a cycle of four arrow symbols: left ($\leftarrow$), right ($\rightarrow$), up ($\uparrow$), and down ($\downarrow$).
+
+\subsection{Symbol Design and RAM Storage}
+Each symbol is an 8-byte bitmap where bit 7 of each byte represents the leftmost column and bit 0 represents the rightmost. The four patterns are:
+
+\begin{center}
+\begin{tabular}{lcccccccc}
+\toprule
+Symbol & Row 0 & Row 1 & Row 2 & Row 3 & Row 4 & Row 5 & Row 6 & Row 7 \\
+\midrule
+Left  ($\leftarrow$)  & \texttt{08} & \texttt{18} & \texttt{38} & \texttt{7F} & \texttt{7F} & \texttt{38} & \texttt{18} & \texttt{08} \\
+Right ($\rightarrow$) & \texttt{10} & \texttt{18} & \texttt{1C} & \texttt{FE} & \texttt{FE} & \texttt{1C} & \texttt{18} & \texttt{10} \\
+Up    ($\uparrow$)    & \texttt{18} & \texttt{3C} & \texttt{7E} & \texttt{FF} & \texttt{18} & \texttt{18} & \texttt{18} & \texttt{18} \\
+Down  ($\downarrow$)  & \texttt{18} & \texttt{18} & \texttt{18} & \texttt{18} & \texttt{FF} & \texttt{7E} & \texttt{3C} & \texttt{18} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The bitmaps are written into data RAM during initialisation. Symbol $i$, row $j$ is stored at RAM address $4 + 32i + 4j$. The current symbol index (0--3) is kept at RAM address \texttt{0x00000000}.
+
+\subsection{Algorithm and Implementation}
+The \texttt{display\_symbol} subroutine computes the base address of the current symbol as $\mathtt{\$20} = \mathtt{\$14} \times 32 + 4$ using a left shift and immediate addition, then copies all eight rows to the LED matrix MMIO:
+
+\begin{lstlisting}[style=mips, caption={Display Subroutine}]
+display_symbol:
+    sll   $20, $14, 5        # $20 = index * 32
+    addiu $20, $20, 4        # $20 = base RAM address of symbol
+
+    lw $21, 0($20)  ; sw $21, 0($17)   # row 0 -> LED matrix row 0
+    lw $21, 4($20)  ; sw $21, 4($17)   # row 1 -> LED matrix row 1
+    ...                                 # rows 2-7 (same pattern)
+    jr $31
+\end{lstlisting}
+
+The main loop advances the symbol index on each B1 press using a 2-bit mask to enforce modulo-4 wraparound:
+
+\begin{lstlisting}[style=mips, caption={Symbol Advance Logic}]
+advance_symbol:
+    lw    $14, 0($0)
+    addiu $14, $14, 1
+    andi  $14, $14, 3        # index mod 4 (masks to bits [1:0])
+    sw    $14, 0($0)
+    jal   display_symbol
+\end{lstlisting}
+
+\subsection{Simulation Observations}
+\begin{itemize}
+    \item The program is \textbf{104 instructions}: 64 for table initialisation, 3 for setup, and the remaining 37 for the main loop, advance handler, release-wait, and subroutine.
+    \item The modulo-4 index wrap is achieved with a single \texttt{andi \$14, \$14, 3} rather than a branch, exploiting the fact that $2^2 = 4$.
+    \item The use of \texttt{jal}/\texttt{jr \$31} keeps the display routine reusable from both the startup call and the button handler, demonstrating standard MIPS subroutine convention.
+\end{itemize}
+
+% ============================================================
+\section{Conclusion}
+% ============================================================
+
+This lab explored direct hardware control on a custom MIPS Logisim processor through Memory-Mapped I/O. Exercises 3--4 established the foundational pattern of polling the combined Button/Switch register at \texttt{0x80000010}, extracting individual bit fields with shift-and-mask sequences, and reflecting computed results onto output peripherals. Exercise 5 demonstrated that adding a new I/O peripheral (the 7-segment display at \texttt{0x80000014}) requires no changes to the control logic—only the destination register changes. Exercise 6 synthesised all prior techniques: it introduced a RAM-resident data table, a \texttt{jal}/\texttt{jr} subroutine, and an indexed memory access pattern ($\mathtt{sll} + \mathtt{addiu}$) to efficiently address a multi-symbol bitmap, highlighting how a small number of MIPS instructions can drive a rich visual output with no hardware multiplier.
+
+\end{document}

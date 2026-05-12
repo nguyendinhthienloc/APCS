@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5-Stage Datapath Cheatsheet</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --border: #252a35;
+    --accent1: #00e5ff;
+    --accent2: #ff6b35;
+    --accent3: #7fff6b;
+    --accent4: #ffcc00;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --load: #3b82f6;
+    --store: #f59e0b;
+    --alu: #10b981;
+    --call: #a855f7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Pipeline strip */
+  .pipeline {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .stage {
+    flex: 1;
+    padding: 1rem 0.75rem;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .stage:last-child { border-right: none; }
+
+  .stage-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .stage-name {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .stage-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .s1 { background: #0d1117; }
+  .s2 { background: #0f1318; }
+  .s3 { background: #101419; }
+  .s4 { background: #11151a; }
+  .s5 { background: #12161b; }
+
+  .s1 .stage-name { color: #94a3b8; }
+  .s2 .stage-name { color: var(--accent4); }
+  .s3 .stage-name { color: var(--accent2); }
+  .s4 .stage-name { color: var(--accent1); }
+  .s5 .stage-name { color: var(--accent3); }
+
+  /* Signal badges */
+  .signals-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .sig {
+    background: #1a1f2e;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.2rem 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent1);
+  }
+
+  /* Main decision table */
+  .section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .decision-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .instr-card {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .instr-header {
+    padding: 0.6rem 1rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+  }
+
+  .instr-body {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--surface);
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .row:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .row-label {
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+  }
+
+  .row-val {
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+  }
+
+  .load-card .instr-header { background: #1e3a5f; color: #60a5fa; }
+  .alu-card .instr-header  { background: #14352a; color: #34d399; }
+  .store-card .instr-header{ background: #3a2a0f; color: #fbbf24; }
+  .call-card .instr-header { background: #2a1440; color: #c084fc; }
+
+  .v-load  { color: #60a5fa; }
+  .v-alu   { color: #34d399; }
+  .v-store { color: #fbbf24; }
+  .v-call  { color: #c084fc; }
+  .v-no    { color: #ef4444; }
+  .v-yes   { color: #34d399; }
+
+  /* MuxY reference */
+  .muxy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .muxy-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .muxy-val {
+    font-size: 2rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 0.25rem;
+  }
+
+  .muxy-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .muxy-desc {
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* How-to steps */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+  }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent2);
+    min-width: 2rem;
+    line-height: 1;
+    padding-top: 0.1rem;
+  }
+
+  .step-content { flex: 1; }
+
+  .step-q {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .step-a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .step-a span { color: var(--text); font-weight: 700; }
+
+  /* Trap box */
+  .trap-box {
+    background: #1a0f0f;
+    border: 1px solid #4a1c1c;
+    border-radius: 10px;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 2rem;
+  }
+
+  .trap-title {
+    color: #ef4444;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .trap-item {
+    font-size: 0.78rem;
+    color: #fca5a5;
+    margin-bottom: 0.35rem;
+    padding-left: 1rem;
+    position: relative;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .trap-item::before {
+    content: '⚠';
+    position: absolute;
+    left: 0;
+    font-size: 0.65rem;
+  }
+
+  @media (max-width: 700px) {
+    .decision-grid { grid-template-columns: 1fr 1fr; }
+    .muxy-grid { grid-template-columns: 1fr; }
+    .pipeline { flex-direction: column; }
+    .stage { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<h1>5-Stage Datapath</h1>
+<p class="subtitle">// control signals cheatsheet — ECE341 final review</p>
+
+<!-- Pipeline overview -->
+<div class="section-title">The 5 Stages</div>
+<div class="pipeline">
+  <div class="stage s1">
+    <div class="stage-num">Stage 1</div>
+    <div class="stage-name">Fetch</div>
+    <div class="stage-detail">IR ← Mem[PC]<br>PC ← PC + 4</div>
+  </div>
+  <div class="stage s2">
+    <div class="stage-num">Stage 2</div>
+    <div class="stage-name">Decode</div>
+    <div class="stage-detail">RA ← [Rsrc1]<br>RB ← [Rsrc2]<br>read regs</div>
+    <div class="signals-row" style="margin-top:0.5rem">
+      <span class="sig">RF read</span>
+    </div>
+  </div>
+  <div class="stage s3">
+    <div class="stage-num">Stage 3</div>
+    <div class="stage-name">Execute</div>
+    <div class="stage-detail">RZ ← ALU out<br>RM ← [RB]<br>(for Store)</div>
+    <div class="signals-row" style="margin-top:0.5rem">
+      <span class="sig">MuxB</span><span class="sig">ALU_op</span>
+    </div>
+  </div>
+  <div class="stage s4">
+    <div class="stage-num">Stage 4</div>
+    <div class="stage-name">Mem Access</div>
+    <div class="stage-detail">Load: read mem<br>Store: write mem<br>ALU: pass RZ</div>
+    <div class="signals-row" style="margin-top:0.5rem">
+      <span class="sig">Y_select</span>
+    </div>
+  </div>
+  <div class="stage s5">
+    <div class="stage-num">Stage 5</div>
+    <div class="stage-name">Writeback</div>
+    <div class="stage-detail">Rdst ← [RY]<br>(if RF_write=1)</div>
+    <div class="signals-row" style="margin-top:0.5rem">
+      <span class="sig">RF_write</span><span class="sig">C_select</span>
+    </div>
+  </div>
+</div>
+
+<!-- Decision cards -->
+<div class="section-title">Signal Values by Instruction Type</div>
+<div class="decision-grid">
+
+  <div class="instr-card load-card">
+    <div class="instr-header">LOAD Rd, X(Rs)</div>
+    <div class="instr-body">
+      <div class="row">
+        <span class="row-label">MuxB</span>
+        <span class="row-val v-load">1 — Imm. X</span>
+      </div>
+      <div class="row">
+        <span class="row-label">ALU does</span>
+        <span class="row-val v-load">Rs + X</span>
+      </div>
+      <div class="row">
+        <span class="row-label">Y_select</span>
+        <span class="row-val v-load">1 — Mem Data</span>
+      </div>
+      <div class="row">
+        <span class="row-label">RY after S4</span>
+        <span class="row-val v-load">Mem[Rs+X]</span>
+      </div>
+      <div class="row">
+        <span class="row-label">RF_write</span>
+        <span class="row-val v-yes">1 ✓</span>
+      </div>
+      <div class="row">
+        <span class="row-label">C_select</span>
+        <span class="row-val v-load">→ Rd</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="instr-card alu-card">
+    <div class="instr-header">ALU Rd, Ra, Rb</div>
+    <div class="instr-body">
+      <div class="row">
+        <span class="row-label">MuxB</span>
+        <span class="row-val v-alu">0 — RB reg</span>
+      </div>
+      <div class="row">
+        <span class="row-label">ALU does</span>
+        <span class="row-val v-alu">Ra op Rb</span>
+      </div>
+      <div class="row">
+        <span class="row-label">Y_select</span>
+        <span class="row-val v-alu">0 — RZ</span>
+      </div>
+      <div class="row">
+        <span class="row-label">RY after S4</span>
+        <span class="row-val v-alu">ALU result</span>
+      </div>
+      <div class="row">
+        <span class="row-label">RF_write</span>
+        <span class="row-val v-yes">1 ✓</span>
+      </div>
+      <div class="row">
+        <span class="row-label">C_select</span>
+        <span class="row-val v-alu">→ Rd</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="instr-card store-card">
+    <div class="instr-header">STORE Rs, X(Rb)</div>
+    <div class="instr-body">
+      <div class="row">
+        <span class="row-label">MuxB</span>
+        <span class="row-val v-store">1 — Imm. X</span>
+      </div>
+      <div class="row">
+        <span class="row-label">ALU does</span>
+        <span class="row-val v-store">Rb + X (addr)</span>
+      </div>
+      <div class="row">
+        <span class="row-label">Y_select</span>
+        <span class="row-val v-store">— (don't care)</span>
+      </div>
+      <div class="row">
+        <span class="row-label">RY after S4</span>
+        <span class="row-val v-store">irrelevant</span>
+      </div>
+      <div class="row">
+        <span class="row-label">RF_write</span>
+        <span class="row-val v-no">0 ✗</span>
+      </div>
+      <div class="row">
+        <span class="row-label">C_select</span>
+        <span class="row-val v-store">don't care</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="instr-card call-card">
+    <div class="instr-header">CALL / BR_LINK</div>
+    <div class="instr-body">
+      <div class="row">
+        <span class="row-label">MuxB</span>
+        <span class="row-val v-call">varies</span>
+      </div>
+      <div class="row">
+        <span class="row-label">ALU does</span>
+        <span class="row-val v-call">compute target</span>
+      </div>
+      <div class="row">
+        <span class="row-label">Y_select</span>
+        <span class="row-val v-call">2 — Return Addr</span>
+      </div>
+      <div class="row">
+        <span class="row-label">RY after S4</span>
+        <span class="row-val v-call">PC+4 (ret addr)</span>
+      </div>
+      <div class="row">
+        <span class="row-label">RF_write</span>
+        <span class="row-val v-yes">1 ✓</span>
+      </div>
+      <div class="row">
+        <span class="row-label">C_select</span>
+        <span class="row-val v-call">2 → LINK reg</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MuxY reference -->
+<div class="section-title">MuxY (Y_select) — What Goes Into RY</div>
+<div class="muxy-grid">
+  <div class="muxy-card">
+    <div class="muxy-val" style="color:var(--accent3)">0</div>
+    <div class="muxy-name">RZ — ALU Result</div>
+    <div class="muxy-desc">Used by: ADD, SUB, XOR,<br>AND, OR, and all<br>register-register ops</div>
+  </div>
+  <div class="muxy-card">
+    <div class="muxy-val" style="color:var(--accent1)">1</div>
+    <div class="muxy-name">Memory Data</div>
+    <div class="muxy-desc">Used by: LOAD only<br>Data read from memory<br>goes into RY here</div>
+  </div>
+  <div class="muxy-card">
+    <div class="muxy-val" style="color:var(--call)">2</div>
+    <div class="muxy-name">Return Address</div>
+    <div class="muxy-desc">Used by: CALL / BR_LINK<br>Saves PC+4 so the<br>program can return</div>
+  </div>
+</div>
+
+<!-- Step-by-step how to solve -->
+<div class="section-title">How to Solve Any Question — 4 Steps</div>
+<div class="steps">
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <div class="step-q">Identify instruction type</div>
+      <div class="step-a">
+        Has <span>X(Reg)</span> offset AND loading a register? → <span>LOAD</span><br>
+        Has <span>X(Reg)</span> offset AND writing to memory? → <span>STORE</span><br>
+        Two register operands, result into a register? → <span>ALU</span> (ADD, XOR, AND…)<br>
+        Saves return address? → <span>CALL</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <div class="step-q">Determine MuxB</div>
+      <div class="step-a">
+        Is there an <span>immediate / offset</span> in the instruction? → MuxB = <span>1</span><br>
+        Are <span>both operands registers</span>? → MuxB = <span>0</span><br>
+        Tip: LOAD and STORE always have an offset → always MuxB = <span>1</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <div class="step-q">Compute RY after Stage 4</div>
+      <div class="step-a">
+        LOAD → RY = <span>value read from memory</span> at address (base + offset)<br>
+        ALU  → RY = <span>result of ALU operation</span> (use updated register values!)<br>
+        STORE → RY = <span>don't care</span> (nothing written to register)<br>
+        CALL  → RY = <span>PC + 4</span> (return address)
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <div class="step-q">RF_write in Stage 5</div>
+      <div class="step-a">
+        <span>STORE</span> → RF_write = <span>0</span>  (writes memory, NOT a register)<br>
+        <span>Everything else</span> (LOAD, ALU, CALL) → RF_write = <span>1</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Common traps -->
+<div class="trap-box">
+  <div class="trap-title">⚡ Common Exam Traps</div>
+  <div class="trap-item">Register values UPDATE after each instruction. Instruction 2 uses the NEW value written by Instruction 1.</div>
+  <div class="trap-item">Store: RF_write = 0. Students always write 1 here. Store writes to MEMORY, not to a register.</div>
+  <div class="trap-item">For LOAD, RY = Mem[base + offset], NOT the base register value itself.</div>
+  <div class="trap-item">For ALU ops, RY = ALU result (RZ passed through MuxY=0). Not RM, not memory.</div>
+  <div class="trap-item">Store's RY is irrelevant — don't waste time computing it.</div>
+</div>
+
+</body>
+</html>

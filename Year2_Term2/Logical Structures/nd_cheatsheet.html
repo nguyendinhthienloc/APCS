@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d0d0f; color: #e8e6e0; font-family: 'Syne', sans-serif; padding: 32px 24px; }
+  h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; color: #fff; margin-bottom: 4px; }
+  .subtitle { font-size: 0.72rem; color: #555; font-family: 'JetBrains Mono', monospace; margin-bottom: 24px; letter-spacing: 0.06em; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 4px; font-size: 0.73rem; font-weight: 700; cursor: pointer; border: 1.5px solid transparent; background: #1a1a1e; color: #777; transition: all 0.15s; letter-spacing: 0.05em; }
+  .tab:hover { color: #ccc; border-color: #333; }
+  .tab.active { background: #fff; color: #0d0d0f; border-color: #fff; }
+  .section { display: none; }
+  .section.active { display: block; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.81rem; }
+  th { text-align: left; padding: 8px 10px; font-size: 0.63rem; letter-spacing: 0.1em; color: #444; border-bottom: 1px solid #222; font-family: 'JetBrains Mono', monospace; }
+  td { padding: 10px 10px; border-bottom: 1px solid #181818; vertical-align: top; line-height: 1.55; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #13131a; }
+  .rule-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.8rem; white-space: nowrap; }
+  .tag { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 0.63rem; font-weight: 700; letter-spacing: 0.06em; font-family: 'JetBrains Mono', monospace; }
+  .tag-i { background: #1a2e1a; color: #4ade80; }
+  .tag-e { background: #2e1a1a; color: #f87171; }
+  .fm { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #a78bfa; background: #17141f; padding: 1px 6px; border-radius: 3px; display: inline-block; margin: 1px 0; }
+  code { font-family: 'JetBrains Mono', monospace; color: #a78bfa; font-size: 0.75rem; background: #17141f; padding: 1px 5px; border-radius: 2px; }
+  .sc { background: #111114; border: 1px solid #1e1e22; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  .sc h3 { font-size: 0.85rem; font-weight: 700; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .sc p { font-size: 0.79rem; color: #888; line-height: 1.6; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; margin-top: 2px; }
+  .dg { background: #4ade80; }
+  .dh { background: #f87171; }
+  .db { background: #fb923c; }
+  .legend { display: flex; gap: 18px; margin-bottom: 16px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #555; font-family: 'JetBrains Mono', monospace; }
+  .warn { color: #f87171; font-size: 0.76rem; }
+  .muted { color: #666; font-size: 0.76rem; }
+</style>
+</head>
+<body>
+
+<h1>Natural Deduction Cheatsheet</h1>
+<p class="subtitle">HUTH &amp; RYAN &middot; PROPOSITIONAL + PREDICATE LOGIC</p>
+
+<div class="tabs">
+  <div class="tab active" onclick="show('all',this)">All Rules</div>
+  <div class="tab" onclick="show('prop',this)">Propositional</div>
+  <div class="tab" onclick="show('pred',this)">Predicate</div>
+  <div class="tab" onclick="show('strat',this)">Strategy Guide</div>
+</div>
+
+<!-- ALL RULES -->
+<div id="all" class="section active">
+<table>
+  <tr><th style="width:115px">RULE</th><th style="width:65px">TYPE</th><th style="width:200px">WHAT YOU NEED</th><th>WHAT YOU GET / HOW TO USE</th></tr>
+  <tr><td><span class="rule-name">&and;i</span></td><td><span class="tag tag-i">INTRO</span></td><td><span class="fm">A</span> and <span class="fm">B</span> on separate lines</td><td>Write <span class="fm">A &and; B</span> &mdash; justify: <code>&and;i, m, n</code></td></tr>
+  <tr><td><span class="rule-name">&and;e&sub1;</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">A &and; B</span></td><td>Extract <span class="fm">A</span> &mdash; justify: <code>&and;e1, n</code></td></tr>
+  <tr><td><span class="rule-name">&and;e&sub2;</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">A &and; B</span></td><td>Extract <span class="fm">B</span> &mdash; justify: <code>&and;e2, n</code></td></tr>
+  <tr><td><span class="rule-name">&or;i&sub1;</span></td><td><span class="tag tag-i">INTRO</span></td><td><span class="fm">A</span></td><td>Write <span class="fm">A &or; B</span> for any B &mdash; justify: <code>&or;i1, n</code></td></tr>
+  <tr><td><span class="rule-name">&or;i&sub2;</span></td><td><span class="tag tag-i">INTRO</span></td><td><span class="fm">B</span></td><td>Write <span class="fm">A &or; B</span> for any A &mdash; justify: <code>&or;i2, n</code></td></tr>
+  <tr><td><span class="rule-name">&or;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">A &or; B</span> + two subproofs</td><td>Subproof 1: assume <span class="fm">A</span> &rarr; prove <span class="fm">C</span>. Subproof 2: assume <span class="fm">B</span> &rarr; prove <span class="fm">C</span>. Conclude <span class="fm">C</span>.</td></tr>
+  <tr><td><span class="rule-name">&rarr;i</span></td><td><span class="tag tag-i">INTRO</span></td><td>Subproof: assume <span class="fm">A</span>, derive <span class="fm">B</span></td><td>Write <span class="fm">A &rarr; B</span> &mdash; justify: <code>&rarr;i, m--n</code></td></tr>
+  <tr><td><span class="rule-name">&rarr;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">A &rarr; B</span> and <span class="fm">A</span></td><td>Write <span class="fm">B</span> (modus ponens) &mdash; justify: <code>&rarr;e, m, n</code></td></tr>
+  <tr><td><span class="rule-name">&not;i</span></td><td><span class="tag tag-i">INTRO</span></td><td>Subproof: assume <span class="fm">A</span>, derive <span class="fm">&perp;</span></td><td>Write <span class="fm">&not;A</span> &mdash; justify: <code>&not;i, m--n</code></td></tr>
+  <tr><td><span class="rule-name">&not;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">A</span> and <span class="fm">&not;A</span></td><td>Write <span class="fm">&perp;</span> &mdash; justify: <code>&not;e, m, n</code></td></tr>
+  <tr><td><span class="rule-name">&perp;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">&perp;</span></td><td>Write <em>anything</em> (ex falso) &mdash; justify: <code>&perp;e, n</code></td></tr>
+  <tr><td><span class="rule-name">&not;&not;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">&not;&not;A</span></td><td>Write <span class="fm">A</span> (double negation)</td></tr>
+  <tr><td><span class="rule-name">PBC</span></td><td><span class="tag tag-i">INTRO</span></td><td>Subproof: assume <span class="fm">&not;A</span>, derive <span class="fm">&perp;</span></td><td>Write <span class="fm">A</span> (proof by contradiction &mdash; classical only)</td></tr>
+  <tr><td><span class="rule-name">LEM</span></td><td><span class="tag tag-i">INTRO</span></td><td>Nothing</td><td>Write <span class="fm">A &or; &not;A</span> for free (classical only)</td></tr>
+  <tr><td><span class="rule-name">&forall;i</span></td><td><span class="tag tag-i">INTRO</span></td><td>Subproof with fresh <span class="fm">a</span>, derive <span class="fm">P(a)</span></td><td>Write <span class="fm">&forall;x P(x)</span>. <span class="warn">a must not be free in any open assumption.</span></td></tr>
+  <tr><td><span class="rule-name">&forall;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">&forall;x P(x)</span></td><td>Write <span class="fm">P(t)</span> for any term t you choose. Use as many times as you like.</td></tr>
+  <tr><td><span class="rule-name">&exist;i</span></td><td><span class="tag tag-i">INTRO</span></td><td><span class="fm">P(t)</span> for some term t</td><td>Write <span class="fm">&exist;x P(x)</span>. You have your witness &mdash; generalise it.</td></tr>
+  <tr><td><span class="rule-name">&exist;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">&exist;x P(x)</span> + subproof</td><td>Assume <span class="fm">P(a)</span> (fresh a), derive <span class="fm">C</span>. <span class="warn">C must not contain a.</span></td></tr>
+</table>
+</div>
+
+<!-- PROPOSITIONAL -->
+<div id="prop" class="section">
+<table>
+  <tr><th style="width:115px">RULE</th><th style="width:65px">TYPE</th><th>NEED</th><th>GET</th></tr>
+  <tr><td><span class="rule-name">&and;i</span></td><td><span class="tag tag-i">INTRO</span></td><td><span class="fm">A</span> and <span class="fm">B</span></td><td><span class="fm">A &and; B</span></td></tr>
+  <tr><td><span class="rule-name">&and;e&sub1; / &and;e&sub2;</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">A &and; B</span></td><td><span class="fm">A</span> or <span class="fm">B</span></td></tr>
+  <tr><td><span class="rule-name">&or;i&sub1; / &or;i&sub2;</span></td><td><span class="tag tag-i">INTRO</span></td><td><span class="fm">A</span> or <span class="fm">B</span></td><td><span class="fm">A &or; B</span></td></tr>
+  <tr><td><span class="rule-name">&or;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">A &or; B</span> + 2 subproofs both reaching <span class="fm">C</span></td><td><span class="fm">C</span></td></tr>
+  <tr><td><span class="rule-name">&rarr;i</span></td><td><span class="tag tag-i">INTRO</span></td><td>Assume <span class="fm">A</span>, derive <span class="fm">B</span></td><td><span class="fm">A &rarr; B</span></td></tr>
+  <tr><td><span class="rule-name">&rarr;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">A &rarr; B</span> and <span class="fm">A</span></td><td><span class="fm">B</span></td></tr>
+  <tr><td><span class="rule-name">&not;i</span></td><td><span class="tag tag-i">INTRO</span></td><td>Assume <span class="fm">A</span>, derive <span class="fm">&perp;</span></td><td><span class="fm">&not;A</span></td></tr>
+  <tr><td><span class="rule-name">&not;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">A</span> and <span class="fm">&not;A</span></td><td><span class="fm">&perp;</span></td></tr>
+  <tr><td><span class="rule-name">&perp;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">&perp;</span></td><td>Anything</td></tr>
+  <tr><td><span class="rule-name">&not;&not;e</span></td><td><span class="tag tag-e">ELIM</span></td><td><span class="fm">&not;&not;A</span></td><td><span class="fm">A</span></td></tr>
+  <tr><td><span class="rule-name">PBC</span></td><td><span class="tag tag-i">INTRO</span></td><td>Assume <span class="fm">&not;A</span>, derive <span class="fm">&perp;</span></td><td><span class="fm">A</span></td></tr>
+  <tr><td><span class="rule-name">LEM</span></td><td><span class="tag tag-i">INTRO</span></td><td>Nothing</td><td><span class="fm">A &or; &not;A</span></td></tr>
+</table>
+</div>
+
+<!-- PREDICATE -->
+<div id="pred" class="section">
+<table>
+  <tr><th style="width:115px">RULE</th><th style="width:65px">TYPE</th><th>HOW TO USE</th><th>KEY CONSTRAINT</th></tr>
+  <tr>
+    <td><span class="rule-name">&forall;i</span></td><td><span class="tag tag-i">INTRO</span></td>
+    <td>Open subproof. Pick fresh name <span class="fm">a</span>. Prove <span class="fm">P(a)</span>. Close &rarr; write <span class="fm">&forall;x P(x)</span>.</td>
+    <td class="warn"><strong>a must be fresh</strong> &mdash; not free in any premise or open assumption outside the box.</td>
+  </tr>
+  <tr>
+    <td><span class="rule-name">&forall;e</span></td><td><span class="tag tag-e">ELIM</span></td>
+    <td>You have <span class="fm">&forall;x P(x)</span>. Write <span class="fm">P(t)</span> for any term t. Reuse as needed.</td>
+    <td class="muted">No restriction on t.</td>
+  </tr>
+  <tr>
+    <td><span class="rule-name">&exist;i</span></td><td><span class="tag tag-i">INTRO</span></td>
+    <td>You have <span class="fm">P(t)</span>. Generalise to write <span class="fm">&exist;x P(x)</span>.</td>
+    <td class="muted">You must already have a concrete witness.</td>
+  </tr>
+  <tr>
+    <td><span class="rule-name">&exist;e</span></td><td><span class="tag tag-e">ELIM</span></td>
+    <td>You have <span class="fm">&exist;x P(x)</span>. Open subproof, assume <span class="fm">P(a)</span> (fresh a), derive <span class="fm">C</span>, close &rarr; write <span class="fm">C</span>.</td>
+    <td class="warn"><strong>C must not contain a.</strong> a stays inside the box.</td>
+  </tr>
+</table>
+</div>
+
+<!-- STRATEGY -->
+<div id="strat" class="section">
+<div class="legend">
+  <div class="legend-item"><span class="dot dg"></span> LOOK AT YOUR GOAL</div>
+  <div class="legend-item"><span class="dot dh"></span> LOOK AT WHAT YOU HAVE</div>
+  <div class="legend-item"><span class="dot db"></span> STUCK</div>
+</div>
+
+<div class="sc"><h3><span class="dot dg"></span> Goal is <code>A &rarr; B</code></h3><p>Use <strong>&rarr;i</strong>. Open a subproof, assume <code>A</code>, prove <code>B</code>, close the box.</p></div>
+<div class="sc"><h3><span class="dot dg"></span> Goal is <code>&not;A</code></h3><p>Use <strong>&not;i</strong>. Open a subproof, assume <code>A</code>, derive <code>&perp;</code>, close the box.</p></div>
+<div class="sc"><h3><span class="dot dg"></span> Goal is <code>A &and; B</code></h3><p>Use <strong>&and;i</strong>. Prove <code>A</code> and <code>B</code> separately, then combine them.</p></div>
+<div class="sc"><h3><span class="dot dg"></span> Goal is <code>A &or; B</code></h3><p>Use <strong>&or;i&sub1;</strong> if you can prove <code>A</code>, or <strong>&or;i&sub2;</strong> if you can prove <code>B</code>. If neither is obvious, try PBC.</p></div>
+<div class="sc"><h3><span class="dot dg"></span> Goal is <code>&forall;x P(x)</code></h3><p>Use <strong>&forall;i</strong>. Open a subproof, pick fresh <code>a</code>, prove <code>P(a)</code>, close the box.</p></div>
+<div class="sc"><h3><span class="dot dg"></span> Goal is <code>&exist;x P(x)</code></h3><p>Use <strong>&exist;i</strong>. Find a concrete term <code>t</code>, prove <code>P(t)</code>, then generalise.</p></div>
+<div class="sc"><h3><span class="dot dh"></span> You have <code>A &or; B</code></h3><p>Use <strong>&or;e</strong>. Handle both cases: subproof 1 assumes <code>A</code>, subproof 2 assumes <code>B</code>. Both must reach the same conclusion <code>C</code>.</p></div>
+<div class="sc"><h3><span class="dot dh"></span> You have <code>&exist;x P(x)</code></h3><p>Use <strong>&exist;e</strong>. Open a subproof, assume <code>P(a)</code> for fresh <code>a</code>, derive your conclusion <code>C</code> (must not contain <code>a</code>), close the box.</p></div>
+<div class="sc"><h3><span class="dot dh"></span> You have <code>&forall;x P(x)</code></h3><p>Use <strong>&forall;e</strong> freely. Instantiate to any term you need. You can apply it multiple times with different terms.</p></div>
+<div class="sc"><h3><span class="dot dh"></span> You have <code>A</code> and <code>&not;A</code></h3><p>Use <strong>&not;e</strong> to get <code>&perp;</code>, then <strong>&perp;e</strong> to derive whatever your goal is.</p></div>
+<div class="sc"><h3><span class="dot db"></span> Completely stuck</h3><p>Try <strong>PBC</strong>: assume <code>&not;(goal)</code>, derive <code>&perp;</code>, conclude goal. Or use <strong>LEM</strong> on a relevant formula and case-split.</p></div>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

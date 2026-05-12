@@ -1,0 +1,160 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{lastpage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small VIETNAM NATIONAL UNIVERSITY -- HCMC \\ \small UNIVERSITY OF SCIENCE}
+\fancyhead[R]{\small \textbf{FINAL EXAMINATION} \\ \small Semester II -- Academic Year 2025--2026}
+\fancyfoot[L]{\small (This test has \pageref{LastPage} pages)}
+\fancyfoot[R]{\small Page \thepage/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\setlength{\headheight}{30pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+\begin{center}
+\textbf{\large TEST 2}\\[2pt]
+\textbf{Course:} Applied Statistics for Engineering and Scientists 1 \quad
+\textbf{Course ID:} STAT451\\[2pt]
+\textbf{Duration:} 90 minutes \hspace{1.5cm} \textbf{Materials:} One A4 formula sheet allowed
+\end{center}
+
+\vspace{-6pt}
+\noindent\textbf{Student name:} \dotfill \quad \textbf{Student ID:} \dotfill \quad \textbf{No.:} \dotfill
+
+\vspace{4pt}
+\noindent\textbf{Note:}
+\begin{itemize}[leftmargin=*,topsep=2pt,itemsep=0pt]
+  \item All calculations must be rounded to \textbf{four} decimal places.
+  \item Standard normal $\mathcal{N}(0,1)$ and Student $t$ distribution tables are provided.
+\end{itemize}
+
+%--------------------------------------------------------------------
+\textbf{Question 1.} (2.0 \emph{points})
+The diameter of stainless steel rods manufactured on an extruder is
+normally distributed with a mean of $\mu = 0.503$ inch and a standard
+deviation of $\sigma = 0.004$ inch. Rods are classified as acceptable
+only if their diameter falls in the interval $[0.495, 0.510]$ inch.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Compute the probability that a randomly selected rod is
+        \emph{not} acceptable (i.e., is defective).
+  \item Among a random sample of $n = 120$ rods, let $X$ denote the
+        number of defective rods. Using the normal approximation to
+        the binomial distribution (with continuity correction), find
+        $P(X \geq 10)$.
+  \item A random sample of $n = 25$ rods is drawn; let $\bar{X}$ be
+        the sample mean diameter. Determine the probability that
+        $\bar{X}$ differs from the process mean by less than
+        0.001 inch.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 2.} (2.0 \emph{points})
+A random sample of $n = 15$ specimens of a particular type of aluminum
+alloy yielded the following yield strengths (in ksi):
+\begin{center}
+33.8, 35.6, 34.2, 36.1, 33.4, 35.0, 34.7, 36.3,\\
+33.9, 35.2, 34.5, 35.9, 33.6, 34.8, 36.0
+\end{center}
+Assume the yield strengths are approximately normally distributed.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Compute the sample mean $\bar{x}$ and sample standard
+        deviation $s$. Then construct a 98\% confidence interval for
+        the true mean yield strength $\mu$.
+  \item In a quality audit, 186 out of 250 randomly inspected
+        aluminum castings passed all surface-defect tests. Construct
+        a 95\% confidence interval for the true proportion $p$ of
+        castings that pass.
+  \item Using the preliminary estimate from part (b), how many
+        castings should be inspected to estimate $p$ to within
+        0.03 with 95\% confidence?
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 3.} (2.0 \emph{points})
+The specification sheet for a certain chemical process asserts that
+its mean yield is exactly 500 grams per batch. A process engineer
+suspects that recent production has drifted from this target. A random
+sample of $n = 16$ batches produced a sample mean yield of
+$\bar{x} = 493.4$ grams with a sample standard deviation of
+$s = 11.2$ grams. Yields are approximately normally distributed.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item At the $\alpha = 0.05$ significance level, test the hypothesis
+        $H_0: \mu = 500$ against $H_1: \mu \neq 500$. State the
+        rejection region, the test statistic, and your conclusion.
+  \item In a separate study, the engineer records that 58 out of 400
+        randomly selected batches failed to meet the yield target.
+        The company had previously claimed the true failure rate is
+        at most 12\%. Test this claim at the $\alpha = 0.01$
+        significance level using the rejection-region approach.
+  \item Compute the $p$-value for part (b) and interpret its meaning.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 4.} (1.5 \emph{points})
+Two machines are used to fill plastic bottles with a net volume of
+16.0 ounces. The fill volumes are assumed to be normal. To compare the
+two machines, quality engineers collect random samples with the
+following results:
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+ & Machine 1 & Machine 2 \\
+\midrule
+Sample size                 & $n_1 = 10$   & $n_2 = 10$   \\
+Sample mean                 & $\bar{x}_1 = 16.015$ & $\bar{x}_2 = 16.005$ \\
+Sample standard deviation   & $s_1 = 0.030$ & $s_2 = 0.025$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Assuming the two population variances are \emph{equal},
+        test at $\alpha = 0.05$ whether there is any difference in the
+        mean fill volumes.
+  \item Construct a 95\% confidence interval for the difference in
+        mean fill volumes, $\mu_1 - \mu_2$.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 5.} (2.5 \emph{points})
+A researcher investigates the relationship between the hardness
+($y$, Rockwell B) of a copper alloy and the percentage of tin ($x$,
+\%) added to the alloy. Data for $n = 8$ specimens were recorded:
+\begin{center}
+\begin{tabular}{l|cccccccc}
+$x$ & 0.5 & 1.0 & 1.5 & 2.0 & 2.5 & 3.0 & 3.5 & 4.0 \\ \hline
+$y$ & 41.2 & 45.0 & 48.7 & 52.4 & 55.8 & 59.1 & 62.3 & 65.4 \\
+\end{tabular}
+\end{center}
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Compute the sample correlation coefficient $r$ between
+        tin percentage and hardness, and interpret it.
+  \item Determine the least-squares regression line
+        $\hat{y} = \hat{\beta}_0 + \hat{\beta}_1 x$, and interpret
+        both estimated coefficients.
+  \item Determine the coefficient of determination $R^{2}$ and
+        interpret it in the context of this study.
+  \item Predict the hardness when the tin percentage is
+        $x = 2.75\%$ and when $x = 6.0\%$. For each prediction,
+        state whether the estimate is reliable and justify your
+        answer.
+\end{enumerate}
+
+\vspace{10pt}
+\begin{center}
+\textbf{--- END OF TEST 2 ---}
+\end{center}
+
+\end{document}

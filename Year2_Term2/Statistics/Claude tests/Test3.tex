@@ -1,0 +1,154 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{lastpage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small VIETNAM NATIONAL UNIVERSITY -- HCMC \\ \small UNIVERSITY OF SCIENCE}
+\fancyhead[R]{\small \textbf{FINAL EXAMINATION} \\ \small Semester II -- Academic Year 2025--2026}
+\fancyfoot[L]{\small (This test has \pageref{LastPage} pages)}
+\fancyfoot[R]{\small Page \thepage/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\setlength{\headheight}{30pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+\begin{center}
+\textbf{\large TEST 3}\\[2pt]
+\textbf{Course:} Applied Statistics for Engineering and Scientists 1 \quad
+\textbf{Course ID:} STAT451\\[2pt]
+\textbf{Duration:} 90 minutes \hspace{1.5cm} \textbf{Materials:} One A4 formula sheet allowed
+\end{center}
+
+\vspace{-6pt}
+\noindent\textbf{Student name:} \dotfill \quad \textbf{Student ID:} \dotfill \quad \textbf{No.:} \dotfill
+
+\vspace{4pt}
+\noindent\textbf{Note:}
+\begin{itemize}[leftmargin=*,topsep=2pt,itemsep=0pt]
+  \item All calculations must be rounded to \textbf{four} decimal places.
+  \item Standard normal $\mathcal{N}(0,1)$ and Student $t$ distribution tables are provided.
+\end{itemize}
+
+%--------------------------------------------------------------------
+\textbf{Question 1.} (2.0 \emph{points})
+In the production of a certain pharmaceutical tablet, the active
+ingredient content (in mg) is approximately normally distributed with
+mean $\mu = 250$ mg and standard deviation $\sigma = 6$ mg. Tablets
+are considered acceptable only if the active-ingredient content is
+between 240 mg and 260 mg.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Compute the probability that a randomly chosen tablet is
+        \emph{rejected} (i.e., outside specification).
+  \item A large batch of 200 tablets is randomly selected from
+        production. Using the normal approximation to the binomial
+        distribution, calculate the probability that the batch
+        contains between 15 and 25 rejected tablets (inclusive).
+  \item A quality inspector randomly selects $n = 40$ tablets.
+        Determine the probability that the sample mean
+        active-ingredient content exceeds 252 mg.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 2.} (2.0 \emph{points})
+The impact strength (in foot-pounds) of insulating materials used in
+printed-circuit boards is being monitored. Historical records indicate
+that impact strength is approximately normally distributed with
+population standard deviation $\sigma = 0.45$ foot-pounds. A random
+sample of $n = 36$ specimens produced a sample mean of
+$\bar{x} = 1.58$ foot-pounds.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Construct a 99\% confidence interval for the true mean
+        impact strength $\mu$.
+  \item In a separate inspection, 42 out of 180 randomly selected
+        circuit boards failed a thermal-shock test. Construct a
+        90\% confidence interval for the true proportion $p$ of
+        boards that fail the test.
+  \item The quality engineer desires a 95\% confidence interval for
+        $\mu$ with a maximum error of 0.10 foot-pounds. What
+        minimum sample size is required?
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 3.} (2.0 \emph{points})
+A brochure claims that the mean tensile strength of a certain synthetic
+fiber is 84 cN/tex. To test this, a quality control laboratory
+measures a random sample of $n = 12$ fibers. Assuming the tensile
+strength is normally distributed, the sample yielded
+$\bar{x} = 82.1$ cN/tex and $s = 3.4$ cN/tex.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item At the significance level $\alpha = 0.05$, test
+        $H_0: \mu = 84$ against $H_1: \mu < 84$.
+        Clearly state the rejection region, the value of the test
+        statistic, and the conclusion in plain English.
+  \item A field study involving 500 fibers found that 85 of them
+        broke under the specified working load. The manufacturer
+        claims that the true breakage rate is less than 20\%.
+        Test this claim at $\alpha = 0.05$.
+  \item Compute the $p$-value for part (b) and interpret its meaning
+        in context.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 4.} (1.5 \emph{points})
+A dietician wishes to evaluate a new weight-loss supplement. Ten
+randomly selected volunteers were weighed (in kilograms) before
+starting the program and again after 8 weeks.
+\begin{center}
+\begin{tabular}{l|cccccccccc}
+Subject & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\ \hline
+Before  & 86.4 & 79.2 & 92.1 & 74.8 & 88.5 & 81.0 & 95.3 & 77.6 & 83.9 & 90.7 \\
+After   & 83.1 & 77.8 & 88.4 & 73.5 & 85.2 & 79.6 & 91.7 & 76.9 & 81.0 & 86.8 \\
+\end{tabular}
+\end{center}
+Assume the differences are approximately normal.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Test at $\alpha = 0.05$ whether the supplement produces a
+        mean weight loss of more than 2 kg. Use the paired $t$-test
+        and state all steps.
+  \item Construct a 95\% confidence interval for the mean weight
+        loss $\mu_D$.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 5.} (2.5 \emph{points})
+The final exam score ($y$) and the number of hours spent studying per
+week ($x$) are recorded for $n = 9$ randomly chosen students in an
+introductory statistics course:
+\begin{center}
+\begin{tabular}{l|ccccccccc}
+$x$ & 2 & 3 & 4 & 6 & 7 & 8 & 10 & 12 & 14 \\ \hline
+$y$ & 55 & 58 & 63 & 70 & 72 & 78 & 83 & 88 & 92 \\
+\end{tabular}
+\end{center}
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Determine the least-squares regression line
+        $\hat{y} = \hat{\beta}_0 + \hat{\beta}_1 x$. Interpret the
+        estimated slope and the intercept in context.
+  \item Compute the sample correlation coefficient $r$ between study
+        hours and exam score, and interpret its value.
+  \item Compute the coefficient of determination $R^{2}$ and
+        interpret it.
+  \item Using the regression line, predict the exam score for a
+        student who studies 9 hours per week and for a student who
+        studies 25 hours per week. Comment on the reliability of
+        each prediction.
+\end{enumerate}
+
+\vspace{10pt}
+\begin{center}
+\textbf{--- END OF TEST 3 ---}
+\end{center}
+
+\end{document}

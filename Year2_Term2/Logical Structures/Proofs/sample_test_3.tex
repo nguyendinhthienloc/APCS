@@ -1,0 +1,64 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+
+\geometry{a4paper, margin=1in}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+    \textbf{Sample Test 3} \\
+    \textbf{Times: 90 minutes}
+\end{center}
+
+\vspace{0.3cm}
+
+\noindent\textbf{Question 1} (2 points). Let
+\[
+\phi \equiv \exists x \bigl( P(y, z) \wedge \forall y (\neg Q(y, x) \vee P(y, z)) \bigr)
+\]
+and
+\[
+\psi \equiv \neg \forall x \bigl( (\exists y\, P(x, y, z)) \wedge (\forall z\, P(x, y, z)) \bigr).
+\]
+\begin{itemize}
+    \item[a)] Draw parse trees and identify the free and bound variables for $\phi$ and $\psi$.
+    \item[b)] Determine $\phi[f(x)/y]$ and $\psi[g(y, z)/z]$.
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 2} (2 points). Verify the following sequents using natural deduction rules.
+\begin{itemize}
+    \item[a)] $\exists x (S \rightarrow Q(x)) \vdash S \rightarrow \exists x\, Q(x)$
+    \item[b)] $\forall x (P(x) \vee Q(x)),\ \forall x \neg P(x) \vdash \forall x\, Q(x)$
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 3} (2 points). For each of the formulas below, find a model that satisfies the formula and one that does not.
+\begin{itemize}
+    \item[a)] $\forall x \forall y \bigl( S(x, y) \rightarrow S(y, x) \bigr) \rightarrow \forall x\, \neg S(x, x)$
+    \item[b)] $\exists y \bigl( (\forall x\, P(x)) \rightarrow P(y) \bigr)$
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 4} (2 points). Which of the following semantic entailments hold?
+\begin{itemize}
+    \item[a)] $\forall x\, P(x) \vee \forall x\, Q(x) \models \forall x (P(x) \vee Q(x))$
+    \item[b)] $\forall x (P(x) \vee Q(x)) \models \forall x\, P(x) \vee \forall x\, Q(x)$
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 5} (2 points). Use the tableau algorithm to determine whether the following formulas are valid or not. If it is not valid, is it satisfiable?
+\begin{itemize}
+    \item[a)] $\phi \equiv \bigl( p \rightarrow (q \rightarrow r) \bigr) \rightarrow \bigl( (p \rightarrow q) \rightarrow (p \rightarrow r) \bigr)$
+    \item[b)] $\psi \equiv \forall x (P(x) \rightarrow Q(x)) \rightarrow \bigl( \forall x\, P(x) \rightarrow \forall x\, Q(x) \bigr)$
+\end{itemize}
+
+\end{document}

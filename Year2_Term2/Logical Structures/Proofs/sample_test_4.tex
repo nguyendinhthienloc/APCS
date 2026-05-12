@@ -1,0 +1,64 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+
+\geometry{a4paper, margin=1in}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+    \textbf{Sample Test 4} \\
+    \textbf{Times: 90 minutes}
+\end{center}
+
+\vspace{0.3cm}
+
+\noindent\textbf{Question 1} (2 points). Let
+\[
+\phi \equiv \forall x \exists y \bigl( P(x, y) \wedge \neg Q(x, y, z) \bigr)
+\]
+and
+\[
+\psi \equiv \exists x \bigl( P(x) \wedge Q(f(x, y)) \bigr) \rightarrow \forall z\, R(z, y).
+\]
+\begin{itemize}
+    \item[a)] Draw parse trees and identify the free and bound variables for $\phi$ and $\psi$.
+    \item[b)] Determine $\phi[h(z)/z]$ and $\psi[g(x)/y]$.
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 2} (2 points). Verify the following sequents using natural deduction rules.
+\begin{itemize}
+    \item[a)] $\forall x\, P(x) \vee \forall x\, Q(x) \vdash \forall x \bigl( P(x) \vee Q(x) \bigr)$
+    \item[b)] $\neg \forall x\, \neg P(x) \vdash \exists x\, P(x)$
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 3} (2 points). For each of the formulas below, find a model that satisfies the formula and one that does not.
+\begin{itemize}
+    \item[a)] $\forall x \forall y \bigl( (P(x) \rightarrow P(y)) \wedge (P(y) \rightarrow P(x)) \bigr)$
+    \item[b)] $\forall x \exists y \bigl( P(x) \rightarrow Q(y) \bigr) \rightarrow \bigl( \forall x\, P(x) \rightarrow \exists y\, Q(y) \bigr)$
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 4} (2 points). Which of the following semantic entailments hold?
+\begin{itemize}
+    \item[a)] $\forall x \exists y\, P(x, y) \models \exists y \forall x\, P(x, y)$
+    \item[b)] $\exists x \bigl( P(x) \wedge Q(x) \bigr) \models \exists x\, P(x) \wedge \exists x\, Q(x)$
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 5} (2 points). Use the tableau algorithm to determine whether the following formulas are valid or not. If it is not valid, is it satisfiable?
+\begin{itemize}
+    \item[a)] $\phi \equiv \bigl( (p \rightarrow q) \wedge (q \rightarrow r) \bigr) \rightarrow (p \rightarrow r)$
+    \item[b)] $\psi \equiv \exists x \bigl( P(x) \rightarrow Q(x) \bigr) \rightarrow \bigl( \forall x\, P(x) \rightarrow \exists x\, Q(x) \bigr)$
+\end{itemize}
+
+\end{document}

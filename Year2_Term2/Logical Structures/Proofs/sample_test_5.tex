@@ -1,0 +1,64 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+
+\geometry{a4paper, margin=1in}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+    \textbf{Sample Test 5} \\
+    \textbf{Times: 90 minutes}
+\end{center}
+
+\vspace{0.3cm}
+
+\noindent\textbf{Question 1} (2 points). Let
+\[
+\phi \equiv \forall x \Bigl( P(x, f(y)) \rightarrow \exists z\, Q(x, z, g(y, z)) \Bigr)
+\]
+and
+\[
+\psi \equiv \exists x \forall y \Bigl( P(x, y) \rightarrow R(x, g(x, y)) \Bigr) \wedge \neg Q(x, y).
+\]
+\begin{itemize}
+    \item[a)] Draw parse trees and identify the free and bound variables for $\phi$ and $\psi$.
+    \item[b)] Determine $\phi[h(y)/y]$ and $\psi[f(z)/x]$.
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 2} (2 points). Verify the following sequents using natural deduction rules.
+\begin{itemize}
+    \item[a)] $\forall x \forall y\, P(x, y) \vdash \forall y \forall x\, P(x, y)$
+    \item[b)] $\forall x \bigl( P(x) \rightarrow Q(x) \bigr),\ \forall x\, P(x) \vdash \forall x\, Q(x)$
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 3} (2 points). For each of the formulas below, find a model that satisfies the formula and one that does not.
+\begin{itemize}
+    \item[a)] $\exists x \forall y\, P(x, y) \wedge \forall y\, \neg P(a, y)$
+    \item[b)] $\forall x \bigl( P(x) \rightarrow \exists y\, Q(x, y) \bigr)$
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 4} (2 points). Which of the following semantic entailments hold?
+\begin{itemize}
+    \item[a)] $\forall x\, P(x) \rightarrow \exists x\, Q(x) \models \exists x \bigl( P(x) \rightarrow Q(x) \bigr)$
+    \item[b)] $\forall x \bigl( P(x) \rightarrow Q(x) \bigr) \models \bigl( \forall x\, P(x) \bigr) \rightarrow \bigl( \forall x\, Q(x) \bigr)$
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent\textbf{Question 5} (2 points). Use the tableau algorithm to determine whether the following formulas are valid or not. If it is not valid, is it satisfiable?
+\begin{itemize}
+    \item[a)] $\phi \equiv \bigl( (p \vee q) \wedge (p \rightarrow r) \wedge (q \rightarrow r) \bigr) \rightarrow r$
+    \item[b)] $\psi \equiv \bigl( \forall x \exists y\, P(x, y) \bigr) \rightarrow \bigl( \exists y \forall x\, P(x, y) \bigr)$
+\end{itemize}
+
+\end{document}

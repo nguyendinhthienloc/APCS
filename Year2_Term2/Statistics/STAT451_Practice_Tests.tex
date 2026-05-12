@@ -1,0 +1,156 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{enumerate}
+\usepackage{booktabs}
+
+\geometry{margin=0.75in}
+
+\title{STAT451: Applied Statistics for Engineering and Sciences\\Practice Final Exams (Based on 2024-2025 Format)}
+\author{Extracted from: Devore, J. L. (2015). \textit{Probability and Statistics for Engineering and the Sciences}}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{General Instructions}
+\begin{itemize}
+    \item Duration: 90 minutes.
+    \item You are allowed one A4-sized formula sheet (double-sided).
+    \item Round all final calculations to four decimal places.
+\end{itemize}
+
+\hrule
+\vspace{1em}
+
+\section*{Practice Test 1}
+
+\noindent \textbf{Question 1 (2.0 points)} \\
+A particular brand of dishwasher soap is sold in three sizes: 25 oz, 40 oz, and 65 oz. Twenty percent of all purchasers select a 25-oz box, 50\% select a 40-oz box, and the remaining 30\% choose a 65-oz box. Let $X_1, X_2, \dots, X_{50}$ be a random sample of 50 independent purchases.
+\begin{enumerate}[(a)]
+    \item Determine the expected value and variance of the size of a single box.
+    \item Use the Central Limit Theorem to approximate the probability that the total weight of the 50 boxes exceeds 2250 oz.
+\end{enumerate}
+\textit{Source: Devore, Page 229, Exercise 37.}
+
+\vspace{1em}
+\noindent \textbf{Question 2 (1.5 points)} \\
+The following observations are on drill lifetime (number of holes) for a brass alloy:
+\[ 161, 168, 184, 206, 248, 263, 289, 322, 388, 513 \]
+\begin{enumerate}[(a)]
+    \item Calculate the sample mean and the 10\% trimmed mean.
+    \item Calculate the sample variance and sample standard deviation.
+\end{enumerate}
+\textit{Source: Devore, Page 46, Exercise 27.}
+
+\vspace{1em}
+\noindent \textbf{Question 3 (2.0 points)} \\
+A sample of 50 lenses for eyeglasses yields a sample mean thickness of $3.05$ mm and a sample standard deviation of $0.34$ mm.
+\begin{enumerate}[(a)]
+    \item Calculate a 95\% confidence interval for the true average thickness $\mu$.
+    \item If the desired width of the 95\% interval is $0.1$ mm, what sample size is required?
+\end{enumerate}
+\textit{Source: Devore, Page 357, Exercise 57.}
+
+\vspace{1em}
+\noindent \textbf{Question 4 (2.0 points)} \\
+In an experiment to compare the bond strength of two adhesives, five bondings were made with each type. \\
+Adhesive 1: $229, 286, 245, 299, 250$ \\
+Adhesive 2: $213, 179, 163, 247, 225$ \\
+Assume normal distributions with equal variances. Test $H_0: \mu_1 = \mu_2$ against $H_a: \mu_1 > \mu_2$ at $\alpha = 0.05$.
+\textit{Source: Devore, Page 666, Exercise 11.}
+
+\vspace{1em}
+\noindent \textbf{Question 5 (2.5 points)} \\
+Observations on $x = $ cation exchange capacity and $y = $ specific surface area for 20 soils resulted in:
+$\sum x = 1762, \sum y = 5480, \sum x^2 = 164012, \sum y^2 = 1654200, \sum xy = 498300$.
+\begin{enumerate}[(a)]
+    \item Determine the equation of the least squares regression line.
+    \item Calculate and interpret the coefficient of determination $R^2$.
+\end{enumerate}
+\textit{Source: Devore, Page 536, Exercise 62.}
+
+\newpage
+
+\section*{Practice Test 2}
+
+\noindent \textbf{Question 1 (2.0 points)} \\
+A company knows that 10\% of its goblets have cosmetic flaws.
+\begin{enumerate}[(a)]
+    \item Among 15 randomly selected goblets, what is the probability that at least 4 are "seconds"?
+    \item In a sample of 200 goblets, use the normal approximation to find the probability that between 15 and 25 (inclusive) are seconds.
+\end{enumerate}
+\textit{Source: Devore, Page 123, Exercise 49.}
+
+\vspace{1em}
+\noindent \textbf{Question 2 (2.0 points)} \\
+In a sample of 1000 consumers, 250 said they never sent in a rebate claim.
+\begin{enumerate}[(a)]
+    \item Calculate a 99\% confidence interval for the true proportion $p$ of consumers who never apply for a rebate.
+    \item What sample size is needed to ensure the margin of error is at most $0.02$ with 95\% confidence?
+\end{enumerate}
+\textit{Source: Devore, Page 294, Exercise 21.}
+
+\vspace{1em}
+\noindent \textbf{Question 3 (1.5 points)} \\
+A mixture of fuel ash and cement should have a compressive strength $\mu > 1300$ $KN/m^2$. For $n=10$ specimens, $\bar{x} = 1340$. Assume normality with $\sigma = 60$. Test $H_0: \mu = 1300$ vs $H_a: \mu > 1300$ at $\alpha = 0.01$.
+\textit{Source: Devore, Page 326, Exercise 12.}
+
+\vspace{1em}
+\noindent \textbf{Question 4 (2.0 points)} \\
+Computer retrieval times were measured for 13 professionals using two methods: Slide ($x$) and Digital ($y$). The differences ($d = x - y$) had $\bar{d} = 20.5$ and $s_d = 11.96$. Test if the Digital method is faster at $\alpha = 0.05$.
+\textit{Source: Devore, Page 389, Exercise 38.}
+
+\vspace{1em}
+\noindent \textbf{Question 5 (2.5 points)} \\
+Data on $x = $ duration of a tantrum and $y = $ anger intensity was collected. Given $n=12, \sum x = 150, \sum y = 85, S_{xx} = 450, S_{yy} = 210, S_{xy} = 280$.
+\begin{enumerate}[(a)]
+    \item Find the regression line $y = \hat{\beta}_0 + \hat{\beta}_1 x$.
+    \item Predict the intensity for a 15-minute tantrum and discuss if this is appropriate.
+\end{enumerate}
+\textit{Source: Devore, Page 45, Exercise 23.}
+
+\newpage
+
+\section*{Practice Test 3}
+
+\noindent \textbf{Question 1 (2.0 points)} \\
+The processing time $X$ for garbage trucks is normally distributed with $\mu = 13$ min and $\sigma = 4$ min.
+\begin{enumerate}[(a)]
+    \item What is the probability that a single truck takes more than 20 min?
+    \item For a sample of $n=16$ trucks, what is the probability that the sample mean time $\bar{X}$ is between 12 and 15 min?
+\end{enumerate}
+\textit{Source: Devore, Page 245, Exercise 87.}
+
+\vspace{1em}
+\noindent \textbf{Question 2 (2.0 points)} \\
+A package-delivery service claims 90\% of packages are delivered by noon. In a sample of 225 packages, 180 were delivered by noon. Does this suggest the true proportion is less than 0.90? Test at $\alpha = 0.01$.
+\textit{Source: Devore, Page 349, Example 8.14.}
+
+\vspace{1em}
+\noindent \textbf{Question 3 (2.0 points)} \\
+Mean headability ratings for 30 specimens of aluminum killed steel ($\bar{x}_1 = 7.09, s_1 = 1.19$) and 30 specimens of silicon killed steel ($\bar{x}_2 = 6.43, s_2 = 1.08$) were compared. Use a $t$-test to determine if the means differ at $\alpha = 0.05$.
+\textit{Source: Devore, Page 405, Exercise 75.}
+
+\vspace{1em}
+\noindent \textbf{Question 4 (1.5 points)} \\
+The following are $CeO_2$ particle sizes: $3.0, 3.4, 3.8, 3.9, 4.0, 4.2, 4.5, 4.8, 5.1, 7.2$.
+\begin{enumerate}[(a)]
+    \item Identify any outliers using the IQR method.
+    \item Compare the mean and median; what does this suggest about the skewness?
+\end{enumerate}
+\textit{Source: Devore, Page 43, Exercise 12.}
+
+\vspace{1em}
+\noindent \textbf{Question 5 (2.5 points)} \\
+A study of $x = $ stiffness and $y = $ thickness for flame-retardant fabrics gave $n=6, \sum x = 112.7, \sum y = 2.91, \sum x^2 = 3012, \sum y^2 = 1.68, \sum xy = 65.4$.
+\begin{enumerate}[(a)]
+    \item Calculate the sample correlation coefficient $r$.
+    \item Test $H_0: \rho = 0$ vs $H_a: \rho \neq 0$ at $\alpha = 0.05$.
+\end{enumerate}
+\textit{Source: Devore, Page 536, Exercise 63.}
+
+\end{document}

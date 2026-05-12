@@ -1,0 +1,169 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{logicproof}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+\geometry{a4paper, margin=0.8in}
+
+
+\title{Sample Test 1: Logical Proof}
+\author{\textbf{Nguyen Dinh Thien Loc} \\ Student ID: 24125093}
+
+\begin{document}
+\maketitle
+\section*{Problem 2}
+\subsection*{(a)}
+\begin{logicproof}{2}
+\exists x (P(x) \wedge Q(x)) & premise \\
+\forall x (Q(x) \rightarrow R(x)) & premise \\
+\begin{subproof}
+    x_0 \quad P(x_0) \wedge Q(x_0) & assumption \\
+    Q(x_0) \rightarrow R(x_0) & $\forall x e$ 2 \\
+    Q(x_0) & $\wedge e_2$ 3 \\
+    R(x_0) & $\rightarrow e$ 4, 5 \\
+    P(x_0) & $\wedge e_1$ 3 \\
+    P(x_0) \wedge R(x_0) & $\wedge i$ 7, 6 \\
+    \exists x (P(x) \wedge R(x)) & $\exists x i$ 8
+\end{subproof}
+\exists x (P(x) \wedge R(x)) & $\exists x e$ 1, 3--9
+\end{logicproof}
+
+\subsection*{(b)}
+\begin{logicproof}{3}
+\exists x P(x) & premise \\
+\forall x \forall y (P(x) \rightarrow Q(y)) & premise \\
+\begin{subproof}
+    y_0 & \\
+    \begin{subproof}
+        x_0 \quad P(x_0) & assumption \\
+        \forall y (P(x_0) \rightarrow Q(y)) & $\forall x e$ 2 \\
+        P(x_0) \rightarrow Q(y_0) & $\forall y e$ 5 \\
+        Q(y_0) & $\rightarrow e$ 6, 4
+    \end{subproof}
+    Q(y_0) & $\exists x e$ 1, 4--7
+\end{subproof}
+\forall y Q(y) & $\forall y i$ 3--8
+\end{logicproof}
+
+\section*{Problem 3}
+
+\subsection*{(a) $\forall x(P(x) \rightarrow Q(f(x)))$}
+
+\begin{tcolorbox}[title=Model $\mathcal{M}_1$ (Satisfies the formula)]
+    \begin{itemize}
+        \item \textbf{Domain} $\mathcal{D} = \{1, 2\}$
+        \item \textbf{Function} $f(n) = n$ (Identity function)
+        \item \textbf{Predicates:} $P = \{1\}$, $Q = \{1, 2\}$
+        \item \textbf{Reason:} For $x=1$, $P(1) \rightarrow Q(1)$ is $T \rightarrow T$ (True). For $x=2$, $P(2) \rightarrow Q(2)$ is $F \rightarrow T$ (True).
+    \end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[title=Model $\mathcal{M}_2$ (Does not satisfy)]
+    \begin{itemize}
+        \item \textbf{Domain} $\mathcal{D} = \{1\}$
+        \item \textbf{Function} $f(1) = 1$
+        \item \textbf{Predicates:} $P = \{1\}$, $Q = \emptyset$
+        \item \textbf{Reason:} For $x=1$, $P(1) \rightarrow Q(1)$ becomes $T \rightarrow F$, which is False.
+    \end{itemize}
+\end{tcolorbox}
+
+\subsection*{(b) $\exists x \forall y ((P(x,y) \wedge P(y,x)) \vee (Q(x,y) \wedge R(y,x)))$}
+
+\begin{tcolorbox}[title=Model $\mathcal{M}_3$ (Satisfies the formula)]
+    \begin{itemize}
+        \item \textbf{Domain} $\mathcal{D} = \{a\}$
+        \item \textbf{Predicates:} $P = \{(a,a)\}$, $Q = \emptyset$, $R = \emptyset$
+        \item \textbf{Reason:} If we pick $x=a$, then for all $y$ (which can only be $a$), the first part of the disjunction $(P(a,a) \wedge P(a,a))$ is True. Thus the whole formula is True.
+    \end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[title=Model $\mathcal{M}_4$ (Does not satisfy)]
+    \begin{itemize}
+        \item \textbf{Domain} $\mathcal{D} = \{1, 2\}$
+        \item \textbf{Predicates:} $P = \emptyset$, $Q = \emptyset$, $R = \emptyset$
+        \item \textbf{Reason:} All predicates are empty relations. For any $x$ we choose, both $(P \wedge P)$ and $(Q \wedge R)$ will be False for all $y$, making the entire disjunction False.
+    \end{itemize}
+\end{tcolorbox}
+
+\newpage
+\section*{Problem 4}
+
+\subsection*{(a) $\exists x P(x) \wedge \exists x Q(x) \models \exists x (P(x) \wedge Q(x))$}
+\textbf{Result:} This semantic entailment \textbf{does not hold}.
+
+\begin{tcolorbox}[title=Counter-example Model]
+    \begin{itemize}
+        \item \textbf{Domain} $\mathcal{D} = \{1, 2\}$
+        \item \textbf{Predicates:} $P = \{1\}$, $Q = \{2\}$
+        \item \textbf{Reason:} 
+            \begin{itemize}
+                \item $\exists x P(x)$ is True (witness $x=1$).
+                \item $\exists x Q(x)$ is True (witness $x=2$).
+                \item Thus, the premise $\exists x P(x) \wedge \exists x Q(x)$ is True.
+                \item However, there is no element in $\mathcal{D}$ that is in both $P$ and $Q$. Thus, $\exists x (P(x) \wedge Q(x))$ is False.
+            \end{itemize}
+    \end{itemize}
+\end{tcolorbox}
+
+\subsection*{(b) $\exists y \forall x P(x,y) \models \forall x \exists y P(x,y)$}
+\textbf{Result:} This semantic entailment \textbf{holds}.
+
+\begin{tcolorbox}[title=Proof Sketch]
+    Assume the premise $\exists y \forall x P(x,y)$ is true in a model $\mathcal{M}$ with environment $l$. This means there exists some element $c \in \mathcal{D}$ such that for all elements $a \in \mathcal{D}$, the pair $(a, c) \in P^{\mathcal{M}}$. 
+    
+    To show $\forall x \exists y P(x,y)$, we must show that for any arbitrary $a \in \mathcal{D}$, there exists some $b \in \mathcal{D}$ such that $(a, b) \in P^{\mathcal{M}}$. For any such $a$, we can choose $b = c$. Since the premise guarantees $(a, c) \in P^{\mathcal{M}}$ for all $a$, the conclusion is satisfied.
+\end{tcolorbox}
+
+\newpage
+\section*{Problem 5}
+
+\subsection*{(a) $\phi = ((p \rightarrow q) \wedge p) \vee q$}
+
+To check for validity, we apply the Tableau Algorithm to the negation $\neg\phi$:
+$$\neg (((p \rightarrow q) \wedge p) \vee q)$$
+
+\begin{tcolorbox}[title=Tableau Path for $\neg\phi$]
+\begin{enumerate}
+    \item $C_0 = \{ \neg (((p \rightarrow q) \wedge p) \vee q) \}$
+    \item $C_1 = \{ \neg ((p \rightarrow q) \wedge p), \neg q \}$ \hfill ($\neg\vee$-rule)
+    \item \textbf{Path Branching} ($\neg\wedge$-rule applied to $\neg ((p \rightarrow q) \wedge p)$):
+    \begin{itemize}
+        \item \textbf{Branch 1:} $C_2 = \{ \neg (p \rightarrow q), \neg q \}$
+            \begin{itemize}
+                \item $C_3 = \{ p, \neg q, \neg q \}$ \hfill ($\neg\rightarrow$-rule)
+                \item This path is \textbf{complete} and \textbf{not closed} (no clash).
+            \end{itemize}
+        \item \textbf{Branch 2:} $C_2 = \{ \neg p, \neg q \}$
+            \begin{itemize}
+                \item This path is \textbf{complete} and \textbf{not closed} (no clash).
+            \end{itemize}
+    \end{itemize}
+\end{enumerate}
+\end{tcolorbox}
+
+\textbf{Conclusion:} Since there exists a complete tableau path that is not closed, the negated formula $\neg\phi$ is \textbf{satisfiable}. Therefore, the original formula $\phi$ is \textbf{not valid}.
+
+\subsection*{(b) $\psi = \forall x \neg P(x) \vee \exists x( P(x) \vee Q(x))$}
+
+We apply the Tableau Algorithm to the negation $\neg\psi$:
+$$\neg (\forall x \neg P(x) \vee \exists x( P(x) \vee Q(x)))$$
+
+\begin{tcolorbox}[title=Tableau Path for $\neg\psi$]
+\begin{enumerate}
+    \item $C_0 = \{ \neg (\forall x \neg P(x) \vee \exists x( P(x) \vee Q(x))) \}$
+    \item $C_1 = \{ \neg \forall x \neg P(x), \neg \exists x (P(x) \vee Q(x)) \}$ \hfill ($\neg\vee$-rule)
+    \item $C_2 = \{ \exists x \neg \neg P(x), \neg \exists x (P(x) \vee Q(x)) \}$ \hfill ($\neg\forall$-rule)
+    \item $C_3 = \{ \exists x P(x), \neg \exists x (P(x) \vee Q(x)) \}$ \hfill ($\neg\neg$-rule)
+    \item $C_4 = \{ \exists x P(x), \forall x \neg (P(x) \vee Q(x)) \}$ \hfill ($\neg\exists$-rule)
+    \item $C_5 = \{ P(c), \forall x \neg (P(x) \vee Q(x)) \}$ \hfill ($\exists$-rule, creates new constant $c$)
+    \item $C_6 = \{ P(c), \neg (P(c) \vee Q(c)) \}$ \hfill ($\forall$-rule using $c$)
+    \item $C_7 = \{ P(c), \neg P(c), \neg Q(c) \}$ \hfill ($\neg\vee$-rule)
+\end{enumerate}
+\end{tcolorbox}
+
+\textbf{Conclusion:} The path $C_7$ contains a **clash** $\{P(c), \neg P(c)\}$. Since all possible fair tableau paths are closed, the negated formula $\neg\psi$ is \textbf{unsatisfiable}. Therefore, the original formula $\psi$ is \textbf{valid} (a tautology).
+
+\end{document}

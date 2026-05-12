@@ -1,0 +1,23 @@
+\documentclass{article}
+\usepackage{logicproof}
+\usepackage{amssymb}
+
+\begin{document}
+
+\begin{logicproof}{2} % The '2' indicates the number of nested subproofs possible
+    \exists x P(x) & premise \\
+    \forall x \forall y (P(x) \to Q(y)) & premise \\
+    \begin{subproof}
+        x_0, P(x_0) & assume for $\exists E$ (1) \\
+        \begin{subproof}
+            y_0 & arbitrary \\
+            \forall y (P(x_0) \to Q(y)) & $\forall E$ (2) \\
+            P(x_0) \to Q(y_0) & $\forall E$ (5) \\
+            Q(y_0) & $\to E$ (3, 6)
+        \end{subproof}
+        \forall y Q(y) & $\forall I$ (4--7)
+    \end{subproof}
+    \forall y Q(y) & $\exists E$ (1, 3--8)
+\end{logicproof}
+
+\end{document}

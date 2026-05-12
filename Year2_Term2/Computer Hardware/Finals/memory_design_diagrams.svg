@@ -1,0 +1,154 @@
+<svg viewBox="0 0 760 560" xmlns="http://www.w3.org/2000/svg" font-family="monospace, sans-serif">
+  <!-- Background -->
+  <rect width="760" height="560" fill="#f0f4f8" rx="12"/>
+  
+  <!-- Title -->
+  <text x="380" y="34" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a237e">Computer Memory Design</text>
+
+  <!-- ===== PROBLEM 1 ===== -->
+  <!-- Panel -->
+  <rect x="20" y="50" width="340" height="490" rx="10" fill="white" stroke="#3949ab" stroke-width="1.5"/>
+  <text x="190" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a237e">Problem 1: 64KB from 8KB chips</text>
+  <line x1="30" y1="80" x2="350" y2="80" stroke="#3949ab" stroke-width="1"/>
+
+  <!-- Info box -->
+  <rect x="30" y="86" width="320" height="34" rx="6" fill="#e8eaf6"/>
+  <text x="190" y="99" text-anchor="middle" font-size="10" fill="#283593">8 chips × 8KB = 64KB  |  Address bus: A0–A15 (16-bit)</text>
+  <text x="190" y="113" text-anchor="middle" font-size="10" fill="#283593">Chip select: A15–A13 (3 bits)  |  Internal: A12–A0</text>
+
+  <!-- Address bus line -->
+  <line x1="90" y1="135" x2="330" y2="135" stroke="#5c6bc0" stroke-width="2"/>
+  <text x="210" y="130" text-anchor="middle" font-size="9" fill="#3949ab">Address Bus (16-bit: A15–A0)</text>
+  <!-- Bus arrows down into chips -->
+  <line x1="210" y1="135" x2="210" y2="148" stroke="#5c6bc0" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Chips: 8 chips, each 48px tall, with 2px gap -->
+  <!-- Chip colors alternating -->
+  <!-- Chip 0 -->
+  <rect x="90" y="150" width="240" height="42" rx="5" fill="#c8e6c9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="115" y="168" font-size="11" font-weight="bold" fill="#1b5e20">Chip 0  (8KB)</text>
+  <text x="115" y="183" font-size="10" fill="#333">0x0000 – 0x1FFF</text>
+  <text x="320" y="175" text-anchor="end" font-size="9" fill="#555">A15–A13 = 000</text>
+
+  <rect x="90" y="196" width="240" height="42" rx="5" fill="#b2dfdb" stroke="#00796b" stroke-width="1.5"/>
+  <text x="115" y="214" font-size="11" font-weight="bold" fill="#004d40">Chip 1  (8KB)</text>
+  <text x="115" y="229" font-size="10" fill="#333">0x2000 – 0x3FFF</text>
+  <text x="320" y="221" text-anchor="end" font-size="9" fill="#555">A15–A13 = 001</text>
+
+  <rect x="90" y="242" width="240" height="42" rx="5" fill="#c8e6c9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="115" y="260" font-size="11" font-weight="bold" fill="#1b5e20">Chip 2  (8KB)</text>
+  <text x="115" y="275" font-size="10" fill="#333">0x4000 – 0x5FFF</text>
+  <text x="320" y="267" text-anchor="end" font-size="9" fill="#555">A15–A13 = 010</text>
+
+  <rect x="90" y="288" width="240" height="42" rx="5" fill="#b2dfdb" stroke="#00796b" stroke-width="1.5"/>
+  <text x="115" y="306" font-size="11" font-weight="bold" fill="#004d40">Chip 3  (8KB)</text>
+  <text x="115" y="321" font-size="10" fill="#333">0x6000 – 0x7FFF</text>
+  <text x="320" y="313" text-anchor="end" font-size="9" fill="#555">A15–A13 = 011</text>
+
+  <rect x="90" y="334" width="240" height="42" rx="5" fill="#c8e6c9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="115" y="352" font-size="11" font-weight="bold" fill="#1b5e20">Chip 4  (8KB)</text>
+  <text x="115" y="367" font-size="10" fill="#333">0x8000 – 0x9FFF</text>
+  <text x="320" y="359" text-anchor="end" font-size="9" fill="#555">A15–A13 = 100</text>
+
+  <rect x="90" y="380" width="240" height="42" rx="5" fill="#b2dfdb" stroke="#00796b" stroke-width="1.5"/>
+  <text x="115" y="398" font-size="11" font-weight="bold" fill="#004d40">Chip 5  (8KB)</text>
+  <text x="115" y="413" font-size="10" fill="#333">0xA000 – 0xBFFF</text>
+  <text x="320" y="405" text-anchor="end" font-size="9" fill="#555">A15–A13 = 101</text>
+
+  <rect x="90" y="426" width="240" height="42" rx="5" fill="#c8e6c9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="115" y="444" font-size="11" font-weight="bold" fill="#1b5e20">Chip 6  (8KB)</text>
+  <text x="115" y="459" font-size="10" fill="#333">0xC000 – 0xDFFF</text>
+  <text x="320" y="451" text-anchor="end" font-size="9" fill="#555">A15–A13 = 110</text>
+
+  <rect x="90" y="472" width="240" height="42" rx="5" fill="#b2dfdb" stroke="#00796b" stroke-width="1.5"/>
+  <text x="115" y="490" font-size="11" font-weight="bold" fill="#004d40">Chip 7  (8KB)</text>
+  <text x="115" y="505" font-size="10" fill="#333">0xE000 – 0xFFFF</text>
+  <text x="320" y="497" text-anchor="end" font-size="9" fill="#555">A15–A13 = 111</text>
+
+  <!-- Left address spine -->
+  <line x1="82" y1="150" x2="82" y2="514" stroke="#888" stroke-width="1.5"/>
+  <text x="78" y="154" text-anchor="end" font-size="9" fill="#333">0x0000</text>
+  <text x="78" y="200" text-anchor="end" font-size="9" fill="#333">0x2000</text>
+  <text x="78" y="246" text-anchor="end" font-size="9" fill="#333">0x4000</text>
+  <text x="78" y="292" text-anchor="end" font-size="9" fill="#333">0x6000</text>
+  <text x="78" y="338" text-anchor="end" font-size="9" fill="#333">0x8000</text>
+  <text x="78" y="384" text-anchor="end" font-size="9" fill="#333">0xA000</text>
+  <text x="78" y="430" text-anchor="end" font-size="9" fill="#333">0xC000</text>
+  <text x="78" y="476" text-anchor="end" font-size="9" fill="#333">0xE000</text>
+  <text x="78" y="518" text-anchor="end" font-size="9" fill="#333">0xFFFF</text>
+  <!-- Tick marks -->
+  <line x1="82" y1="150" x2="88" y2="150" stroke="#888"/>
+  <line x1="82" y1="196" x2="88" y2="196" stroke="#888"/>
+  <line x1="82" y1="242" x2="88" y2="242" stroke="#888"/>
+  <line x1="82" y1="288" x2="88" y2="288" stroke="#888"/>
+  <line x1="82" y1="334" x2="88" y2="334" stroke="#888"/>
+  <line x1="82" y1="380" x2="88" y2="380" stroke="#888"/>
+  <line x1="82" y1="426" x2="88" y2="426" stroke="#888"/>
+  <line x1="82" y1="472" x2="88" y2="472" stroke="#888"/>
+  <line x1="82" y1="514" x2="88" y2="514" stroke="#888"/>
+
+  <!-- ===== PROBLEM 2 ===== -->
+  <rect x="390" y="50" width="350" height="490" rx="10" fill="white" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="565" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a237e">Problem 2: 4KB from 2KB + 1KB chips</text>
+  <line x1="400" y1="80" x2="730" y2="80" stroke="#1565c0" stroke-width="1"/>
+
+  <!-- Info box -->
+  <rect x="400" y="86" width="330" height="34" rx="6" fill="#e3f2fd"/>
+  <text x="565" y="99" text-anchor="middle" font-size="10" fill="#0d47a1">1×2KB + 2×1KB = 4KB  |  Address bus: A0–A11 (12-bit)</text>
+  <text x="565" y="113" text-anchor="middle" font-size="10" fill="#0d47a1">Chip select: A11, A10  |  Total 3 chips</text>
+
+  <!-- Address bus -->
+  <line x1="450" y1="135" x2="700" y2="135" stroke="#1565c0" stroke-width="2"/>
+  <text x="575" y="130" text-anchor="middle" font-size="9" fill="#1565c0">Address Bus (12-bit: A11–A0)</text>
+  <line x1="575" y1="135" x2="575" y2="148" stroke="#1565c0" stroke-width="1.5"/>
+
+  <!-- Chip A: 2KB — twice height of 1KB chips -->
+  <rect x="460" y="150" width="220" height="100" rx="6" fill="#bbdefb" stroke="#1565c0" stroke-width="2"/>
+  <text x="485" y="175" font-size="12" font-weight="bold" fill="#0d47a1">Chip A  (2KB)</text>
+  <text x="485" y="193" font-size="11" fill="#333">0x000 – 0x7FF</text>
+  <text x="485" y="210" font-size="10" fill="#555">Internal: A10–A0 (11 bits)</text>
+  <text x="485" y="225" font-size="10" fill="#555">Select: A11 = 0</text>
+  <text x="672" y="205" text-anchor="end" font-size="9" fill="#1565c0">A11=0</text>
+
+  <!-- Chip B: 1KB -->
+  <rect x="460" y="258" width="220" height="68" rx="6" fill="#ffe0b2" stroke="#e65100" stroke-width="2"/>
+  <text x="485" y="280" font-size="12" font-weight="bold" fill="#bf360c">Chip B  (1KB)</text>
+  <text x="485" y="296" font-size="11" fill="#333">0x800 – 0xBFF</text>
+  <text x="485" y="312" font-size="10" fill="#555">Select: A11=1, A10=0</text>
+  <text x="672" y="292" text-anchor="end" font-size="9" fill="#e65100">A11=1,A10=0</text>
+
+  <!-- Chip C: 1KB -->
+  <rect x="460" y="332" width="220" height="68" rx="6" fill="#f8bbd0" stroke="#880e4f" stroke-width="2"/>
+  <text x="485" y="354" font-size="12" font-weight="bold" fill="#880e4f">Chip C  (1KB)</text>
+  <text x="485" y="370" font-size="11" fill="#333">0xC00 – 0xFFF</text>
+  <text x="485" y="386" font-size="10" fill="#555">Select: A11=1, A10=1</text>
+  <text x="672" y="366" text-anchor="end" font-size="9" fill="#880e4f">A11=1,A10=1</text>
+
+  <!-- Left address spine P2 -->
+  <line x1="452" y1="150" x2="452" y2="400" stroke="#888" stroke-width="1.5"/>
+  <text x="448" y="154" text-anchor="end" font-size="9" fill="#333">0x000</text>
+  <text x="448" y="262" text-anchor="end" font-size="9" fill="#333">0x800</text>
+  <text x="448" y="336" text-anchor="end" font-size="9" fill="#333">0xC00</text>
+  <text x="448" y="402" text-anchor="end" font-size="9" fill="#333">0xFFF</text>
+  <line x1="452" y1="150" x2="458" y2="150" stroke="#888"/>
+  <line x1="452" y1="258" x2="458" y2="258" stroke="#888"/>
+  <line x1="452" y1="332" x2="458" y2="332" stroke="#888"/>
+  <line x1="452" y1="400" x2="458" y2="400" stroke="#888"/>
+
+  <!-- Chip select decode box -->
+  <rect x="400" y="420" width="330" height="105" rx="6" fill="#fff8e1" stroke="#f9a825" stroke-width="1.5"/>
+  <text x="565" y="438" text-anchor="middle" font-size="11" font-weight="bold" fill="#5d4037">Chip Select Decode Table</text>
+  <text x="420" y="456" font-size="10" fill="#333">A11  A10  →  Selected Chip</text>
+  <line x1="420" y1="461" x2="720" y2="461" stroke="#bbb" stroke-width="1"/>
+  <text x="420" y="476" font-size="10" fill="#0d47a1"> 0    x   →  Chip A (2KB)   0x000–0x7FF</text>
+  <text x="420" y="492" font-size="10" fill="#bf360c"> 1    0   →  Chip B (1KB)   0x800–0xBFF</text>
+  <text x="420" y="508" font-size="10" fill="#880e4f"> 1    1   →  Chip C (1KB)   0xC00–0xFFF</text>
+  <text x="420" y="524" font-size="9" fill="#888">Note: x = don't care (A10 not used for Chip A select)</text>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#5c6bc0"/>
+    </marker>
+  </defs>
+</svg>

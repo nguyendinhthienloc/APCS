@@ -1,0 +1,151 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{lastpage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small VIETNAM NATIONAL UNIVERSITY -- HCMC \\ \small UNIVERSITY OF SCIENCE}
+\fancyhead[R]{\small \textbf{FINAL EXAMINATION} \\ \small Semester II -- Academic Year 2025--2026}
+\fancyfoot[L]{\small (This test has \pageref{LastPage} pages)}
+\fancyfoot[R]{\small Page \thepage/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\setlength{\headheight}{30pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+\begin{center}
+\textbf{\large TEST 1}\\[2pt]
+\textbf{Course:} Applied Statistics for Engineering and Scientists 1 \quad
+\textbf{Course ID:} STAT451\\[2pt]
+\textbf{Duration:} 90 minutes \hspace{1.5cm} \textbf{Materials:} One A4 formula sheet allowed
+\end{center}
+
+\vspace{-6pt}
+\noindent\textbf{Student name:} \dotfill \quad \textbf{Student ID:} \dotfill \quad \textbf{No.:} \dotfill
+
+\vspace{4pt}
+\noindent\textbf{Note:}
+\begin{itemize}[leftmargin=*,topsep=2pt,itemsep=0pt]
+  \item All calculations must be rounded to \textbf{four} decimal places.
+  \item Standard normal $\mathcal{N}(0,1)$ and Student $t$ distribution tables are provided.
+\end{itemize}
+
+%--------------------------------------------------------------------
+\textbf{Question 1.} (2.0 \emph{points})
+A machine produces metal sheets whose thickness (in millimeters) is
+normally distributed with mean $\mu = 2.40$ mm and standard deviation
+$\sigma = 0.12$ mm. Quality engineers regard a sheet as \emph{defective}
+if its thickness falls outside the interval $[2.20,\, 2.60]$ mm.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Find the probability that a randomly selected sheet is defective.
+  \item Suppose that a quality inspector checks a batch of $n = 50$
+        randomly selected sheets. Using the normal approximation to the
+        binomial distribution, compute the probability that the batch
+        contains \emph{at least 4} defective sheets.
+  \item The plant produces thousands of sheets each day. A random sample
+        of $n = 36$ sheets is taken, and $\bar{X}$ denotes the sample
+        mean thickness. Determine the probability that $\bar{X}$ lies
+        within 0.03 mm of the process mean.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 2.} (2.0 \emph{points})
+The compressive strength (in MPa) of $n = 20$ randomly selected concrete
+cylinders produced by a supplier yielded the following summary:
+sample mean $\bar{x} = 33.48$ MPa and sample standard deviation
+$s = 3.25$ MPa. Assume the population distribution is approximately normal.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Construct a 95\% confidence interval for the mean compressive strength $\mu$.
+  \item A separate inspection of 400 cylinders revealed that 352 of
+        them met a minimum strength specification. Construct a 99\%
+        confidence interval for the true proportion $p$ of cylinders
+        that meet this specification.
+  \item A civil engineer wishes to estimate $\mu$ within a margin of
+        error of 1.0 MPa with 95\% confidence. Using the preliminary
+        estimate $s = 3.25$ MPa, determine the minimum sample size
+        required.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 3.} (2.0 \emph{points})
+A manufacturer claims that the mean lifetime of its new automotive
+battery is at least 60 months. To test this claim, a consumer agency
+selected a random sample of $n = 45$ batteries and found a sample mean
+lifetime of $\bar{x} = 57.9$ months with a sample standard deviation of
+$s = 6.4$ months.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item At the $\alpha = 0.05$ significance level, do the data provide
+        sufficient evidence to refute the manufacturer's claim?
+        State the hypotheses, test statistic, and conclusion.
+  \item In a separate market survey, 72 out of 300 randomly selected
+        customers reported having to replace the battery within the
+        warranty period of 24 months. The manufacturer had advertised
+        that \emph{at most 20\%} of batteries fail within the warranty
+        period. Test at $\alpha = 0.05$ whether the data contradict
+        this claim.
+  \item Compute the $p$-value for part (b) and interpret it.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 4.} (1.5 \emph{points})
+A new drying additive is being evaluated for latex paint. The drying
+times (in hours) are approximately normally distributed. The data are
+summarized below:
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+ & Sample size & Sample mean & Sample std. dev. \\
+\midrule
+Paint \emph{without} additive  & $n_1 = 10$ & $\bar{x}_1 = 4.85$ & $s_1 = 0.42$ \\
+Paint \emph{with} additive     & $n_2 = 12$ & $\bar{x}_2 = 4.22$ & $s_2 = 0.51$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Assume both population variances are equal.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Test at $\alpha = 0.05$ whether the additive significantly
+        reduces the mean drying time by more than 0.3 hours.
+  \item Construct a 95\% confidence interval for $\mu_1 - \mu_2$, the
+        true difference in mean drying times.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\textbf{Question 5.} (2.5 \emph{points})
+A materials engineer studies the relationship between the curing
+temperature $x$ (in ${}^\circ$C) and the tensile strength $y$
+(in $10^3$ psi) of a polymer. The data for $n = 10$ specimens are:
+\begin{center}
+\begin{tabular}{l|cccccccccc}
+$x$ & 90 & 100 & 110 & 120 & 130 & 140 & 150 & 160 & 170 & 180 \\ \hline
+$y$ & 45.1 & 47.8 & 49.3 & 51.7 & 52.9 & 55.0 & 56.2 & 58.1 & 59.4 & 61.3 \\
+\end{tabular}
+\end{center}
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item Determine the estimated least-squares regression line
+        $\hat{y} = \hat{\beta}_0 + \hat{\beta}_1 x$ and interpret
+        the slope in context.
+  \item Compute the sample correlation coefficient $r$ and interpret it.
+  \item Compute the coefficient of determination $R^{2}$ and interpret
+        its meaning.
+  \item Predict the tensile strength when the curing temperature is
+        $x = 155^\circ$C and when $x = 250^\circ$C. For each prediction,
+        comment on whether extrapolation is a concern.
+\end{enumerate}
+
+\vspace{10pt}
+\begin{center}
+\textbf{--- END OF TEST 1 ---}
+\end{center}
+
+\end{document}

@@ -1,0 +1,456 @@
+\documentclass[9pt,a4paper]{extarticle}
+\usepackage[a4paper,margin=0.6cm,top=0.7cm,bottom=0.5cm]{geometry}
+\usepackage{multicol}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{mdframed}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\columnsep}{0.45cm}
+\setlength{\columnseprule}{0.3pt}
+\setlength{\abovedisplayskip}{2pt}
+\setlength{\belowdisplayskip}{2pt}
+\setlength{\abovedisplayshortskip}{1pt}
+\setlength{\belowdisplayshortskip}{1pt}
+\renewcommand{\arraystretch}{1.1}
+
+\titleformat{\section}{\normalfont\bfseries\color{NavyBlue}\small}{\thesection.}{4pt}{}[\vspace{-3pt}\hrule height 0.5pt\vspace{1pt}]
+\titlespacing*{\section}{0pt}{4pt}{2pt}
+
+\newcommand{\sh}[1]{\textbf{\color{BrickRed} #1}}
+\newcommand{\cv}{\mathrm{CV}}
+
+% --- FILL YOUR INFO HERE ---
+\newcommand{\studentname}{Thien Loc}
+\newcommand{\studentid}{[24125093]}
+
+\begin{document}
+\small
+
+\begin{center}
+\textbf{\large STAT451 -- Final Exam Formula Sheet} \\[-1pt]
+\textbf{Name: \studentname} \hspace{2cm} \textbf{Student ID: \studentid}
+\end{center}
+\vspace{-8pt}
+
+\begin{multicols*}{2}
+
+\section{Descriptive Statistics}
+
+\sh{Sample mean:} $\displaystyle \bar{x}=\frac{1}{n}\sum_{i=1}^{n}x_i$
+
+\sh{Sample variance \& standard deviation:}
+\[
+s^{2}=\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^{2}
+     =\frac{1}{n-1}\!\left(\sum_{i=1}^{n}x_i^{2}-n\bar{x}^{2}\right)
+\]
+\[
+s=\sqrt{s^{2}}
+\]
+
+\sh{Population mean \& variance:}
+\[
+\mu=\frac{1}{N}\sum_{i=1}^{N}x_i,\qquad
+\sigma^{2}=\frac{1}{N}\sum_{i=1}^{N}(x_i-\mu)^{2}
+\]
+
+\sh{Median} (ordered $x_{(1)}\!\le\!\cdots\!\le\! x_{(n)}$):
+\[
+\mathrm{Med}=
+\begin{cases}
+x_{\left(\frac{n+1}{2}\right)} & n\text{ odd}\\[2pt]
+\tfrac{1}{2}\!\left(x_{(n/2)}+x_{(n/2+1)}\right) & n\text{ even}
+\end{cases}
+\]
+\sh{Mode:} most frequent value. \sh{Range:} $R=x_{\max}-x_{\min}$.
+
+\section{Binomial \& Normal Distributions}
+
+\sh{Binomial} $X\sim B(n,p)$:
+\[
+P(X=k)=\binom{n}{k}p^{k}(1-p)^{n-k},\ \ k=0,1,\dots,n
+\]
+\[
+E(X)=np,\qquad \mathrm{Var}(X)=np(1-p)
+\]
+\[
+\binom{n}{k}=\frac{n!}{k!(n-k)!}
+\]
+
+\sh{Normal} $X\sim \mathcal{N}(\mu,\sigma^{2})$:
+\[
+f(x)=\frac{1}{\sigma\sqrt{2\pi}}\exp\!\left(-\frac{(x-\mu)^{2}}{2\sigma^{2}}\right)
+\]
+
+\sh{Standardization (Z-score):}
+\[
+Z=\frac{X-\mu}{\sigma}\sim \mathcal{N}(0,1)
+\]
+\[
+P(a\le X\le b)=\Phi\!\left(\tfrac{b-\mu}{\sigma}\right)-\Phi\!\left(\tfrac{a-\mu}{\sigma}\right)
+\]
+\textbf{Note: $\Phi$ is the CDF of $\mathcal{N}(0,1)$.}
+
+\[
+\Phi(z) = P(Z \le z), \quad Z \sim \mathcal{N}(0,1)
+\]
+\sh{Identities:} $\Phi(-z)=1-\Phi(z)$; \ $P(|Z|\le z)=2\Phi(z)-1$; \ $P(Z>z)=1-\Phi(z)$.
+
+\section{Sampling Distributions \& CLT}
+\sh{Standard Error (SE):} For $\bar{X}$ (sample mean diameter), $\text{SE} = \sigma/\sqrt{n}$.\\
+\sh{Sample mean} (from $\mathcal{N}(\mu,\sigma^{2})$):
+\[
+\bar{X}\sim \mathcal{N}\!\left(\mu,\tfrac{\sigma^{2}}{n}\right),\ \
+Z=\frac{\bar{X}-\mu}{\sigma/\sqrt{n}}\sim\mathcal{N}(0,1)
+\]
+
+\sh{Central Limit Theorem:} for large $n$ and any population with mean $\mu$, variance $\sigma^{2}$,
+\[
+\bar{X}\overset{\text{approx}}{\sim}\mathcal{N}\!\left(\mu,\tfrac{\sigma^{2}}{n}\right),\ \
+\frac{\bar{X}-\mu}{\sigma/\sqrt{n}}\ \xrightarrow{d}\ \mathcal{N}(0,1)
+\]
+
+\sh{$t$-statistic} ($\sigma$ unknown, normal pop):
+\[
+T=\frac{\bar{X}-\mu}{S/\sqrt{n}}\sim t_{n-1}
+\]
+
+\sh{Sample proportion} $\hat{p}=X/n$; for large $n$ (rule: $np,\,n(1-p)\ge 5$):
+\[
+\hat{p}\overset{\text{approx}}{\sim}\mathcal{N}\!\left(p,\tfrac{p(1-p)}{n}\right),\ \
+Z=\frac{\hat{p}-p}{\sqrt{p(1-p)/n}}\sim\mathcal{N}(0,1)
+\]
+
+\sh{Normal approximation to Binomial:} if $X\sim B(n,p)$, $np\ge 10$, $n(1-p)\ge 10$:
+\[
+X\overset{\text{approx}}{\sim}\mathcal{N}\!\left(np,\,np(1-p)\right)
+\]
+With continuity correction:
+\[
+P(X\le k)\approx \Phi\!\left(\tfrac{k+0.5-np}{\sqrt{np(1-p)}}\right)
+\]
+(Calculate the area to the left. In Casio: Lower bound: $k+0.5$, Upper bound: $10$.)\\
+\[
+P(X\ge k)\approx 1-\Phi\!\left(\tfrac{k-0.5-np}{\sqrt{np(1-p)}}\right)
+\]
+(Calculate the area to the right. In Casio: Lower bound: $-10$, Upper bound: $k-0.5$.)
+\section{Confidence Intervals (One Sample)}
+
+Confidence level $1-\alpha$. Two-sided critical values: $z_{\alpha/2}$ (normal), $t_{n-1,\alpha/2}$.
+
+\sh{(a) $\mu$, $\sigma$ known (any $n$ if population normal, else large $n$):}
+\[
+\bar{X}\pm z_{\alpha/2}\,\frac{\sigma}{\sqrt{n}}
+\]
+
+\textbf{$z_{\alpha/2}\,\frac{\sigma}{\sqrt{n}}$ is called Margin of Error (ME) for mean when $\sigma$ known.}
+\\
+\sh{Sample size for mean} (given margin $E$):
+\[
+n=\left(\frac{z_{\alpha/2}\,\sigma}{E}\right)^{2}\quad\text{(round UP)}
+\]
+\sh{(b) $\mu$, $\sigma$ unknown, large $n$ ($n\ge 30$):}
+\[
+\bar{X}\pm z_{\alpha/2}\,\frac{S}{\sqrt{n}}
+\]
+
+\sh{(c) $\mu$, $\sigma$ unknown, small $n$ (normal population):}
+\[
+\bar{X}\pm t_{n-1,\,\alpha/2}\,\frac{S}{\sqrt{n}}
+\]
+
+\sh{(d) Population proportion $p$ (large $n$: $n\hat{p},n(1-\hat{p})\ge 5$):}
+\\
+\textbf{Note:} $\hat{p}=X/n$ ($X$=count with property; $n$=sample size).\\
+
+
+\[
+\hat{p}\pm z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}
+\]
+
+
+\section{Hypothesis Testing -- One Sample}
+
+\textbf{Steps:} (1) state $H_0,H_1$; \ (2) choose $\alpha$; \ (3) pick test statistic; \ (4) find rejection region or $p$-value; \ (5) decide; \ (6) conclude in context.
+\\
+\textbf{Note:} $p_0$ is the hypothesized value under $H_0$.
+\\
+\sh{Test for mean $\mu$ ($H_0:\mu=\mu_0$):}
+
+\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=0pt]
+\item $\sigma$ known, or $n\ge 30$: $\ Z_0=\dfrac{\bar{X}-\mu_0}{\sigma/\sqrt{n}}\sim\mathcal{N}(0,1)$
+\item $\sigma$ unknown, large $n$: $\ Z_0=\dfrac{\bar{X}-\mu_0}{S/\sqrt{n}}$
+\item $\sigma$ unknown, small $n$, normal pop: $\ T_0=\dfrac{\bar{X}-\mu_0}{S/\sqrt{n}}\sim t_{n-1}$
+\end{itemize}
+
+\sh{Test for proportion $p$ ($H_0:p=p_0$):}
+\[
+Z_0=\frac{\hat{p}-p_0}{\sqrt{p_0(1-p_0)/n}}\sim\mathcal{N}(0,1)
+\]
+\textit{Note: $n$=sample size; SE uses $p_0$ (not $\hat{p}$) in denominator.}
+
+\sh{Rejection regions \& $p$-values -- Z test:} \\
+Assuming $z_\alpha$ is positive by default
+\begin{center}\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lll@{}}
+\toprule
+$H_1$ & Reject $H_0$ if & $p$-value \\
+\midrule
+$\mu\ne\mu_0$ & $|Z_0|>z_{\alpha/2}$ (Two-tailed) & $2[1-\Phi(|Z_0|)]$ \\
+$\mu>\mu_0$   & $Z_0>z_{\alpha}$  (Right-tailed and positive)   & $1-\Phi(Z_0)$ \\
+$\mu<\mu_0$   & $Z_0<-z_{\alpha}$ (Left-tailed and negative)   & $\Phi(Z_0)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For $T$-test replace $z\!\to\! t_{n-1}$ and $\Phi\!\to\! F_{t_{n-1}}$.\\
+\sh{Decision:} reject $H_0$ iff $p\text{-value}\le\alpha$.
+
+\columnbreak
+
+\section{Hypothesis Testing -- Two Independent Samples}
+
+Samples: $(\bar{X}_1,S_1,n_1)$ vs $(\bar{X}_2,S_2,n_2)$; hypothesized $\Delta_0$. $H_0:\mu_1-\mu_2=\Delta_0$; often $\Delta_0=0$.\\
+\textbf{Large} $n_1,n_2$: both $n_1>30$ \textbf{and} $n_2>30$. \quad \textbf{Small} $n$: either $n_1\!\le\!30$ \textbf{or} $n_2\!\le\!30$.
+
+\sh{(a) Both $\sigma_1,\sigma_2$ known:}
+\[
+Z_0=\frac{(\bar{X}_1-\bar{X}_2)-\Delta_0}{\sqrt{\sigma_1^{2}/n_1+\sigma_2^{2}/n_2}}\sim\mathcal{N}(0,1)
+\]
+CI: $(\bar{X}_1-\bar{X}_2)\pm z_{\alpha/2}\sqrt{\sigma_1^{2}/n_1+\sigma_2^{2}/n_2}$.
+
+\sh{(b) Large $n_1,n_2$, $\sigma$'s unknown:} same form using $S_1,S_2$:
+\[
+Z_0=\frac{(\bar{X}_1-\bar{X}_2)-\Delta_0}{\sqrt{S_1^{2}/n_1+S_2^{2}/n_2}}
+\]
+CI: $(\bar{X}_1-\bar{X}_2)\pm z_{\alpha/2}\sqrt{S_1^{2}/n_1+S_2^{2}/n_2}$.
+
+\sh{(c) Small $n$, $\sigma_1^{2}=\sigma_2^{2}$ (pooled $t$-test):}
+\[
+S_p^{2}=\frac{(n_1-1)S_1^{2}+(n_2-1)S_2^{2}}{n_1+n_2-2}
+\]
+\[
+T_0=\frac{(\bar{X}_1-\bar{X}_2)-\Delta_0}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}}\sim t_{n_1+n_2-2}
+\]
+CI: $(\bar{X}_1-\bar{X}_2)\pm t_{n_1+n_2-2,\,\alpha/2}\,S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}$.
+
+\sh{(d) Small $n$, $\sigma_1^{2}\ne \sigma_2^{2}$ (Welch's $t$):}
+\[
+T_0=\frac{(\bar{X}_1-\bar{X}_2)-\Delta_0}{\sqrt{S_1^{2}/n_1+S_2^{2}/n_2}}\sim t_\nu
+\]
+\[
+\nu=\frac{\left(S_1^{2}/n_1+S_2^{2}/n_2\right)^{2}}{\dfrac{(S_1^{2}/n_1)^{2}}{n_1-1}+\dfrac{(S_2^{2}/n_2)^{2}}{n_2-1}}\ \ (\text{round down})
+\]
+CI: $(\bar{X}_1-\bar{X}_2)\pm t_{\nu,\alpha/2}\sqrt{S_1^{2}/n_1+S_2^{2}/n_2}$.
+
+\sh{(e) Two proportions ($H_0:p_1=p_2$), pooled:}
+\[
+\hat{p}=\frac{X_1+X_2}{n_1+n_2}
+\]
+\[
+Z_0=\frac{\hat{p}_1-\hat{p}_2}{\sqrt{\hat{p}(1-\hat{p})\!\left(\tfrac{1}{n_1}+\tfrac{1}{n_2}\right)}}\sim\mathcal{N}(0,1)
+\]
+
+\sh{CI for $p_1-p_2$ (unpooled SE):}
+\[
+(\hat{p}_1-\hat{p}_2)\pm z_{\alpha/2}\sqrt{\tfrac{\hat{p}_1(1-\hat{p}_1)}{n_1}+\tfrac{\hat{p}_2(1-\hat{p}_2)}{n_2}}
+\]
+
+\sh{Rejection region (two-tailed):}
+$Z$-test: $|Z_0|>z_{\alpha/2}$; pooled $T$-test: $|T_0|>t_{n_1+n_2-2,\alpha/2}$; Welch: $|T_0|>t_{\nu,\alpha/2}$. One-tailed analogous.
+
+\section{Two Dependent Samples -- Paired $t$-test}
+
+Differences $D_i=X_i-Y_i$, $i=1,\dots,n$.
+\[
+\bar{D}=\frac{1}{n}\sum_{i=1}^{n}D_i,\ \ S_D^{2}=\frac{1}{n-1}\sum_{i=1}^{n}(D_i-\bar{D})^{2}
+\]
+
+\sh{Test $H_0:\mu_D=\mu_{D,0}$ (usually $0$):}
+\[
+T_0=\frac{\bar{D}-\mu_{D,0}}{S_D/\sqrt{n}}\sim t_{n-1}
+\]
+
+\sh{Confidence interval for $\mu_D$:}
+\[
+\bar{D}\pm t_{n-1,\,\alpha/2}\,\frac{S_D}{\sqrt{n}}
+\]
+
+Reject (two-tailed) if $|T_0|>t_{n-1,\alpha/2}$.
+\textit{Use when the two samples are paired (same subject, before/after, matched pairs).}
+
+\section{Simple Linear Regression}
+
+Model: $Y=\beta_0+\beta_1 X+\epsilon,\ \ \epsilon\sim\mathcal{N}(0,\sigma^{2})$.
+
+\sh{Auxiliary sums:}
+\[
+S_{xx}=\sum(x_i-\bar{x})^{2}=\sum x_i^{2}-\tfrac{(\sum x_i)^{2}}{n}
+\]
+\[
+S_{yy}=\sum(y_i-\bar{y})^{2}=\sum y_i^{2}-\tfrac{(\sum y_i)^{2}}{n}
+\]
+\[
+S_{xy}=\sum(x_i-\bar{x})(y_i-\bar{y})=\sum x_i y_i-\tfrac{(\sum x_i)(\sum y_i)}{n}
+\]
+
+\sh{Least-squares estimators:}
+\[
+\hat{\beta}_1=\frac{S_{xy}}{S_{xx}},\qquad
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1\,\bar{x}
+\]
+
+\sh{Regression line (fitted) \& prediction:}
+\[
+\hat{y}=\hat{\beta}_0+\hat{\beta}_1 x,\qquad
+\hat{y}_0=\hat{\beta}_0+\hat{\beta}_1 x_0
+\]
+
+\sh{Interpretation of coefficients:}
+$\hat{\beta}_1$ = estimated change in $Y$ per one-unit increase in $X$;\ \ $\hat{\beta}_0$ = predicted $Y$ when $X=0$.
+
+\sh{Residuals:} $e_i=y_i-\hat{y}_i$.
+
+\sh{Sums of squares decomposition:}
+\[
+\mathrm{SST}=\sum(y_i-\bar{y})^{2}=S_{yy}
+\]
+\[
+\mathrm{SSR}=\sum(\hat{y}_i-\bar{y})^{2}=\hat{\beta}_1\,S_{xy}=\frac{S_{xy}^{2}}{S_{xx}}
+\]
+\[
+\mathrm{SSE}=\sum(y_i-\hat{y}_i)^{2}=\mathrm{SST}-\mathrm{SSR}
+\]
+\[
+\boxed{\mathrm{SST}=\mathrm{SSR}+\mathrm{SSE}}
+\]
+
+\sh{Error variance estimator:} $\displaystyle \hat{\sigma}^{2}=\frac{\mathrm{SSE}}{n-2}$.
+
+\sh{Coefficient of determination:}
+\[
+R^{2}=\frac{\mathrm{SSR}}{\mathrm{SST}}=1-\frac{\mathrm{SSE}}{\mathrm{SST}},\qquad 0\le R^{2}\le 1
+\]
+\textit{Interpretation:} proportion of variability in $Y$ explained by the linear regression on $X$. Closer to 1 $\Rightarrow$ better fit.
+
+\sh{Sample correlation coefficient:}
+\[
+r=\frac{S_{xy}}{\sqrt{S_{xx}\,S_{yy}}}=\frac{\sum(x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum(x_i-\bar{x})^{2}\sum(y_i-\bar{y})^{2}}}
+\]
+Properties: $-1\le r\le 1$; $R^{2}=r^{2}$; $\mathrm{sign}(r)=\mathrm{sign}(\hat{\beta}_1)$.
+
+\textit{Interpretation of $r$:} $|r|\!\approx\!1$ strong linear association; $r\!>\!0$ positive, $r\!<\!0$ negative; $r\!\approx\!0$ no linear association (possibly nonlinear).
+
+\section{Quick Reference}
+
+\sh{Common $z$ critical values:}
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+$1-\alpha$ & $z_{\alpha/2}$ (two-tail) & $z_{\alpha}$ (one-tail) \\
+\midrule
+90\% & 1.645 & 1.282 \\
+95\% & 1.960 & 1.645 \\
+98\% & 2.326 & 2.054 \\
+99\% & 2.576 & 2.326 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\sh{Common $t$ critical values} $t_{df,\alpha}$ (upper-tail):
+
+\begin{center}\scriptsize
+\renewcommand{\arraystretch}{1.0}
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}c|cccc@{}}
+\toprule
+$df\ \backslash\ \alpha$ & 0.10 & 0.05 & 0.025 & 0.01 \\
+\midrule
+5   & 1.476 & 2.015 & 2.571 & 3.365 \\
+10  & 1.372 & 1.812 & 2.228 & 2.764 \\
+15  & 1.341 & 1.753 & 2.131 & 2.602 \\
+20  & 1.325 & 1.725 & 2.086 & 2.528 \\
+25  & 1.316 & 1.708 & 2.060 & 2.485 \\
+29  & 1.311 & 1.699 & 2.045 & 2.462 \\
+30  & 1.310 & 1.697 & 2.042 & 2.457 \\
+40  & 1.303 & 1.684 & 2.021 & 2.423 \\
+60  & 1.296 & 1.671 & 2.000 & 2.390 \\
+$\infty$ & 1.282 & 1.645 & 1.960 & 2.326 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textit{Use:} two-tail $t_{df,\alpha/2}$ = column $\alpha/2$; e.g.\ 95\% CI, $df\!=\!20$: column 0.025 $\to 2.086$. If $df$ missing, round \textbf{down}.
+
+\sh{Sample size for proportion} (given margin $E_0$; round UP):
+
+\textit{(a) $\hat{p}$ known:}
+\[
+n \;\ge\; \hat{p}(1-\hat{p})\!\left(\frac{z_{\alpha/2}}{E_0}\right)^{\!2}
+\]
+\textit{(b) $\hat{p}$ unknown -- conservative ($\hat{p}=0.5$):}
+\[
+n \;\ge\; \frac{0.25\,z_{\alpha/2}^{2}}{E_0^{2}}
+\]
+
+\sh{$p$-values -- Two-Sample $Z$ test} ($H_0\!:\mu_1\!-\!\mu_2\!=\!\Delta_0$):
+\begin{center}\small
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}ll@{}}
+\toprule
+$H_1$ & $p$-value \\
+\midrule
+$\mu_1-\mu_2\ne\Delta_0$ & $2[1-\Phi(|Z_0|)]$ \\
+$\mu_1-\mu_2>\Delta_0$   & $1-\Phi(Z_0)$ \\
+$\mu_1-\mu_2<\Delta_0$   & $\Phi(Z_0)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Casio fx-580VN X -- Quick Tips}
+
+\sh{Modes:} \texttt{MENU} $\to$ \textbf{6} Statistics \ | \ \textbf{7} Distribution.
+
+\sh{Stats (MENU 6):} \textbf{1} 1-Var; \textbf{2} $y=a+bx$ linear reg.\\
+Enter data $\to$ \texttt{AC} $\to$ \texttt{OPTN} for: $\bar{x}$, $s_x$ ($=S$, sample SD), $\sigma_x$ (pop SD), $n$, $\sum x$, $\sum x^2$. Regression adds $a\!=\!\hat{\beta}_0$, $b\!=\!\hat{\beta}_1$, $r$, $\hat{y}$, $\hat{x}$.\\
+\textit{Always use $s_x$ for $S$; square it for $S^2$.}
+
+\sh{Normal (MENU 7):} \textbf{1} PD, \textbf{2} CD $P(a\!\le\!X\!\le\!b)$, \textbf{3} Inv Normal (returns $x$ with $P(X\!\le\!x)=p$).\\
+$P(Z>z)$: Normal CD, Lower$=z$, Upper$=10$, $\mu\!=\!0,\sigma\!=\!1$.\\
+$z_{\alpha/2}$: Inv Normal, Area$=1-\alpha/2$, $\mu\!=\!0,\sigma\!=\!1$.
+
+\sh{$t$ (MENU 7):} \textbf{4} PD, \textbf{5} CD, \textbf{6} Inv $t$ (lower-tail area).\\
+$t_{n-1,\alpha/2}$: Inv $t$, Area$=1-\alpha/2$, $df\!=\!n-1$.\\
+Two-tail $p$-value: $t$CD(Lower$=|T_0|$,Upper$=10$,$df$) $\times 2$.
+
+\sh{Binomial (MENU 7):} \textbf{A} PD $P(X\!=\!k)$, \textbf{B} CD $P(X\!\le\!k)$.
+
+\sh{Type I \& II Errors:}
+\begin{center}\scriptsize
+\renewcommand{\arraystretch}{1.0}
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Decision & $H_0$ true & $H_0$ false \\
+\midrule
+Fail to reject $H_0$ & correct $(1\!-\!\alpha)$ & Type II $(\beta)$ \\
+Reject $H_0$ & \textbf{Type I $(\alpha)$} & correct $(1\!-\!\beta)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textit{Power} $=1-\beta=P(\text{reject }H_0\mid H_0\text{ false})$.\\
+\sh{$p$-value rule:} reject $H_0$ iff $p$-value $\le\alpha$.
+
+\end{multicols*}
+
+\end{document}
+                                                             
