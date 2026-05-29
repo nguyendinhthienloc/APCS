@@ -1,0 +1,255 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\geometry{margin=1in}
+
+\title{STAT452: Multiple Linear Regression --- Lesson 1 Notes}
+\author{Nguyen Dinh Thien Loc}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction to Statistical and Linear Models}
+
+\subsection{Conceptual Overview}
+\begin{itemize}
+    \item \textbf{Statistical Model:} A simple, low-dimensional summary designed to capture data relationships, the data-generation process, and the underlying relationships present in a population while explicitly accounting for real-world uncertainty or noise.
+    \item \textbf{Linearity Definition:} A regression model is structurally defined as ``linear'' if it is linear in its \textbf{parameters} ($\beta_0, \beta_1, \dots, \beta_p$), regardless of any non-linear transformations applied to the predictor variables (e.g., $X^2$, $\log(X)$, or reciprocal transformations).
+    \item \textbf{MLR vs. SLR:} While Simple Linear Regression (SLR) handles exactly one predictor variable $X$, Multiple Linear Regression (MLR) integrates multiple predictor variables ($X_1, X_2, \dots, X_p$) to systematically model a single response variable $Y$.
+\end{itemize}
+
+\subsection{Model Specifications}
+\begin{itemize}
+    \item \textbf{Scalar Form:} For an individual observation $i$ (where $i = 1, 2, \dots, n$), the relationship is modeled as:
+    $$y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \dots + \beta_p x_{ip} + \epsilon_i$$
+    where $\epsilon_i$ represents the random error or noise terms, assumed to be independent and identically distributed (\textit{i.i.d.}) following a normal distribution:
+    $$\epsilon_i \sim \mathcal{N}(0, \sigma^2)$$
+    \item \textbf{Matrix Form:} To represent all $n$ cases simultaneously, the system is compactly expressed as:
+    $$\mathbf{Y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}$$
+    where:
+    $$\mathbf{Y} = \begin{bmatrix} y_1 \\ y_2 \\ \vdots \\ y_n \end{bmatrix}_{n \times 1}, \quad 
+    \mathbf{X} = \begin{bmatrix} 1 & x_{11} & x_{12} & \dots & x_{1p} \\ 1 & x_{21} & x_{22} & \dots & x_{2p} \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & x_{n1} & x_{n2} & \dots & x_{np} \end{bmatrix}_{n \times (p+1)}, \quad
+    \boldsymbol{\beta} = \begin{bmatrix} \beta_0 \\ \beta_1 \\ \vdots \\ \beta_p \end{bmatrix}_{(p+1) \times 1}, \quad
+    \boldsymbol{\epsilon} = \begin{bmatrix} \epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n \end{bmatrix}_{n \times 1}$$
+\end{itemize}
+
+\subsection{Population vs. Sample Regression Lines}
+\begin{itemize}
+    \item \textbf{Population Regression Line ($Y = \mathbf{X}\boldsymbol{\beta}$):} Represents the true, fixed, but unknown relationship governing the entire population. It is the primary object of statistical interest.
+    \item \textbf{Sample Regression Line ($Y = \mathbf{X}\hat{\boldsymbol{\beta}}$):} Calculated directly from sample data. It is inherently random and varies from sample to sample.
+\end{itemize}
+
+\section{Least Squares Estimation}
+
+\subsection{Objective and Derivation}
+The goal of Least Squares (LS) estimation is to find parameter estimates $(\hat{\beta}_0, \hat{\beta}_1, \dots, \hat{\beta}_p)$ that minimize the Least Squares criterion function $L$, which aggregates the sum of squared vertical distances from the data points to the fitted hyperplane:
+$$L(\hat{\beta}_0, \hat{\beta}_1, \dots, \hat{\beta}_p) = \sum_{i=1}^{n} (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_{i1} - \dots - \hat{\beta}_p x_{ip})^2 = \boldsymbol{\epsilon}^T \boldsymbol{\epsilon} = (\mathbf{Y} - \mathbf{X}\boldsymbol{\beta})^T (\mathbf{Y} - \mathbf{X}\boldsymbol{\beta})$$
+
+Taking partial derivatives with respect to each $\hat{\beta}_j$ and setting them to $0$ yields a system of $(p+1)$ equations known as the \textbf{Normal Equations}:
+$$\frac{\partial L}{\partial \hat{\beta}_0} = -2 \sum_{i=1}^{n} (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_{i1} - \dots - \hat{\beta}_p x_{ip}) = 0$$
+$$\frac{\partial L}{\partial \hat{\beta}_k} = -2 \sum_{i=1}^{n} x_{ik} (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_{i1} - \dots - \hat{\beta}_p x_{ip}) = 0, \quad k = 1, 2, \dots, p$$
+
+\subsection{Core Least Squares Formulas}
+\begin{itemize}
+    \item \textbf{Matrix Normal Equation:}
+    $$\mathbf{X}^T\mathbf{X}\,\hat{\boldsymbol{\beta}} = \mathbf{X}^T\mathbf{Y}$$
+    \item \textbf{Least Squares Estimator ($\hat{\boldsymbol{\beta}}$):} Assuming $\mathbf{X^TX}$ is non-singular and invertible, the unique solution is:
+    $$\hat{\boldsymbol{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}$$
+    \item \textbf{Unbiased Property:} Assuming the design matrix $\mathbf{X}$ is fixed, the LS estimator is strictly unbiased:
+    $$\mathbb{E}[\hat{\boldsymbol{\beta}}] = \boldsymbol{\beta}$$
+\end{itemize}
+\newpage
+\section{Fitted Model and Residual Properties}
+
+\subsection{Fitted Values and Residuals}
+\begin{itemize}
+    \item \textbf{Fitted (Predicted) Value:} The estimate of the response variable generated by the fitted model:
+    $$\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 x_{i1} + \dots + \hat{\beta}_p x_{ip}$$
+    \item \textbf{Residual ($e_i$):} The difference between the actual observed value and the estimated fitted value:
+    $$e_i = y_i - \hat{y}_i$$
+    Note that $e_i \neq \epsilon_i$ because $\hat{\beta}_j \neq \beta_j$ due to sampling variation.
+\end{itemize}
+
+\subsection{Mathematical Properties of Residuals}
+\begin{itemize}
+    \item \textbf{Zero Sum Condition:} Residuals always sum to zero:
+    $$\sum_{i=1}^{n} e_i = 0$$
+    \item \textbf{Orthogonality to Predictors:} Residuals are perfectly orthogonal to all explanatory variables:
+    $$\sum_{i=1}^{n} x_{ik} e_i = 0, \quad \text{for } k = 1, 2, \dots, p$$
+    \item \textbf{Zero Correlation:} The combined properties above mathematically guarantee that the residuals maintain a $0$ correlation with each of the $p$ predictors:
+    $$\text{Cov}(X_k, e) = \frac{1}{n-1}\left(\sum_{i=1}^{n} x_{ik}e_i - n\bar{x}_k\bar{e}\right) = 0$$
+\end{itemize}
+
+\subsection{Error Variance Estimation}
+\begin{itemize}
+    \item \textbf{Mean Square Error (MSE):} The true error variance $\sigma^2$ is unknown and must be estimated via the Mean Square Error (MSE). It divides the residual sum of squares by the error degrees of freedom ($n-p-1$) to provide an unbiased estimator:
+    $$\sigma^2 \approx \text{MSE} = \frac{\sum_{i=1}^{n} e_i^2}{n - p - 1}$$
+\end{itemize}
+
+\newpage
+\section{Inference and Hypothesis Testing for Coefficients}
+
+\subsection{Variance-Covariance Structure}
+The variance-covariance matrix of the parameter estimator vector $\mathbf{\hat{\beta}}$ in matrix notation is structured as:
+$$\text{Var}(\hat{\boldsymbol{\beta}}) = \sigma^2(\mathbf{X}^T\mathbf{X})^{-1}$$
+$$\text{Var}(\mathbf{\hat{\beta}}) = \begin{bmatrix} \text{Var}(\hat{\beta}_0) & \text{Cov}(\hat{\beta}_0, \hat{\beta}_1) & \dots & \text{Cov}(\hat{\beta}_0, \hat{\beta}_p) \\ \text{Cov}(\hat{\beta}_1, \hat{\beta}_0) & \text{Var}(\hat{\beta}_1) & \dots & \text{Cov}(\hat{\beta}_1, \hat{\beta}_p) \\ \vdots & \vdots & \ddots & \vdots \\ \text{Cov}(\hat{\beta}_p, \hat{\beta}_0) & \text{Cov}(\hat{\beta}_p, \hat{\beta}_1) & \dots & \text{Var}(\hat{\beta}_p) \end{bmatrix}$$
+
+\begin{itemize}
+    \item \textbf{Standard Error ($SE$):} Calculated by taking the square root of the corresponding diagonal elements of $(\mathbf{X^TX})^{-1}$ and substituting the population parameter $\sigma^2$ with the sample $\text{MSE}$:
+    $$\text{SE}(\hat{\beta}_j) = \sqrt{\text{MSE} \times \left[(\mathbf{X}^T\mathbf{X})^{-1}\right]_{jj}}$$
+\end{itemize}
+
+\subsection{Hypothesis Testing ($t$-test)}
+To test the significance of an isolated individual coefficient ($H_0: \beta_j = \beta_j^0$ vs. $H_1: \beta_j \neq \beta_j^0$):
+\begin{itemize}
+    \item \textbf{Test Statistic:}
+    $$t = \frac{\hat{\beta}_j - \beta_j^0}{\text{SE}(\hat{\beta}_j)}$$
+    which strictly follows a Student's $t$-distribution with degrees of freedom $df = n - p - 1$ under $H_0$.
+    \item \textbf{Two-Tailed $P$-value Calculation (via R):}
+    $$\text{P-value} = 2 \times \texttt{pt}(\text{abs}(t), \text{df} = n - p - 1, \text{lower.tail} = \text{FALSE})$$
+\end{itemize}
+
+\subsection{Confidence Intervals}
+The $100(1-\alpha)\%$ confidence interval for any regression parameter $\beta_j$ is evaluated as:
+$$\hat{\beta}_j \pm t_{(n-p-1, \, \alpha/2)} \times \text{SE}(\hat{\beta}_j)$$
+where $t_{(n-p-1, \, \alpha/2)}$ represents the critical value of the $t_{n-p-1}$ distribution at a significance level of $\alpha$.
+
+\section{Goodness-of-Fit Metrics}
+
+\begin{itemize}
+    \item \textbf{Multiple $R^2$ (Coefficient of Determination):} Represents the total proportion of systemic variability in $Y$ successfully explained by the set of predictors $X_1, \dots, X_p$:
+    $$R^2 = \frac{\text{SSR}}{\text{SST}} = 1 - \frac{\text{SSE}}{\text{SST}}$$
+    Where $\text{SST} = \sum (y_i - \bar{y})^2$, $\text{SSE} = \sum (y_i - \hat{y}_i)^2$, and $\text{SSR} = \sum (\hat{y}_i - \bar{y})^2$. Note that $R^2$ will always increase or remain static as more variables are introduced.
+    \item \textbf{Adjusted $R^2$ ($R_{\text{adj}}^2$):} Modifies $R^2$ by penalizing the model for adding unnecessary predictors based on degrees of freedom constraints:
+    $$R_{\text{adj}}^2 = 1 - \frac{\text{SSE}/df_E}{\text{SST}/df_T} = 1 - \frac{\text{SSE}/(n-p-1)}{\text{SST}/(n-1)} = 1 - \frac{n-1}{n-p-1}(1-R^2)$$
+    Unlike Multiple $R^2$, $R_{\text{adj}}^2$ can decrease if non-essential features are integrated.
+\end{itemize}
+
+\section{Model Comparison and Nested Testing}
+
+\subsection{Conceptual Framework}
+Model 1 is structurally defined as \textbf{nested} within Model 2 if Model 1 is a restricted special case of Model 2 (created by constraining parameters, e.g., setting specific $\beta_k = 0$). 
+\begin{itemize}
+    \item The simpler model is termed the \textbf{reduced model}.
+    \item The complex model is termed the \textbf{full model}.
+    \item Models using identical datasets share a completely identical Total Sum of Squares ($\text{SST}$).
+    \item Because the full model searches a broader parameter space, its optimization bounds guarantee:
+    $$\text{SSE}_{\text{reduced}} \geq \text{SSE}_{\text{full}} \quad \text{and} \quad \text{SSR}_{\text{reduced}} \leq \text{SSR}_{\text{full}}$$
+\end{itemize}
+
+\subsection{The Partial $F$-Test Formula}
+To test $H_0: \text{Reduced model is true}$ vs. $H_1: \text{Full model is true}$:
+$$F = \frac{(\text{SSE}_{\text{reduced}} - \text{SSE}_{\text{full}}) / (df_E^{\text{reduced}} - df_E^{\text{full}})}{\text{MSE}_{\text{full}}}$$
+Under $H_0$, this statistic follows an $F$-distribution with degrees of freedom:
+$$df_1 = df_E^{\text{reduced}} - df_E^{\text{full}}, \quad df_2 = df_E^{\text{full}}$$
+
+\subsection{Overall Model Significance Test}
+When testing whether *any* of the selected predictors are useful ($H_0: \beta_1 = \beta_2 = \dots = \beta_p = 0$), the reduced model simplifies to an intercept-only model ($y_i = \beta_0 + \epsilon_i$), where $\text{SSE}_{\text{reduced}} = \text{SST}_{\text{full}}$ and $df_E^{\text{reduced}} = n-1$. The partial $F$-test collapses to the overall model $F$-test:
+$$F = \frac{(\text{SST}_{\text{full}} - \text{SSE}_{\text{full}}) / [n-1 - (n-p-1)]}{\text{SSE}_{\text{full}}/(n-p-1)} = \frac{\text{SSR}_{\text{full}}/p}{\text{SSE}_{\text{full}}/(n-p-1)} = \frac{\text{MSR}_{\text{full}}}{\text{MSE}_{\text{full}}}$$
+which follows an $F_{p, \, n-p-1}$ distribution under $H_0$.
+
+\section{Residual Analysis (Model Diagnostics)}
+
+Residual analysis is performed to evaluate the four core Gauss-Markov and normality assumptions of linear regression models:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth}
+                            >{\raggedright\arraybackslash}p{0.30\textwidth}
+                            >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Assumption} & \textbf{Mathematical Definition} & \textbf{Diagnostic Check Method} \\ 
+\midrule
+
+1. Linearity 
+& $\mathbb{E}[Y|\mathbf{X}=\mathbf{x}] = \mathbf{x}^T\boldsymbol{\beta}$ 
+& Residual plot: $e_i$ vs. $\hat{y}_i$; curves indicate non-linearity. \\
+
+2. Homoscedasticity 
+& $\text{Var}(Y|\mathbf{X}=\mathbf{x}) = \sigma^2$ 
+& Residual plot; funnel or megaphone shapes show non-constant variance. \\
+
+3. Independence 
+& $\text{Cov}(\epsilon_i, \epsilon_j) = 0 \quad \forall i \neq j$ 
+& Residual plot ordered sequentially. \\
+
+4. Normality 
+& $Y|\mathbf{X}=\mathbf{x} \sim \mathcal{N}(\mathbf{x}^T\boldsymbol{\beta}, \sigma^2)$ 
+& Normal Q-Q plot; points should lie near the diagonal reference line. \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+\section{Casio fx-580VN X Exam Utility Sections}
+If a Casio fx-580VN X scientific calculator is authorized during examination, specific arithmetic subsets can be automated rapidly to verify raw matrix calculations and minimize algebraic errors.
+
+\subsection{Automating Matrix Operations for Coefficient Estimation}
+When the examination question provides a small, explicit data matrix ($\mathbf{X}$ and $\mathbf{Y}$) where $n$ is small and $p \le 3$, you can bypass structural manual matrix arithmetic via the calculator's dedicated \textbf{Matrix Mode} (\texttt{MENU} $\rightarrow$ \texttt{4}).
+\begin{enumerate}
+    \item \textbf{Data Input Matrix Assignments:}
+    \begin{itemize}
+        \item Define Matrix A ($\text{MatA}$) as the design matrix $\mathbf{X}$ with dimension $n \times (p+1)$.
+        \item Define Matrix B ($\text{MatB}$) as the column response vector $\mathbf{Y}$ with dimension $n \times 1$.
+    \end{itemize}
+    \item \textbf{Generating Summary Matrices Directly:}
+    \begin{itemize}
+        \item To obtain the matrix component $\mathbf{X^TX}$, execute the command block:
+        $$\text{MatA}^T \times \text{MatA}$$
+        (Using $\mathbf{\text{Trn}}$ in the \texttt{OPTN} menu to compute the transposition).
+        \item To obtain the column matrix component $\mathbf{X^TY}$, execute the command block:
+        $$\text{MatA}^T \times \text{MatB}$$
+    \end{itemize}
+    \item \textbf{Direct Parameter Verification ($\hat{\boldsymbol{\beta}}$):}
+    If the computed $\mathbf{X^TX}$ yields a square matrix of size $\le 4 \times 4$, assign this resulting matrix to a new matrix slot, say Matrix C ($\text{MatC}$). The final least squares coefficient parameters can be verified instantly by computing the inverse matrix multiplication chain:
+    $$\mathbf{\hat{\beta}} = \text{MatC}^{-1} \times (\text{MatA}^T \times \text{MatB})$$
+\end{enumerate}
+
+\subsection{Solving System of Normal Equations via Simultaneous Equation Solvers}
+When the problem provides the fully evaluated scalar expansions of the Normal Equations rather than a data table, calculation speed can be maximized using the \textbf{Equation/Func Mode} (\texttt{MENU} $\rightarrow$ \texttt{9} $\rightarrow$ \texttt{1}).
+\begin{itemize}
+    \item Select the number of unknowns equal to $p+1$ (the total parameters $\hat{\beta}_0, \hat{\beta}_1, \dots, \hat{\beta}_p$).
+    \item Directly input the consolidated summation parameters:
+    $$\begin{bmatrix}
+    n & \sum x_{i1} & \dots & \sum x_{ip} & \big| & \sum y_i \\
+    \sum x_{i1} & \sum x_{i1}^2 & \dots & \sum x_{i1}x_{ip} & \big| & \sum x_{i1}y_i \\
+    \vdots & \vdots & \ddots & \vdots & \big| & \vdots \\
+    \sum x_{ip} & \sum x_{ip}x_{i1} & \dots & \sum x_{ip}^2 & \big| & \sum x_{ip}y_i
+    \end{bmatrix}$$
+    \item Pressing \texttt{=} will output the optimized exact fractions or decimals for $\hat{\beta}_0, \hat{\beta}_1, \dots, \hat{\beta}_p$ concurrently, serving as an absolute confirmation for manually computed entries.
+\end{itemize}
+
+\subsection{Two-Variable Summary Statistics Automation (SLR Check)}
+For sub-problems restricting data checking to a Simple Linear Regression framework or analyzing interactions between two structural attributes $X_k$ and $Y$, use the \textbf{Statistics Mode} (\texttt{MENU} $\rightarrow$ \texttt{6} $\rightarrow$ \texttt{2} for $y=a+bx$).
+\begin{itemize}
+    \item Input data pairs directly into the $x$ and $y$ spreadsheets.
+    \item Pressing \texttt{OPTN} $\rightarrow$ \texttt{3} (\text{2-Variable Regression Calc}) outputs structural metrics immediately:
+    \begin{itemize}
+        \item $a$: The sample intercept ($\hat{\beta}_0$).
+        \item $b$: The sample slope ($\hat{\beta}_1$).
+        \item $r$: The Pearson correlation coefficient ($r_{xy}$). Squaring this manually gives the Multiple $R^2$ value for the simple model ($R^2 = r_{xy}^2$).
+    \end{itemize}
+    \item Pressing \texttt{OPTN} $\rightarrow$ \texttt{2} (\text{2-Variable Variable Calc}) retrieves fundamental summation quantities ($\sum x, \sum x^2, \sum y, \sum y^2, \sum xy$) without needing manual step-by-step arithmetic loops.
+\end{itemize}
+
+\subsection{Validating Unconditional Sum of Squares via 1-Variable Summary Statistics}
+To quickly verify the denominator for variance allocations without manual deviation squaring ($SST = \sum (y_i - \bar{y})^2$):
+\begin{itemize}
+    \item Enter the raw $Y$ data entries into \textbf{Statistics Mode: 1-Variable} (\texttt{MENU} $\rightarrow$ \texttt{6} $\rightarrow$ \texttt{1}).
+    \item Execute \texttt{OPTN} $\rightarrow$ \texttt{2} (\text{1-Variable Calc}).
+    \item Extract the value of $\sum x^2$ (which acts as $\sum y_i^2$) and $\sum x$ (which acts as $\sum y_i$).
+    \item Apply the computational shortcut formula to verify your manual total sum of squares calculation:
+    $$SST = \sum y_i^2 - \frac{(\sum y_i)^2}{n}$$
+\end{itemize}
+
+\end{document}
