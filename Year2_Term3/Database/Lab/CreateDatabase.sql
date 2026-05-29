@@ -1,0 +1,115 @@
+-- CREATE DATABASE my_database
+-- GO 
+-- USE my_database
+-- -- ALTER DATABASE my_database SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+-- -- USE master
+-- -- DROP DATABASE my_database
+-- -- 1. Tao bang Department truoc
+-- GO
+-- CREATE TABLE Department (
+--     department_id VARCHAR(5) PRIMARY KEY,
+--     department_name NVARCHAR(50) NOT NULL,
+--     office VARCHAR(5),
+--     department_head VARCHAR(9)   
+-- )
+
+-- GO
+-- -- Tao bang Instructor sau
+-- CREATE TABLE Instructor (
+--     instructor_id VARCHAR(9) PRIMARY KEY NOT NULL,
+--     instructor_name NVARCHAR(50) NOT NULL,
+--     phone NVARCHAR(9) NOT NULL,
+--     department_id VARCHAR(5) REFERENCES Department(department_id),
+--     salary INT CHECK (salary > 0)
+-- )
+-- -- Cap nhap lai bang Department de them khoa ngoai cho department_head
+-- GO
+-- ALTER TABLE Department
+-- ADD FOREIGN KEY (department_head) REFERENCES Instructor(instructor_id)
+
+-- GO
+-- -- Tao bang Student
+-- CREATE TABLE Student (
+--     student_id VARCHAR(9) PRIMARY KEY,
+--     student_name NVARCHAR(50) NOT NULL,
+--     gender CHAR(1) CHECK (gender IN ('M', 'F', 'O')),
+--     birthday DATETIME,
+--     student_class VARCHAR(5), 
+--     department_id VARCHAR(5) REFERENCES Department(department_id)
+-- )
+-- GO
+-- -- Tao bang Course
+-- CREATE TABLE Course (
+--     course_id VARCHAR(9) PRIMARY KEY,
+--     course_name NVARCHAR(50) NOT NULL UNIQUE,
+--     credit INT CHECK (credit > 0),
+--     department_id VARCHAR(5) REFERENCES Department(department_id)
+-- )
+
+-- GO
+-- -- Tao bang Section
+-- CREATE TABLE Section (
+--     section_id INT PRIMARY KEY NOT NULL,
+--     course_id VARCHAR(9) NOT NULL REFERENCES Course(course_id),
+--     semester VARCHAR(9) NOT NULL,
+--     school_year INT NOT NULL,
+--     capacity INT CHECK (capacity > 0),
+--     CONSTRAINT UQ_Section_Course_Semester_Year UNIQUE (course_id, semester, school_year)
+-- )
+
+-- GO
+-- -- Tao bang Teaching 
+-- CREATE TABLE Teaching (
+--     section_id INT NOT NULL REFERENCES Section(section_id),
+--     instructor_id VARCHAR(9) NOT NULL REFERENCES Instructor(instructor_id),
+--     teaching_role VARCHAR(9) CHECK (teaching_role IN ('Lecturer', 'TA')),
+--     PRIMARY KEY (section_id, instructor_id)
+-- )
+-- GO
+-- -- Tao bang GradeReport
+-- CREATE TABLE GradeReport (
+--     section_id INT NOT NULL REFERENCES Section(section_id),
+--     student_id VARCHAR(9) NOT NULL REFERENCES Student(student_id),
+--     grade_100 INT CHECK (grade_100 >= 0),
+--     grade_ABC CHAR(1) CHECK (grade_ABC IN ('A', 'B', 'C', 'D', 'E', 'F')),
+--     PRIMARY KEY (section_id, student_id)
+-- )
+-- GO
+-- -- Tao bang Prerequisite
+-- CREATE TABLE Prerequisite (
+--     course_id VARCHAR(9) NOT NULL REFERENCES Course(course_id),
+--     prerequisite_id VARCHAR(9) NOT NULL REFERENCES Course(course_id),
+--     PRIMARY KEY (course_id, prerequisite_id)
+-- )
+
+-- GO
+-- --Circular Dependency: Department has Department_head which is a foreign key to Instructor, and Instructor has department_id which is a foreign key to Department. To resolve this, we can first create the Department table without the department_head foreign key, then create the Instructor table, and finally alter the Department table to add the department_head foreign key constraint.
+-- INSERT INTO Department(department_id, department_name, office, department_head)
+-- VALUES
+-- ('AI', 'Artificial Intelligence', 'I86', NULL),
+-- ('CS', 'Computer Science', 'I81', NULL),
+-- ('IS', 'Information System', 'I84', NULL),
+-- ('NW', 'Network', 'I87', NULL),
+-- ('SE', 'Software Engineering', 'I82', NULL);
+-- GO
+
+-- INSERT INTO Instructor (instructor_id, instructor_name, phone, department_id, salary)
+-- VALUES 
+-- ('I001', 'Dang Huynh Bao Khanh', '080913213', 'CS', 1000),
+-- ('I002', 'Alex Grant', '082412613', 'CS', 2000),
+-- ('I003', 'Tran Hoang Lan', '080921234', 'SE', 1500),
+-- ('I004', 'Nguyen Ngoc Khanh', '090245613', 'IS', 1500),
+-- ('I005', 'James Cobb', '092193213', 'SE', 2000),
+-- ('I006', 'Le Khanh', '090799131', 'IS', 2200),
+-- ('I007', 'Vu Ngoc Bao', '090511342', 'SE', 2100),
+-- ('I008', 'Tran Hong An', '099912353', 'NW', 1900),
+-- ('I009', 'Nguyen Hai Lam', '080911234', 'AI', 1500),
+-- ('I010', 'Dang Hoang Phong', '090233451', 'AI', 2300);
+-- GO
+
+-- UPDATE Department SET department_head = 'I009' WHERE department_id = 'AI';
+-- UPDATE Department SET department_head = 'I001' WHERE department_id = 'CS';
+-- UPDATE Department SET department_head = 'I004' WHERE department_id = 'IS';
+-- UPDATE Department SET department_head = 'I003' WHERE department_id = 'SE';
+
+-- GO
