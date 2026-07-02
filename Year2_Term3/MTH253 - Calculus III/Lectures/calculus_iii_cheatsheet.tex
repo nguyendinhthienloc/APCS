@@ -1,0 +1,359 @@
+\documentclass[10pt,landscape,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{geometry}
+\geometry{top=0.25in,bottom=0.25in,left=0.25in,right=0.25in}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\usepackage{microtype}
+
+% --- Color Palette (sleek dark corporate / mathematical theme) ---
+\definecolor{primary}{HTML}{1A365D}      % Deep Blue
+\definecolor{secondary}{HTML}{2B6CB0}    % Slate Blue
+\definecolor{accent}{HTML}{C53030}       % Muted Red/Crimson
+\definecolor{lightbg}{HTML}{F7FAFC}      % Off-white
+\definecolor{boxborder}{HTML}{E2E8F0}    % Light Gray
+
+% --- Minimalist custom section formats ---
+\usepackage{titlesec}
+\titleformat{\section}
+  {\color{primary}\normalfont\bfseries\small}
+  {}{0em}{}
+  [\color{secondary}\titlerule]
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+
+\titleformat{\subsection}
+  {\color{secondary}\normalfont\bfseries\scriptsize}
+  {}{0em}{}
+\titlespacing*{\subsection}{0pt}{4pt}{2pt}
+
+% --- Layout Customizations ---
+\setlist[itemize]{leftmargin=*,noitemsep,topsep=1pt,parsep=1pt,partopsep=0pt}
+\setlist[enumerate]{leftmargin=*,noitemsep,topsep=1pt,parsep=1pt,partopsep=0pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.5pt}
+\setlength{\columnsep}{12pt}
+
+% Custom tcolorbox for key theorems
+\newtcolorbox{theorembox}[2][]{
+    colback=lightbg,
+    colframe=secondary,
+    arc=0.8mm,
+    outer arc=0.8mm,
+    left=1.5mm,
+    right=1.5mm,
+    top=1.5mm,
+    bottom=1.5mm,
+    boxrule=0.25mm,
+    fonttitle=\bfseries\scriptsize,
+    coltitle=white,
+    colbacktitle=secondary,
+    title={#2},
+    #1
+}
+
+\begin{document}
+\footnotesize
+
+\begin{center}
+    \textbf{\large MTH253 -- Calculus III Cheat Sheet} \\
+    \scriptsize Chapters 1 \& 2: Multivariable Differentiation \& Multiple Integration --- VNU-HCM University of Science
+\end{center}
+
+\begin{multicols*}{3}
+
+% ==========================================
+% SECTION 1: VECTORS & 3D SPACE
+% ==========================================
+\section{1. Vectors \& 3D Coordinate Geometry}
+\subsection{Coordinate Systems \& Distance}
+\begin{itemize}
+    \item \textbf{Distance in $\mathbb{R}^3$}: The distance between $P_1(x_1, y_1, z_1)$ and $P_2(x_2, y_2, z_2)$ is:
+    \[ d = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2 + (z_2-z_1)^2} \]
+    \item \textbf{Equation of a Sphere}: With center $C(h,k,l)$ and radius $R$:
+    \[ (x-h)^2 + (y-k)^2 + (z-l)^2 = R^2 \]
+\end{itemize}
+
+\subsection{Vectors, Magnitude, and Unit Vectors}
+\begin{itemize}
+    \item \textbf{Vector from $A$ to $B$}: For $A(a_1, b_1, c_1)$ and $B(a_2, b_2, c_2)$:
+    \[ \vec{AB} = \langle a_2 - a_1, b_2 - b_1, c_2 - c_1 \rangle \]
+    \item \textbf{Magnitude}: For vector $\vec{u} = \langle a, b, c \rangle$:
+    \[ \|\vec{u}\| = \sqrt{a^2 + b^2 + c^2} \]
+    \item \textbf{Unit Vector}: Vector of length 1 in the direction of $\vec{v} \neq \vec{0}$:
+    \[ \vec{u} = \frac{\vec{v}}{\|\vec{v}\|} \]
+    \item \textbf{Basis Vectors}: $\vec{i} = \langle 1,0,0 \rangle$, $\vec{j} = \langle 0,1,0 \rangle$, $\vec{k} = \langle 0,0,1 \rangle$.
+\end{itemize}
+
+\subsection{Dot Product (Scalar Product)}
+\begin{itemize}
+    \item \textbf{Definition}: $\vec{u} \cdot \vec{v} = u_1v_1 + u_2v_2 + u_3v_3 = \|\vec{u}\|\|\vec{v}\|\cos\theta$.
+    \item \textbf{Orthogonality}: $\vec{u} \perp \vec{v} \iff \vec{u} \cdot \vec{v} = 0$.
+    \item \textbf{Properties}: $\vec{u} \cdot \vec{u} = \|\vec{u}\|^2$; $\vec{u} \cdot \vec{v} = \vec{v} \cdot \vec{u}$.
+\end{itemize}
+
+\subsection{Cross Product (Vector Product)}
+\begin{itemize}
+    \item \textbf{Definition} (Defined only in $\mathbb{R}^3$):
+    \[ \vec{u} \times \vec{v} = \begin{vmatrix} \vec{i} & \vec{j} & \vec{k} \\ u_1 & u_2 & u_3 \\ v_1 & v_2 & v_3 \end{vmatrix} = \langle u_2v_3 - u_3v_2, u_3v_1 - u_1v_3, u_1v_2 - u_2v_1 \rangle \]
+    \item \textbf{Geometry}: $\vec{u} \times \vec{v}$ is perpendicular to both $\vec{u}$ and $\vec{v}$.
+    \item \textbf{Magnitude}: $\|\vec{u} \times \vec{v}\| = \|\vec{u}\|\|\vec{v}\|\sin\theta$ (Area of the parallelogram formed by $\vec{u}$ and $\vec{v}$).
+    \item \textbf{Parallelism}: $\vec{u} \parallel \vec{v} \iff \vec{u} \times \vec{v} = \vec{0}$.
+\end{itemize}
+
+\subsection{Lines and Planes in Space}
+\begin{itemize}
+    \item \textbf{Line $L$} through $P_0(x_0, y_0, z_0)$ parallel to direction vector $\vec{v} = \langle a, b, c \rangle$:
+    \begin{itemize}
+        \item \textbf{Vector}: $\vec{r}(t) = \vec{r}_0 + t\vec{v}$ or $\langle x,y,z \rangle = \langle x_0,y_0,z_0 \rangle + t\langle a,b,c \rangle$
+        \item \textbf{Parametric}: $x = x_0 + at$, $y = y_0 + bt$, $z = z_0 + ct$
+        \item \textbf{Symmetric}: $\frac{x-x_0}{a} = \frac{y-y_0}{b} = \frac{z-z_0}{c}$ (for $a,b,c \neq 0$)
+    \end{itemize}
+    \item \textbf{Plane $M$} through $P_0(x_0, y_0, z_0)$ with normal vector $\vec{n} = \langle a, b, c \rangle$:
+    \begin{itemize}
+        \item \textbf{Vector}: $\vec{n} \cdot (\vec{r} - \vec{r}_0) = 0$
+        \item \textbf{Scalar}: $a(x-x_0) + b(y-y_0) + c(z-z_0) = 0$
+        \item \textbf{Linear}: $ax + by + cz + d = 0$
+    \end{itemize}
+\end{itemize}
+
+% ==========================================
+% SECTION 2: LIMITS & CONTINUITY
+% ==========================================
+\section{2. Limits and Continuity}
+\subsection{Functions of Several Variables}
+\begin{itemize}
+    \item \textbf{Level Curves}: The set of points where $f(x,y) = k$.
+    \item \textbf{Level Surfaces}: The set of points where $f(x,y,z) = k$.
+\end{itemize}
+
+\subsection{Limits}
+\begin{itemize}
+    \item $\lim\limits_{(x,y) \to (a,b)} f(x,y) = L \iff \forall \varepsilon > 0, \exists \delta > 0$ such that:
+    \[ 0 < \sqrt{(x-a)^2 + (y-b)^2} < \delta \implies |f(x,y) - L| < \varepsilon \]
+    \item \textbf{Non-existence Test}: If $f(x,y) \to L_1$ along path $C_1$ and $f(x,y) \to L_2$ along path $C_2$ as $(x,y) \to (a,b)$, and $L_1 \neq L_2$, then the limit \textbf{does not exist}.
+    \item Standard paths to test as $(x,y) \to (0,0)$:
+    \begin{itemize}
+        \item Axes: $x=0$ or $y=0$.
+        \item Lines: $y=mx$ (shows $m$-dependence).
+        \item Parabolas: $y=kx^2$ or $x=ky^2$ (for terms like $x^4+y^2$).
+    \end{itemize}
+\end{itemize}
+
+\begin{theorembox}{Squeeze Theorem}
+If $g(x,y) \leq f(x,y) \leq h(x,y)$ near $(a,b)$ (except possibly at $(a,b)$) and $\lim\limits_{(x,y) \to (a,b)} g(x,y) = \lim\limits_{(x,y) \to (a,b)} h(x,y) = L$, then:
+\[ \lim_{(x,y) \to (a,b)} f(x,y) = L \]
+\end{theorembox}
+
+\subsection{Continuity}
+\begin{itemize}
+    \item $f$ is continuous at $(a,b)$ if $\lim\limits_{(x,y) \to (a,b)} f(x,y) = f(a,b)$.
+    \item Polynomials, rational, exponential, logarithmic, trigonometric, and root functions are continuous on their domains.
+\end{itemize}
+
+% ==========================================
+% SECTION 3: PARTIAL DERIVATIVES
+% ==========================================
+\section{3. Partial Derivatives}
+\subsection{First-Order Partial Derivatives}
+\begin{itemize}
+    \item \textbf{Respect to $x$}: Regard $y$ as a constant:
+    \[ f_x(a,b) = \lim_{h \to 0} \frac{f(a+h,b) - f(a,b)}{h} = \frac{\partial f}{\partial x} \]
+    \item \textbf{Respect to $y$}: Regard $x$ as a constant:
+    \[ f_y(a,b) = \lim_{h \to 0} \frac{f(a,b+h) - f(a,b)}{h} = \frac{\partial f}{\partial y} \]
+\end{itemize}
+
+\subsection{Higher-Order Derivatives}
+\begin{itemize}
+    \item Second partials: $f_{xx} = \frac{\partial^2 f}{\partial x^2}$, $f_{yy} = \frac{\partial^2 f}{\partial y^2}$.
+    \item Mixed partials: $f_{xy} = (f_x)_y = \frac{\partial^2 f}{\partial y \partial x}$, $f_{yx} = (f_y)_x = \frac{\partial^2 f}{\partial x \partial y}$.
+\end{itemize}
+
+\begin{theorembox}{Clairaut's Theorem}
+If $f$ is defined on a disk $D$ containing $(a,b)$, and mixed partials $f_{xy}$ and $f_{yx}$ are both continuous on $D$, then:
+\[ f_{xy}(a,b) = f_{yx}(a,b) \]
+\end{theorembox}
+
+\subsection{Tangent Planes \& Linearization}
+\begin{itemize}
+    \item \textbf{Tangent Plane}: To surface $z=f(x,y)$ at $P(x_0, y_0, z_0)$:
+    \[ z - z_0 = f_x(x_0,y_0)(x-x_0) + f_y(x_0,y_0)(y-y_0) \]
+    \item \textbf{Linearization}: $L(x,y)$ of $f(x,y)$ at $(a,b)$:
+    \[ L(x,y) = f(a,b) + f_x(a,b)(x-a) + f_y(a,b)(y-b) \]
+    \item \textbf{Linear Approximation}: $f(x,y) \approx L(x,y)$ for $(x,y) \approx (a,b)$.
+\end{itemize}
+
+\subsection{Differentiability \& Differentials}
+\begin{itemize}
+    \item \textbf{Sufficient Condition}: If $f_x$ and $f_y$ exist near $(a,b)$ and are continuous at $(a,b)$, then $f$ is \textbf{differentiable} at $(a,b)$.
+    \item \textbf{Total Differential}: For $z = f(x,y)$:
+    \[ dz = f_x(x,y)\,dx + f_y(x,y)\,dy = \frac{\partial z}{\partial x}\,dx + \frac{\partial z}{\partial y}\,dy \]
+    We approximate $\Delta z \approx dz$ for small $\Delta x = dx$ and $\Delta y = dy$.
+\end{itemize}
+
+% ==========================================
+% SECTION 4: CHAIN RULE & IMPLICIT
+% ==========================================
+\section{4. Chain Rule \& Implicit Differentiation}
+\subsection{The Chain Rule}
+\begin{itemize}
+    \item \textbf{Case 1}: $z = f(x,y)$ differentiable, $x = g(t)$, $y = h(t)$ differentiable:
+    \[ \frac{dz}{dt} = \frac{\partial z}{\partial x}\frac{dx}{dt} + \frac{\partial z}{\partial y}\frac{dy}{dt} \]
+    \item \textbf{Case 2}: $z = f(x,y)$, $x = g(s,t)$, $y = h(s,t)$:
+    \[ \frac{\partial z}{\partial s} = \frac{\partial z}{\partial x}\frac{\partial x}{\partial s} + \frac{\partial z}{\partial y}\frac{\partial y}{\partial s}, \quad \frac{\partial z}{\partial t} = \frac{\partial z}{\partial x}\frac{\partial x}{\partial t} + \frac{\partial z}{\partial y}\frac{\partial y}{\partial t} \]
+    \item \textbf{General Rule}: For $u = f(x_1, \dots, x_n)$ and $x_j = g_j(t_1, \dots, t_m)$:
+    \[ \frac{\partial u}{\partial t_i} = \sum_{j=1}^{n} \frac{\partial u}{\partial x_j} \frac{\partial x_j}{\partial t_i} \]
+\end{itemize}
+
+\subsection{Implicit Differentiation}
+\begin{itemize}
+    \item \textbf{Single Variable}: If $F(x,y) = 0$ defines $y = f(x)$ implicitly:
+    \[ \frac{dy}{dx} = -\frac{F_x}{F_y} \]
+    \item \textbf{Multivariable}: If $F(x,y,z) = 0$ defines $z = f(x,y)$ implicitly:
+    \[ \frac{\partial z}{\partial x} = -\frac{F_x}{F_z}, \quad \frac{\partial z}{\partial y} = -\frac{F_y}{F_z} \]
+\end{itemize}
+
+% ==========================================
+% SECTION 5: GRADIENT & DIRECTIONAL DERIVATIVES
+% ==========================================
+\section{5. Gradients \& Directional Derivatives}
+\subsection{The Gradient Vector}
+\begin{itemize}
+    \item For $f(x,y)$, gradient $\nabla f(x,y)$ is:
+    \[ \nabla f(x,y) = \langle f_x(x,y), f_y(x,y) \rangle = f_x\vec{i} + f_y\vec{j} \]
+    \item For $f(x,y,z)$, gradient $\nabla f(x,y,z)$ is:
+    \[ \nabla f(x,y,z) = \langle f_x, f_y, f_z \rangle = f_x\vec{i} + f_y\vec{j} + f_z\vec{k} \]
+\end{itemize}
+
+\subsection{Directional Derivative}
+\begin{itemize}
+    \item Rate of change of $f$ in the direction of a \textbf{unit vector} $\vec{u} = \langle a, b \rangle$:
+    \[ D_{\vec{u}}f(x,y) = f_x(x,y)a + f_y(x,y)b = \nabla f(x,y) \cdot \vec{u} \]
+    \item If angle $\theta$ defines $\vec{u} = \langle \cos\theta, \sin\theta \rangle$:
+    \[ D_{\vec{u}}f(x,y) = f_x(x,y)\cos\theta + f_y(x,y)\sin\theta \]
+    \item \textbf{Important}: If given direction is $\vec{v}$, you \textbf{must} normalize: $\vec{u} = \frac{\vec{v}}{\|\vec{v}\|}$.
+\end{itemize}
+
+\subsection{Properties of the Gradient}
+\begin{itemize}
+    \item \textbf{Maximum Rate of Change}: Max value of $D_{\vec{u}}f(x,y)$ is $\|\nabla f(x,y)\|$. Occurs when $\vec{u}$ has the same direction as $\nabla f$ (i.e. $\vec{u} = \frac{\nabla f}{\|\nabla f\|}$).
+    \item \textbf{Minimum Rate of Change}: Min value is $-\|\nabla f(x,y)\|$ in the direction of $-\nabla f$.
+    \item \textbf{Orthogonality}: $\nabla f(x_0, y_0)$ is orthogonal to the level curve $f(x,y)=k$ at $(x_0,y_0)$.
+\end{itemize}
+
+% ==========================================
+% SECTION 6: EXTREMA
+% ==========================================
+\section{6. Extrema of Multivariable Functions}
+\subsection{Local Extrema \& Critical Points}
+\begin{itemize}
+    \item \textbf{Critical Point}: $(a,b)$ is a critical point of $f$ if $f_x(a,b) = 0$ and $f_y(a,b) = 0$, or if either partial derivative does not exist.
+    \item If $f$ has a local extremum at $(a,b)$, then $(a,b)$ is a critical point.
+\end{itemize}
+
+\begin{theorembox}{Second Derivatives Test}
+Let $(a,b)$ be a critical point of $f$ where second partials are continuous. Let $D = D(a,b)$ be:
+\[ D = f_{xx}(a,b)f_{yy}(a,b) - [f_{xy}(a,b)]^2 \]
+\begin{enumerate}[label=\alph*)]
+    \item If $D > 0$ and $f_{xx}(a,b) > 0 \implies f(a,b)$ is a \textbf{local minimum}.
+    \item If $D > 0$ and $f_{xx}(a,b) < 0 \implies f(a,b)$ is a \textbf{local maximum}.
+    \item If $D < 0 \implies (a,b)$ is a \textbf{saddle point}.
+    \item If $D = 0 \implies$ \textbf{Inconclusive} (need other methods).
+\end{enumerate}
+\end{theorembox}
+
+\subsection{Absolute Extrema on Closed Bounded Sets}
+\begin{itemize}
+    \item \textbf{Extreme Value Theorem}: Continuous $f$ on closed, bounded $D \subset \mathbb{R}^2$ attains an absolute max and min.
+    \item \textbf{Closed Interval Method}:
+    \begin{enumerate}
+        \item Find values of $f$ at critical points of $f$ in $D$.
+        \item Find extreme values of $f$ on the boundary of $D$.
+        \item Compare: largest is absolute max, smallest is absolute min.
+    \end{enumerate}
+\end{itemize}
+
+\subsection{Lagrange Multipliers}
+\begin{itemize}
+    \item To find extrema of $f(x,y,z)$ subject to constraint $g(x,y,z) = k$ (assuming $\nabla g \neq \vec{0}$):
+    \item \textbf{Method}: Solve the system:
+    \[ \begin{cases} \nabla f(x,y,z) = \lambda \nabla g(x,y,z) \\ g(x,y,z) = k \end{cases} \iff \begin{cases} f_x = \lambda g_x \\ f_y = \lambda g_y \\ f_z = \lambda g_z \\ g(x,y,z) = k \end{cases} \]
+    $\lambda$ is the Lagrange multiplier. Evaluate $f$ at all solutions.
+\end{itemize}
+
+% ==========================================
+% SECTION 7: DOUBLE INTEGRALS
+% ==========================================
+\section{7. Double Integrals}
+\subsection{Iterated Integrals (Fubini's Theorem)}
+\begin{itemize}
+    \item If $f$ is continuous on rectangle $R = [a,b] \times [c,d]$:
+    \[ \iint_R f(x,y)\,dA = \int_a^b \int_c^d f(x,y)\,dy\,dx = \int_c^d \int_a^b f(x,y)\,dx\,dy \]
+    \item If $f(x,y) = g(x)h(y)$, then:
+    \[ \iint_R f(x,y)\,dA = \left( \int_a^b g(x)\,dx \right) \times \left( \int_c^d h(y)\,dy \right) \]
+\end{itemize}
+
+\subsection{General Regions}
+\begin{itemize}
+    \item \textbf{Type I Region} (bounded by functions of $x$):
+    \[ D = \{ (x,y) \mid a \leq x \leq b, \, g_1(x) \leq y \leq g_2(x) \} \]
+    \[ \iint_D f(x,y)\,dA = \int_a^b \int_{g_1(x)}^{g_2(x)} f(x,y)\,dy\,dx \]
+    \item \textbf{Type II Region} (bounded by functions of $y$):
+    \[ D = \{ (x,y) \mid c \leq y \leq d, \, h_1(y) \leq x \leq h_2(y) \} \]
+    \[ \iint_D f(x,y)\,dA = \int_c^d \int_{h_1(y)}^{h_2(y)} f(x,y)\,dx\,dy \]
+    \item \textbf{Area of $D$}: $A(D) = \iint_D 1\,dA$.
+\end{itemize}
+
+\subsection{Double Integrals in Polar Coordinates}
+\begin{itemize}
+    \item \textbf{Transformations}: $x = r\cos\theta$, $y = r\sin\theta$, $x^2 + y^2 = r^2$.
+    \item \textbf{Area Element}: $dA = r\,dr\,d\theta$ (Jacobian is $r$).
+    \item \textbf{Integral formula} over polar rectangle $R = [a,b] \times [\alpha, \beta]$:
+    \[ \iint_R f(x,y)\,dA = \int_{\alpha}^{\beta} \int_a^b f(r\cos\theta, r\sin\theta)\,r\,dr\,d\theta \]
+    \item \textbf{General Polar Region}: $D = \{ (r,\theta) \mid \alpha \leq \theta \leq \beta, \, h_1(\theta) \leq r \leq h_2(\theta) \}$:
+    \[ \iint_D f(x,y)\,dA = \int_{\alpha}^{\beta} \int_{h_1(\theta)}^{h_2(\theta)} f(r\cos\theta, r\sin\theta)\,r\,dr\,d\theta \]
+\end{itemize}
+
+% ==========================================
+% SECTION 8: TRIPLE INTEGRALS
+% ==========================================
+\section{8. Triple Integrals}
+\subsection{Rectangular Box \& Fubini's}
+\begin{itemize}
+    \item For $B = [a,b] \times [c,d] \times [r,s]$:
+    \[ \iiint_B f(x,y,z)\,dV = \int_r^s \int_c^d \int_a^b f(x,y,z)\,dx\,dy\,dz \]
+\end{itemize}
+
+\subsection{General Regions}
+\begin{itemize}
+    \item \textbf{Type 1}: $E = \{ (x,y,z) \mid (x,y) \in D, \, u_1(x,y) \leq z \leq u_2(x,y) \}$ where $D$ is the projection of $E$ onto the $xy$-plane:
+    \[ \iiint_E f(x,y,z)\,dV = \iint_D \left( \int_{u_1(x,y)}^{u_2(x,y)} f(x,y,z)\,dz \right) dA \]
+    \item \textbf{Type 2}: $E = \{ (x,y,z) \mid (y,z) \in D, \, u_1(y,z) \leq x \leq u_2(y,z) \}$ ($D$ in $yz$-plane).
+    \item \textbf{Type 3}: $E = \{ (x,y,z) \mid (x,z) \in D, \, u_1(x,z) \leq y \leq u_2(x,z) \}$ ($D$ in $xz$-plane).
+    \item \textbf{Volume of $E$}: $V(E) = \iiint_E 1\,dV$.
+\end{itemize}
+
+\subsection{Cylindrical Coordinates}
+\begin{itemize}
+    \item \textbf{Transformations}: $x = r\cos\theta$, $y = r\sin\theta$, $z = z$.
+    \item \textbf{Volume Element}: $dV = r\,dz\,dr\,d\theta$.
+    \item \textbf{Integration Formula} over Type 1 Region $E$:
+    \[ \iiint_E f(x,y,z)\,dV = \int_{\alpha}^{\beta} \int_{h_1(\theta)}^{h_2(\theta)} \int_{u_1(r\cos\theta, r\sin\theta)}^{u_2(r\cos\theta, r\sin\theta)} f(r\cos\theta, r\sin\theta, z)\,r\,dz\,dr\,d\theta \]
+\end{itemize}
+
+\subsection{Spherical Coordinates}
+\begin{itemize}
+    \item \textbf{Transformations}:
+    \[ x = \rho\sin\phi\cos\theta, \quad y = \rho\sin\phi\sin\theta, \quad z = \rho\cos\phi \]
+    where $\rho \geq 0$, $0 \leq \phi \leq \pi$, and $x^2 + y^2 + z^2 = \rho^2$.
+    \item \textbf{Volume Element}: $dV = \rho^2\sin\phi\,d\rho\,d\theta\,d\phi$.
+    \item \textbf{Spherical Wedge} $E = \{ (\rho, \theta, \phi) \mid a \leq \rho \leq b, \, \alpha \leq \theta \leq \beta, \, c \leq \phi \leq d \}$:
+    \[ \iiint_E f(x,y,z)\,dV = \int_c^d \int_{\alpha}^{\beta} \int_a^b f(\rho\sin\phi\cos\theta, \rho\sin\phi\sin\theta, \rho\cos\phi)\,\rho^2\sin\phi\,d\rho\,d\theta\,d\phi \]
+\end{itemize}
+
+\end{multicols*}
+\end{document}

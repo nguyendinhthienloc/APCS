@@ -1,0 +1,280 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{array}
+\geometry{margin=1in}
+
+\title{STAT452: Logistic Regression and Classification --- Lesson 4 Notes}
+\author{Nguyen Dinh Thien Loc}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction to Classification}
+
+\subsection{The Classification Problem}
+\begin{itemize}
+    \item \textbf{Classification} is the task of predicting a \textbf{qualitative (categorical)} response variable $Y$ based on predictor variables $X_1, X_2, \dots, X_p$.
+    \item The goal is to build a function or rule set that takes predictor values as input and predicts the category of $Y$ for previously unseen records.
+    \item Qualitative variables take values in an \textbf{unordered set} $\mathcal{C}$, e.g.:
+    \begin{itemize}
+        \item Eye color $\in \{\text{brown, blue, green}\}$
+        \item Insurance claim $\in \{\text{fraudulent, legitimate}\}$
+        \item Default $\in \{\text{Yes, No}\}$
+    \end{itemize}
+    \item Data is typically divided into a \textbf{training set} (to build the model) and a \textbf{test set} (to validate it).
+\end{itemize}
+
+\section{Why Not Linear Regression for Binary Outcomes?}
+
+\subsection{Encoding and the Problem}
+For a binary response $Y \in \{0, 1\}$, we can encode $Y = 0$ (No) and $Y = 1$ (Yes) and fit a linear regression:
+$$E(Y_i) = \beta_0 + \beta_1 x_i$$
+Since $E(Y_i) = P(Y = 1) \cdot 1 + P(Y = 0) \cdot 0 = P(Y = 1)$, this implies:
+$$P(\text{Default}) = \beta_0 + \beta_1 x_i$$
+
+\subsection{Fundamental Limitation}
+\begin{itemize}
+    \item Linear regression can produce \textbf{predicted probabilities less than 0 or greater than 1}, which is meaningless for probability estimation.
+    \item The linear model does not respect the constraint that probabilities must lie in $[0, 1]$.
+    \item This motivates the use of the \textbf{logistic function}, which naturally maps any real-valued input to the interval $(0, 1)$.
+\end{itemize}
+
+\section{The Logistic Regression Model}
+
+\subsection{The Logistic Function}
+The logistic (sigmoid) function maps any real number to the interval $(0, 1)$:
+$$\sigma(x) = \frac{e^x}{1 + e^x} = \frac{1}{1 + e^{-x}}$$
+
+\subsection{Model Specification}
+\begin{itemize}
+    \item \textbf{Log-odds (Logit) form:}
+    $$\log\left(\frac{\pi(\mathbf{X})}{1 - \pi(\mathbf{X})}\right) = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p = \mathbf{X}^T\boldsymbol{\beta}$$
+    where $\pi(\mathbf{X}) = P(Y = 1 \mid \mathbf{X})$.
+    \item \textbf{Probability form:}
+    $$\pi(\mathbf{X}) = \frac{e^{\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p}}{1 + e^{\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p}} = \frac{e^{\mathbf{X}^T\boldsymbol{\beta}}}{1 + e^{\mathbf{X}^T\boldsymbol{\beta}}}$$
+\end{itemize}
+
+\subsection{Odds and Log-Odds}
+\begin{itemize}
+    \item \textbf{Odds:} The ratio of the probability of success to the probability of failure:
+    $$\text{Odds} = \frac{\pi}{1 - \pi} = \exp(\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p)$$
+    \item If $\pi = 0.2$, then $\text{Odds} = 0.2/0.8 = 0.25$ (for every 1 person who defaults, 4 do not).
+    \item Odds $> 1$: success is more likely; Odds $< 1$: failure is more likely; Odds $= 1$: equal chance.
+    \item \textbf{Log-odds (Logit):} Taking the log of the odds yields a linear function of the predictors:
+    $$\text{logit}(\pi) = \log\left(\frac{\pi}{1 - \pi}\right) = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p$$
+\end{itemize}
+
+\newpage
+\section{Parameter Estimation: Maximum Likelihood}
+
+\subsection{Likelihood Function}
+For a sample of size $n$ with binary outcomes $y_i \in \{0, 1\}$:
+$$L(\boldsymbol{\beta}; \mathbf{y}, \mathbf{X}) = \prod_{i=1}^{n} \pi_i^{y_i} (1 - \pi_i)^{1 - y_i} = \prod_{i=1}^{n} \left(\frac{e^{\mathbf{X}_i^T\boldsymbol{\beta}}}{1 + e^{\mathbf{X}_i^T\boldsymbol{\beta}}}\right)^{y_i} \left(\frac{1}{1 + e^{\mathbf{X}_i^T\boldsymbol{\beta}}}\right)^{1 - y_i}$$
+
+\subsection{Log-Likelihood}
+Taking the log:
+$$\ell(\boldsymbol{\beta}) = \sum_{i=1}^{n} \left[ y_i \log(\pi_i) + (1 - y_i)\log(1 - \pi_i) \right] = \sum_{i=1}^{n} \left[ y_i \mathbf{X}_i^T\boldsymbol{\beta} - \log(1 + e^{\mathbf{X}_i^T\boldsymbol{\beta}}) \right]$$
+
+\begin{itemize}
+    \item Maximizing the log-likelihood has \textbf{no closed-form solution}.
+    \item Numerical optimization techniques such as \textbf{Iteratively Reweighted Least Squares (IRLS)} are used to find $\hat{\boldsymbol{\beta}}$.
+\end{itemize}
+
+\section{Interpreting Coefficients}
+
+\subsection{Odds Ratio Interpretation}
+\begin{itemize}
+    \item Each coefficient $\beta_j$ represents the change in \textbf{log-odds} for a one-unit increase in $X_j$, holding other predictors constant.
+    \item Exponentiating gives the \textbf{odds ratio}: $\text{OR}_j = e^{\beta_j}$.
+    \item \textbf{Interpretation of the odds ratio:}
+    \begin{itemize}
+        \item $\text{OR} = 1$: no association between predictor and response.
+        \item $\text{OR} > 1$: higher predictor values \textbf{increase} the odds of success.
+        \item $\text{OR} < 1$: higher predictor values \textbf{decrease} the odds of success.
+    \end{itemize}
+    \item A positive $\beta_j$ increases the log-odds $\Rightarrow$ higher probability of success.
+    \item A negative $\beta_j$ decreases the log-odds $\Rightarrow$ lower probability of success.
+\end{itemize}
+
+\subsection{Example: Default Dataset}
+With the fitted model $\log\left(\frac{\pi}{1 - \pi}\right) = -10.6513 + 0.0055 \cdot \text{balance}$:
+\begin{itemize}
+    \item $\hat{\beta}_1 = 0.0055$, so $\text{OR} = e^{0.0055} \approx 1.0055$.
+    \item For each additional unit increase in balance, the odds of default increase by approximately $0.55\%$.
+    \item At balance $= 1000$: $\hat{p} = \frac{e^{-10.6513 + 0.0055 \times 1000}}{1 + e^{-10.6513 + 0.0055 \times 1000}} \approx 0.00576$.
+    \item At balance $= 2000$: $\hat{p} \approx 0.586$.
+\end{itemize}
+
+\subsection{Categorical Predictors}
+For a dummy-coded predictor (e.g., student: 1 = Yes, 0 = No):
+$$\log\left(\frac{\pi}{1 - \pi}\right) = -3.5041 + 0.4049 \cdot \text{student}$$
+\begin{itemize}
+    \item $\hat{p}(\text{default} \mid \text{student=Yes}) = \frac{e^{-3.5041 + 0.4049}}{1 + e^{-3.5041 + 0.4049}} \approx 0.0431$
+    \item $\hat{p}(\text{default} \mid \text{student=No}) = \frac{e^{-3.5041}}{1 + e^{-3.5041}} \approx 0.0292$
+\end{itemize}
+
+\newpage
+\section{Statistical Inference}
+
+\subsection{Wald Test for Individual Coefficients}
+To test $H_0: \beta_i = 0$:
+$$Z = \frac{\hat{\beta}_i}{\text{SE}(\hat{\beta}_i)}$$
+\begin{itemize}
+    \item $Z$ is compared to the \textbf{standard normal distribution} to compute the $p$-value.
+    \item This is analogous to the $t$-test in linear regression.
+    \item \textbf{Confidence interval:} $\hat{\beta}_i \pm z_{1-\alpha/2} \cdot \text{SE}(\hat{\beta}_i)$.
+\end{itemize}
+
+\subsection{Likelihood Ratio Test (LRT)}
+To compare two \textbf{nested models}:
+$$G^2 = -2 \cdot (\ell_{\text{null}} - \ell_{\text{model}}) \sim \chi^2_{df}$$
+\begin{itemize}
+    \item Tests whether adding predictors \textbf{significantly improves} model fit.
+    \item $df$ = difference in the number of parameters between the two models.
+\end{itemize}
+
+\section{Model Evaluation}
+
+\subsection{Deviance}
+$$\text{Deviance} = -2 \cdot \ell(\text{model}) + 2 \cdot \ell(\text{saturated model})$$
+\begin{itemize}
+    \item A lower deviance indicates a better fit.
+    \item The deviance of the \textbf{null model} (intercept-only) is used as a baseline.
+\end{itemize}
+
+\subsection{AIC and Pseudo-$R^2$}
+\begin{itemize}
+    \item \textbf{AIC:}
+    $$\text{AIC} = -2\ell(\hat{\boldsymbol{\beta}}) + 2p$$
+    Balances model fit and complexity. Lower AIC indicates a better model. Can compare \textbf{non-nested} models.
+    \item \textbf{McFadden's Pseudo-$R^2$:}
+    $$R^2 = 1 - \frac{\ell_{\text{model}}}{\ell_{\text{null}}}$$
+    Measures improvement over the null model. Interpretation is less direct than $R^2$ in linear regression.
+\end{itemize}
+
+\subsection{Model Selection: AIC vs. LRT}
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth}
+                            >{\raggedright\arraybackslash}p{0.35\textwidth}
+                            >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Criterion} & \textbf{Characteristics} & \textbf{Best Use} \\ 
+\midrule
+AIC & Balances fit and complexity; can compare non-nested models & Prediction-focused model selection \\
+LRT & Formal hypothesis test for nested models; based on $\chi^2$ distribution & Significance-focused model comparison \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\noindent\textbf{Guiding principle:} Use LRT for significance, AIC for prediction. When they disagree (AIC prefers complex model, LRT is not significant), prefer the simpler model for interpretability.
+
+\newpage
+\section{Classification Using Logistic Regression}
+
+\subsection{Decision Rule}
+Logistic regression predicts the probability $\pi(\mathbf{X}) = P(Y = 1 \mid \mathbf{X})$. To classify:
+$$\hat{Y} = \begin{cases} 1 & \text{if } \pi(\mathbf{X}) \ge \tau \\ 0 & \text{if } \pi(\mathbf{X}) < \tau \end{cases}$$
+where $\tau$ is the \textbf{classification threshold} (default $\tau = 0.5$).
+
+The decision boundary $\pi(\mathbf{X}) = 0.5$ corresponds to:
+$$\log\left(\frac{\pi}{1 - \pi}\right) = 0 \implies \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p = 0$$
+This is a \textbf{linear decision boundary} in predictor space.
+
+\subsection{Confusion Matrix}
+A table showing predicted vs. actual classifications:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+ & \textbf{Predicted: 1} & \textbf{Predicted: 0} \\
+\midrule
+\textbf{Actual: 1} & True Positive (TP) & False Negative (FN) \\
+\textbf{Actual: 0} & False Positive (FP) & True Negative (TN) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Goal: Maximize TP and TN; minimize FP and FN. Different applications value different types of errors (e.g., fraud detection prioritizes high sensitivity).
+
+\subsection{Classification Metrics}
+\begin{itemize}
+    \item \textbf{Accuracy:}
+    $$\text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}$$
+    \item \textbf{True Positive Rate (Sensitivity / Recall):}
+    $$\text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}$$
+    \item \textbf{False Positive Rate:}
+    $$\text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}$$
+    \item \textbf{Precision:}
+    $$\text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}$$
+    \item \textbf{F1 Score} (Harmonic mean of Precision and Recall):
+    $$F_1 = \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$$
+\end{itemize}
+
+\subsection{Threshold Trade-Off}
+\begin{itemize}
+    \item \textbf{Lowering $\tau$} (e.g., from 0.5 to 0.3): increases True Positives (higher sensitivity) but also increases False Positives (lower specificity).
+    \item \textbf{Raising $\tau$}: increases specificity but decreases sensitivity.
+    \item The optimal threshold depends on the \textbf{application context} and the relative cost of false positives vs. false negatives.
+\end{itemize}
+
+\newpage
+\section{ROC Curve and AUC}
+
+\subsection{ROC Curve (Receiver Operating Characteristic)}
+\begin{itemize}
+    \item The ROC curve plots \textbf{TPR (sensitivity)} vs. \textbf{FPR (1 $-$ specificity)} across \textbf{all possible thresholds} $\tau$.
+    \item The closer the curve to the \textbf{top-left corner}, the better the model.
+    \item A \textbf{perfect classifier} hugs the top-left corner (TPR $= 1$, FPR $= 0$).
+    \item A \textbf{random classifier} lies along the diagonal (TPR $=$ FPR).
+\end{itemize}
+
+\subsection{AUC (Area Under the ROC Curve)}
+\begin{itemize}
+    \item AUC measures the model's overall ability to discriminate between classes.
+    \item $\text{AUC} = 1$: perfect model.
+    \item $\text{AUC} = 0.5$: no discrimination (equivalent to random guessing).
+    \item $\text{AUC} > 0.8$: strong discrimination.
+\end{itemize}
+
+\subsection{Choosing the Optimal Threshold}
+Two common strategies:
+\begin{enumerate}
+    \item \textbf{Youden's Index:} Choose $\tau$ to maximize:
+    $$J = \text{TPR} - \text{FPR}$$
+    This maximizes the \textbf{vertical distance} from the diagonal (random guessing line).
+    \item \textbf{F1-based:} Choose $\tau$ that maximizes the $F_1$ score, balancing Precision and Recall.
+\end{enumerate}
+
+\section{Summary of Key Formulas}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}
+                            >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Concept} & \textbf{Formula} \\
+\midrule
+Logistic model (logit) & $\log\left(\frac{\pi}{1 - \pi}\right) = \mathbf{X}^T\boldsymbol{\beta}$ \\[6pt]
+Probability & $\pi(\mathbf{X}) = \frac{e^{\mathbf{X}^T\boldsymbol{\beta}}}{1 + e^{\mathbf{X}^T\boldsymbol{\beta}}}$ \\[6pt]
+Log-likelihood & $\ell(\boldsymbol{\beta}) = \sum_{i=1}^{n} \left[ y_i \mathbf{X}_i^T\boldsymbol{\beta} - \log(1 + e^{\mathbf{X}_i^T\boldsymbol{\beta}}) \right]$ \\[6pt]
+Odds ratio & $\text{OR}_j = e^{\beta_j}$ \\[6pt]
+Wald test & $Z = \hat{\beta}_i / \text{SE}(\hat{\beta}_i)$ \\[6pt]
+LRT & $G^2 = -2(\ell_{\text{null}} - \ell_{\text{model}}) \sim \chi^2_{df}$ \\[6pt]
+AIC & $\text{AIC} = -2\ell(\hat{\boldsymbol{\beta}}) + 2p$ \\[6pt]
+McFadden's $R^2$ & $R^2 = 1 - \ell_{\text{model}} / \ell_{\text{null}}$ \\[6pt]
+Youden's Index & $J = \text{TPR} - \text{FPR}$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\end{document}
