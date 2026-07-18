@@ -24,8 +24,11 @@ The 0.5 threshold is a decision rule, not a universal law. Report a confusion ma
 \begin{exercise}{4: Threshold trade-offs} Compare thresholds 0.3 and 0.5. Calculate sensitivity and specificity.\end{exercise}
 \begin{exercise}{5: Validate predictions} Split into training and test observations. Fit on training data and evaluate on test data. Explain optimistic training accuracy.\end{exercise}
 \begin{exercise}{6: Compare models} Use a likelihood-ratio test and AIC to compare intercept-only and two-predictor models.\end{exercise}
+
 \section{Worked solutions}
-\begin{answer}{1} Linear regression is not guaranteed to respect probability bounds; inspect \texttt{range(predict(linear\_binary))}. This motivates the logistic link.\end{answer}
+\begin{answer}{1} Linear regression is not guaranteed to respect probability bounds; 
+    \newline
+    inspect \texttt{range(predict(linear\_binary))}. This motivates the logistic link.\end{answer}
 \begin{answer}{2} Use \texttt{exp(coef(fit))}. An odds ratio above one raises the odds of the modeled success class; below one lowers the odds, conditional on other predictors.\end{answer}
 \begin{answer}{3} A confusion matrix separates correct and incorrect classifications. Accuracy is $(TP+TN)/n$, but it can hide unequal costs or class imbalance.\end{answer}
 \begin{answer}{4} Lowering the threshold generally increases sensitivity and decreases specificity. Choose it based on the cost of false negatives versus false positives.\end{answer}
