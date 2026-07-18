@@ -1,0 +1,667 @@
+﻿\documentclass[11pt]{article}
+
+\usepackage[margin=0.82in,headheight=22pt]{geometry}
+\usepackage{amsmath,amssymb,amsthm,bm}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Courier New}[Scale=0.86]
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs,longtable,array,colortbl}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{bookmark}
+
+\definecolor{navy}{RGB}{24,55,95}
+\definecolor{teal}{RGB}{20,112,104}
+\definecolor{codebg}{RGB}{246,248,250}
+\definecolor{rulegray}{RGB}{210,216,222}
+\definecolor{codecomment}{RGB}{80,100,90}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=navy,
+  urlcolor=teal,
+  pdftitle={STAT452 60-Minute Written Test: Complete Solutions},
+  pdfauthor={STAT452 Study Guide}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\sffamily\small STAT452 60-Minute Written Test}
+\rhead{\sffamily\small Mathematical Solutions and R Verification}
+\cfoot{\sffamily\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{navy!45}\leaders\hrule height \headrulewidth\hfill}}
+
+\titleformat{\section}{\sffamily\LARGE\bfseries\color{navy}}{\thesection}{0.65em}{}
+\titleformat{\subsection}{\sffamily\Large\bfseries\color{teal}}{\thesubsection}{0.65em}{}
+\titleformat{\subsubsection}{\sffamily\large\bfseries\color{navy!85}}{\thesubsubsection}{0.65em}{}
+\titlespacing*{\section}{0pt}{2em}{0.75em}
+\titlespacing*{\subsection}{0pt}{1.45em}{0.55em}
+\titlespacing*{\subsubsection}{0pt}{1.15em}{0.4em}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.52em}
+\setlength{\emergencystretch}{1.5em}
+\setlist{leftmargin=1.55em,itemsep=0.25em,topsep=0.35em}
+\renewcommand{\arraystretch}{1.18}
+
+\lstset{
+  language=R,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{navy}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{teal!80!black},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{rulegray},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  xleftmargin=0.45em,
+  xrightmargin=0.45em,
+  aboveskip=0.6em,
+  belowskip=0.7em
+}
+
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\logit}{\operatorname{logit}}
+\newcommand{\SSE}{\operatorname{SSE}}
+\newcommand{\SST}{\operatorname{SST}}
+\newcommand{\RSS}{\operatorname{RSS}}
+\newcommand{\Rtwo}{R^2}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+
+\begin{titlepage}
+  \centering
+  \vspace*{1.0in}
+  {\sffamily\color{navy}\Huge\bfseries STAT452 60-Minute Written Test\par}
+  \vspace{0.25in}
+  {\sffamily\color{teal}\LARGE Complete Mathematical Solutions\par}
+  \vspace{0.16in}
+  {\sffamily\Large with R Verification\par}
+  \vspace{0.5in}
+  {\color{navy!45}\rule{0.78\textwidth}{1.1pt}\par}
+  \vspace{0.5in}
+  {\Large Applied Statistics for Engineers and Scientists II\par}
+  \vfill
+  \begin{minipage}{0.82\textwidth}
+    \colorbox{navy!7}{\parbox{0.94\linewidth}{
+      \textbf{Structure.} Each problem is solved first with the mathematical
+      notation used in the course Notes, followed by R code that verifies the
+      calculation. The ridge result in Problem 4 is proved using derivatives
+      and centered sums.
+    }}
+  \end{minipage}
+  \vfill
+  {\sffamily\small Based on \texttt{MidTerm\_STAT452\_23TT2.pdf} and Notes Chapters 1--4\par}
+\end{titlepage}
+
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\section*{Course-note alignment}
+\addcontentsline{toc}{section}{Course-note alignment}
+
+This solution follows the course Notes directly:
+
+\begin{itemize}
+  \item Chapter 1: the model $\bm y=\bm X\bm\beta+\bm\varepsilon$,
+  least squares, $\Rtwo$, and the partial $F$-test;
+  \item Chapter 2: linearising an exponential model with $\log y$ and
+  back-transforming to the original scale;
+  \item Chapter 3: ridge penalties and the distinction between penalising and
+  not penalising the intercept;
+  \item Chapter 4: logistic probabilities, log-odds, odds ratios, and the
+  threshold rule $\widehat\pi\ge 0.5$.
+\end{itemize}
+
+\section{Problem 1: Multiple linear regression}
+
+For five students, let $x_1$ be self-study time, $x_2$ be tutoring time,
+and $y$ be the test score. The assumed population model is
+\[
+  Y_i=\beta_0+\beta_1x_{i1}+\beta_2x_{i2}+\varepsilon_i,
+  \qquad \varepsilon_i\overset{\mathrm{iid}}{\sim}N(0,\sigma^2).
+\]
+
+\subsection{Part (a): Least-squares estimates and R-squared}
+
+\subsubsection*{Core idea}
+
+Least squares finds the plane whose vertical squared residuals have the
+smallest possible total. In matrix notation,
+\[
+  \bm y=\bm X\bm\beta+\bm\varepsilon,
+  \qquad
+  \widehat{\bm\beta}=(\bm X^{\mathsf T}\bm X)^{-1}
+  \bm X^{\mathsf T}\bm y.
+\]
+
+The design matrix and response vector are
+\[
+\bm X=
+\begin{bmatrix}
+1&5&1\\
+1&9&0\\
+1&7&7\\
+1&9&7\\
+1&3&8
+\end{bmatrix},
+\qquad
+\bm y=
+\begin{bmatrix}
+5\\6\\9.5\\10\\7.5
+\end{bmatrix}.
+\]
+Therefore,
+\[
+\bm X^{\mathsf T}\bm X=
+\begin{bmatrix}
+5&33&23\\
+33&245&141\\
+23&141&163
+\end{bmatrix},
+\qquad
+\bm X^{\mathsf T}\bm y=
+\begin{bmatrix}
+38\\258\\201.5
+\end{bmatrix}.
+\]
+
+Solving the normal equations
+$\bm X^{\mathsf T}\bm X\widehat{\bm\beta}
+=\bm X^{\mathsf T}\bm y$ gives
+\[
+\boxed{
+\widehat{\bm\beta}=
+\begin{bmatrix}
+\widehat\beta_0\\[2pt]\widehat\beta_1\\[2pt]\widehat\beta_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+1.819205\\0.486520\\0.558644
+\end{bmatrix}}
+\]
+and hence
+\[
+  \boxed{\widehat y=1.819205+0.486520x_1+0.558644x_2.}
+\]
+
+Holding tutoring time fixed, one more hour of self-study is associated with
+an estimated $0.4865$-point increase in score. Holding self-study time fixed,
+one more tutoring hour is associated with an estimated $0.5586$-point increase.
+
+Using the course-note definitions,
+\[
+  \SSE=\sum_{i=1}^n(y_i-\widehat y_i)^2=0.281267,
+  \qquad
+  \SST=\sum_{i=1}^n(y_i-\overline y)^2=18.7.
+\]
+Thus
+\[
+  \boxed{
+  \Rtwo=1-\frac{\SSE}{\SST}
+  =1-\frac{0.281267}{18.7}
+  =0.984959.}
+\]
+About $98.50\%$ of the observed score variation in this five-student sample is
+explained by the two-predictor fitted model.
+
+\subsubsection*{R verification}
+
+\begin{lstlisting}
+study <- data.frame(
+  x1 = c(5, 9, 7, 9, 3),
+  x2 = c(1, 0, 7, 7, 8),
+  y  = c(5, 6, 9.5, 10, 7.5)
+)
+
+fit_full <- lm(y ~ x1 + x2, data = study)
+X <- model.matrix(fit_full)
+Y <- matrix(study$y, ncol = 1)
+
+crossprod(X)                       # X'X
+crossprod(X, Y)                    # X'y
+solve(crossprod(X), crossprod(X,Y))
+
+SSE <- sum(resid(fit_full)^2)
+SST <- sum((study$y - mean(study$y))^2)
+1 - SSE / SST
+\end{lstlisting}
+
+\subsection{Part (b): Compare the reduced and full models}
+
+The reduced model is $Y_i=\beta_0+\beta_1x_{i1}+\varepsilon_i$.
+The full model adds $x_2$. The hypotheses are
+\[
+  H_0:\beta_2=0
+  \qquad\text{versus}\qquad
+  H_1:\beta_2\ne 0.
+\]
+
+From Chapter 1, the partial $F$ statistic is
+\[
+F=
+\frac{(\SSE_R-\SSE_F)/(df_{E,R}-df_{E,F})}
+     {\SSE_F/df_{E,F}}.
+\]
+Substituting the supplied ANOVA quantities,
+\[
+F=
+\frac{(16.7941-0.2813)/(3-2)}{0.2813/2}
+=117.42,
+\qquad p=0.008409.
+\]
+
+At $\alpha=0.05$, $p<\alpha$, so reject $H_0$. Tutoring time supplies
+significant additional information after self-study time is already in the
+model. The more appropriate of the two candidates is
+\[
+  \boxed{Y\sim x_1+x_2.}
+\]
+
+\begin{lstlisting}
+fit_reduced <- lm(y ~ x1, data = study)
+anova(fit_reduced, fit_full)
+\end{lstlisting}
+
+\subsection{Part (c): Prediction}
+
+For $x_1=5$ and $x_2=6$,
+\begin{align*}
+\widehat y
+&=1.819205+0.486520(5)+0.558644(6)\\
+&=\boxed{7.603669}.
+\end{align*}
+
+\begin{lstlisting}
+predict(fit_full, newdata = data.frame(x1 = 5, x2 = 6))
+# 7.603669
+\end{lstlisting}
+
+\subsection*{Casio fx-580VN X check}
+
+In \texttt{MENU $\to$ Matrix}, enter $\bm X$ as MatA and $\bm y$ as
+MatB. Compute $\operatorname{Trn}(\text{MatA})\text{MatA}$ and
+$\operatorname{Trn}(\text{MatA})\text{MatB}$, then evaluate
+
+\[
+(\bm X^{\mathsf T}\bm X)^{-1}\bm X^{\mathsf T}\bm y.
+\]
+The displayed
+coefficient vector should be approximately
+
+\[
+(1.819205,0.486520,0.558644)^{\mathsf T}.
+\]
+
+\section{Problem 2: Exponential regression}
+
+The proposed model is
+\[
+  Y_i=\exp(\beta_0+\beta_1x_i+\varepsilon_i),
+  \qquad \varepsilon_i\sim N(0,\sigma^2).
+\]
+
+\subsection{Part (a): Linearisation and estimation}
+
+Taking natural logarithms produces a model that is linear in its parameters:
+\[
+  Z_i=\log Y_i=\beta_0+\beta_1x_i+\varepsilon_i.
+\]
+The transformed observations are
+\[
+\begin{array}{c|cccc}
+x_i&1&2&3&4\\ \hline
+y_i&2.98&4.65&5.00&6.50\\
+z_i=\log y_i&1.091923&1.536867&1.609438&1.871802
+\end{array}
+\]
+
+For simple linear regression,
+\[
+  \widehat\beta_1=\frac{S_{xz}}{S_{xx}},
+  \qquad
+  \widehat\beta_0=\overline z-\widehat\beta_1\overline x,
+\]
+where
+\[
+  S_{xx}=\sum_{i=1}^n(x_i-\overline x)^2,
+  \qquad
+  S_{xz}=\sum_{i=1}^n(x_i-\overline x)(z_i-\overline z).
+\]
+The estimates are
+\[
+  \boxed{\widehat\beta_0=0.924456,
+  \qquad \widehat\beta_1=0.241221.}
+\]
+Therefore,
+\[
+  \boxed{\log\widehat y=0.924456+0.241221x.}
+\]
+After back-transformation,
+\[
+  \widehat y
+  =e^{0.924456}e^{0.241221x}
+  =2.52050(1.27280)^x.
+\]
+Thus one additional year multiplies the fitted population by
+$e^{0.241221}=1.27280$, an estimated increase of about $27.28\%$.
+
+\begin{lstlisting}
+population <- data.frame(
+  year = 1:4,
+  population = c(2.98, 4.65, 5.00, 6.50)
+)
+fit_exp <- lm(log(population) ~ year, data = population)
+coef(fit_exp)
+exp(coef(fit_exp)["year"])
+\end{lstlisting}
+
+\subsection{Part (b): Predict the fifth year}
+
+\begin{align*}
+\log\widehat y_5
+&=0.924456+0.241221(5)=2.130559,\\
+\widehat y_5
+&=e^{2.130559}=\boxed{8.419576\text{ million people}.}
+\end{align*}
+
+This plug-in back-transformation estimates the conditional median on the
+original scale. Under an exact lognormal model, the conditional mean would be
+$\exp(\widehat\eta+\widehat\sigma^2/2)$; the standard exam answer is the
+requested plug-in prediction above.
+
+\begin{lstlisting}
+exp(predict(fit_exp, newdata = data.frame(year = 5)))
+# 8.419576
+\end{lstlisting}
+
+\subsection*{Casio fx-580VN X check}
+
+Compute $\log y_i$ and use \texttt{MENU $\to$ Statistics $\to$ A+BX} with
+$x_i$ and $\log y_i$. The calculator should return
+$a\approx0.924456$ and $b\approx0.241221$. Evaluate
+$\exp(a+5b)$ to obtain $8.419576$.
+
+\section{Problem 3: Logistic regression}
+
+Let
+\[
+  \pi(\bm x)=P(Y=1\mid\bm X=\bm x).
+\]
+Following Chapter 4, logistic regression models the log-odds:
+\[
+  \logit\{\pi(\bm x)\}
+  =\log\left(\frac{\pi(\bm x)}{1-\pi(\bm x)}\right)
+  =\beta_0+\beta_1x_1+\beta_2x_2+\beta_3x_3.
+\]
+
+\subsection{Part (a): Estimated model and interpretation}
+
+The fitted model is
+\[
+\boxed{
+\log\left(\frac{\widehat\pi}{1-\widehat\pi}\right)
+=-3.449548+0.002294x_1+0.777014x_2-0.560031x_3.}
+\]
+Equivalently, if
+\[
+\widehat\eta=-3.449548+0.002294x_1+0.777014x_2-0.560031x_3,
+\]
+then
+\[
+  \widehat\pi=\frac{e^{\widehat\eta}}{1+e^{\widehat\eta}}
+  =\frac{1}{1+e^{-\widehat\eta}}.
+\]
+
+Holding the other predictors fixed, a one-unit increase in $x_j$ multiplies
+the odds of class 1 by $e^{\widehat\beta_j}$:
+\[
+\begin{array}{c|c|c|l}
+\text{Predictor}&\widehat\beta_j&e^{\widehat\beta_j}&\text{Interpretation}\\ \hline
+x_1&0.002294&1.002297&\text{odds increase by about }0.23\%\\
+x_2&0.777014&2.174968&\text{odds are multiplied by about }2.175\\
+x_3&-0.560031&0.571191&\text{odds decrease by about }42.9\%
+\end{array}
+\]
+
+All three reported slope p-values are below $0.05$, so each predictor is
+statistically significant at the $5\%$ level within this fitted model.
+
+\subsection{Part (b): Predicted probabilities and classes}
+
+Use the default threshold $\tau=0.5$:
+\[
+\widehat Y=
+\begin{cases}
+1,&\widehat\pi\ge0.5,\\
+0,&\widehat\pi<0.5.
+\end{cases}
+\]
+
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Row}&$\widehat\eta$&$\widehat\pi$&
+$\widehat\pi\ge0.5$&\textbf{Class}\\
+\midrule
+1&-1.058484&0.257599&\text{No}&0\\
+2&-0.940450&0.280809&\text{No}&0\\
+3& 0.362391&0.589619&\text{Yes}&1\\
+4&-0.684196&0.335326&\text{No}&0\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Hence the predicted classes are
+\[
+  \boxed{(0,0,1,0).}
+\]
+
+\begin{lstlisting}
+b <- c(-3.449548, 0.002294, 0.777014, -0.560031)
+new <- data.frame(
+  x1 = c(640, 600, 700, 620),
+  x2 = c(3.35, 3.62, 3.56, 3.17),
+  x3 = c(3, 3, 1, 2)
+)
+
+eta <- drop(cbind(1, as.matrix(new)) %*% b)
+p <- plogis(eta)
+cbind(new, eta, p, class = as.integer(p >= 0.5))
+\end{lstlisting}
+
+\subsection*{Casio fx-580VN X check}
+
+For each row, compute $\widehat\eta$ and then
+$1/(1+e^{-\widehat\eta})$. For row 1 the display should show
+$\widehat\eta\approx-1.05848$ and $\widehat\pi\approx0.25760$, hence class 0.
+
+\section{Problem 4: Ridge estimator proof}
+
+\subsection*{What must be shown}
+
+For $\lambda>0$, minimise
+\[
+L(\beta_0,\beta_1)
+=\sum_{k=1}^n(y_k-\beta_0-\beta_1x_k)^2
++\lambda(\beta_0^2+\beta_1^2).
+\]
+Unlike the practical \texttt{glmnet} model, this question explicitly penalises
+both the intercept and slope.
+
+Define the centered sums
+\[
+S_{xx}=\sum_{k=1}^n(x_k-\overline x)^2,
+\qquad
+S_{xy}=\sum_{k=1}^n(x_k-\overline x)(y_k-\overline y).
+\]
+
+\subsection*{Proof strategy}
+
+Differentiate $L$ with respect to both parameters. Solve the first normal
+equation for $\widehat\beta_0$, substitute it into the second, and rewrite the
+uncentered sums using $S_{xx}$ and $S_{xy}$.
+
+\begin{proof}
+Differentiating with respect to $\beta_0$ gives
+\begin{align*}
+\frac{\partial L}{\partial\beta_0}
+&=-2\sum_{k=1}^n(y_k-\beta_0-\beta_1x_k)+2\lambda\beta_0.
+\end{align*}
+At the minimiser, this derivative is zero, so
+\begin{align*}
+0
+&=-\sum_{k=1}^n y_k+n\widehat\beta_0
+  +\widehat\beta_1\sum_{k=1}^n x_k+\lambda\widehat\beta_0\\
+&=-n\overline y+(n+\lambda)\widehat\beta_0
+  +n\overline x\widehat\beta_1.
+\end{align*}
+Therefore,
+\begin{equation}
+\boxed{
+\widehat\beta_0
+=\frac{n}{n+\lambda}
+  (\overline y-\widehat\beta_1\overline x).}
+\label{eq:beta0}
+\end{equation}
+
+Next,
+\begin{align*}
+\frac{\partial L}{\partial\beta_1}
+&=-2\sum_{k=1}^n x_k(y_k-\beta_0-\beta_1x_k)
+  +2\lambda\beta_1.
+\end{align*}
+Setting this equal to zero yields
+\begin{equation}
+\sum_{k=1}^n x_ky_k
+=n\overline x\widehat\beta_0
++\widehat\beta_1\left(\sum_{k=1}^n x_k^2+\lambda\right).
+\label{eq:secondnormal}
+\end{equation}
+Substitute \eqref{eq:beta0} into \eqref{eq:secondnormal}:
+\begin{align*}
+\sum_{k=1}^n x_ky_k
+&=n\overline x\frac{n}{n+\lambda}
+  (\overline y-\widehat\beta_1\overline x)
+  +\widehat\beta_1\left(\sum_{k=1}^n x_k^2+\lambda\right).
+\end{align*}
+Collecting the $\widehat\beta_1$ terms gives
+\begin{align}
+\widehat\beta_1
+\left[
+\sum_{k=1}^n x_k^2+\lambda
+-\frac{n^2}{n+\lambda}\overline x^{,2}
+\right]
+&=
+\sum_{k=1}^n x_ky_k
+-\frac{n^2}{n+\lambda}\overline x\,\overline y.
+\label{eq:uncentered}
+\end{align}
+
+Use the identities
+\[
+\sum_{k=1}^n x_ky_k=S_{xy}+n\overline x\,\overline y,
+\qquad
+\sum_{k=1}^n x_k^2=S_{xx}+n\overline x^{,2}.
+\]
+The right-hand side of \eqref{eq:uncentered} becomes
+\begin{align*}
+S_{xy}+n\overline x\,\overline y
+-\frac{n^2}{n+\lambda}\overline x\,\overline y
+&=S_{xy}
++\frac{n\lambda}{n+\lambda}\overline x\,\overline y.
+\end{align*}
+The bracket on the left-hand side becomes
+\begin{align*}
+S_{xx}+n\overline x^{,2}+\lambda
+-\frac{n^2}{n+\lambda}\overline x^{,2}
+&=S_{xx}+\lambda
++\frac{n\lambda}{n+\lambda}\overline x^{,2}\\
+&=S_{xx}
++\lambda\left(1+\frac{n}{n+\lambda}\overline x^{,2}\right).
+\end{align*}
+Consequently,
+\begin{equation}
+\boxed{
+\widehat\beta_1=
+\frac{
+S_{xy}+\dfrac{n\lambda}{n+\lambda}\overline x\,\overline y
+}{
+S_{xx}+\lambda\left(1+\dfrac{n}{n+\lambda}\overline x^{,2}\right)
+}.}
+\label{eq:beta1}
+\end{equation}
+Equations \eqref{eq:beta0} and \eqref{eq:beta1} are the required results.
+\end{proof}
+
+Because $L$ is a strictly convex quadratic for $\lambda>0$, its Hessian is
+positive definite; therefore the stationary point above is the unique global
+minimiser.
+
+\subsection*{R verification of the proof}
+
+The following code compares the derived formulas with the penalised matrix
+solution. Here the $2\times2$ identity matrix penalises both coefficients.
+
+\begin{lstlisting}
+x <- c(1, 2, 4, 5)
+y <- c(2, 3, 7, 8)
+lambda <- 2
+n <- length(y)
+x_bar <- mean(x); y_bar <- mean(y)
+Sxx <- sum((x - x_bar)^2)
+Sxy <- sum((x - x_bar) * (y - y_bar))
+
+b1 <- (Sxy + n*lambda*x_bar*y_bar/(n+lambda)) /
+      (Sxx + lambda*(1 + n*x_bar^2/(n+lambda)))
+b0 <- n*(y_bar - b1*x_bar)/(n+lambda)
+
+X <- cbind(1, x)
+matrix_answer <- solve(crossprod(X) + lambda*diag(2),
+                       crossprod(X, y))
+rbind(derived = c(b0, b1), matrix = matrix_answer)
+#          [,1] [,2]
+# derived  0.333  1.5
+# matrix   0.333  1.5
+\end{lstlisting}
+
+\section*{Final answer summary}
+\addcontentsline{toc}{section}{Final answer summary}
+
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.22\textwidth}
+                >{\raggedright\arraybackslash}p{0.68\textwidth}}
+\toprule
+\rowcolor{navy!10}\textbf{Item}&\textbf{Answer}\\
+\midrule
+1(a)&$\widehat y=1.819205+0.486520x_1+0.558644x_2$,
+$\Rtwo=0.984959$\\
+1(b)&Use the full model; $F=117.42$, $p=0.008409$\\
+1(c)&$\widehat y(5,6)=7.603669$\\
+2(a)&$\log\widehat y=0.924456+0.241221x$\\
+2(b)&$\widehat y_5=8.419576$ million\\
+3(a)&$\logit(\widehat\pi)=-3.449548+0.002294x_1+0.777014x_2-0.560031x_3$\\
+3(b)&Predicted classes $(0,0,1,0)$\\
+4&Equations \eqref{eq:beta0} and \eqref{eq:beta1}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}
+

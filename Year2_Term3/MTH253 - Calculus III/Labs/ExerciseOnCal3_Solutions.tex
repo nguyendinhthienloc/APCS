@@ -1,0 +1,149 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\geometry{margin=1in}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\title{Calculus III --- Chain Rule and Directional Derivatives (Problems 18--19, 23--26)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\textbf{Chain Rule.} For $F(s,t)=f(x(s,t),y(s,t))$:
+\[
+F_s = f_x x_s + f_y y_s, \qquad F_t = f_x x_t + f_y y_t
+\]
+(same pattern for $f(r,\theta)$).
+
+\hrulefill
+
+\section*{Problem 18}
+
+\textbf{a)} $f=x^2y^3,\ x=s\cos t,\ y=s\sin t$
+\[
+F_s = 2xy^3\cos t + 3x^2y^2\sin t = 5s^4\cos^2 t\sin^3 t
+\]
+\[
+F_t = -2sxy^3\sin t + 3sx^2y^2\cos t = s^5\sin^2 t\cos t\,(3\cos^2 t-2\sin^2 t)
+\]
+
+\textbf{b)} $f=\arcsin(x-y),\ x=s^2+t^2,\ y=1-2st$
+\[
+F_s=\frac{2s+2t}{\sqrt{1-(x-y)^2}}, \qquad F_t=\frac{2t+2s}{\sqrt{1-(x-y)^2}}
+\]
+Since $x-y=(s+t)^2-1$, both simplify to
+\[
+F_s=F_t=\frac{2(s+t)}{|s+t|\sqrt{2-(s+t)^2}}
+\]
+
+\textbf{c)} $f=e^{x+2y},\ x=s/t,\ y=t/s$
+\[
+F_s = e^{s/t+2t/s}\left(\frac1t-\frac{2t}{s^2}\right), \qquad
+F_t = e^{s/t+2t/s}\left(-\frac{s}{t^2}+\frac2s\right)
+\]
+
+\textbf{d)} $f=\tan(x/y),\ x=2s+3t,\ y=3s-2t$
+\[
+F_s = \frac{-13t}{(3s-2t)^2}\sec^2\!\left(\frac{2s+3t}{3s-2t}\right), \qquad
+F_t = \frac{13s}{(3s-2t)^2}\sec^2\!\left(\frac{2s+3t}{3s-2t}\right)
+\]
+
+\newpage
+\section*{Problem 19}
+
+\textbf{a)} $f(r,\theta)=\sin\theta\cos r,\ r=st^2,\ \theta=s^2t$
+\[
+F_s = -t^2\sin(s^2t)\sin(st^2) + 2st\cos(s^2t)\cos(st^2)
+\]
+\[
+F_t = -2st\sin(s^2t)\sin(st^2) + s^2\cos(s^2t)\cos(st^2)
+\]
+
+\textbf{b)} $f(r,\theta)=e^r\cos\theta,\ r=st,\ \theta=\sqrt{s^2+t^2}$
+\[
+F_s = e^{st}\left[t\cos\sqrt{s^2+t^2} - \frac{s}{\sqrt{s^2+t^2}}\sin\sqrt{s^2+t^2}\right]
+\]
+\[
+F_t = e^{st}\left[s\cos\sqrt{s^2+t^2} - \frac{t}{\sqrt{s^2+t^2}}\sin\sqrt{s^2+t^2}\right]
+\]
+\newpage 
+
+\textbf{Directional Derivative.} The directional derivative of a differentiable function $f$ in the direction of a unit vector $\mathbf{u}$ represents the rate of change of the function in that direction, given by:
+\[
+D_{\mathbf{u}}f = \nabla f \cdot \mathbf{u}
+\]
+where $\nabla f$ is the gradient vector of $f$:
+\begin{itemize}
+    \item In 2D: $\nabla f(x,y) = \langle f_x, f_y \rangle = f_x\mathbf{i} + f_y\mathbf{j}$
+    \item In 3D: $\nabla f(x,y,z) = \langle f_x, f_y, f_z \rangle = f_x\mathbf{i} + f_y\mathbf{j} + f_z\mathbf{k}$
+\end{itemize}
+
+\textbf{Finding the Unit Vector $\mathbf{u}$:}
+The direction vector must be normalized to a unit vector (length 1) before computing the directional derivative.
+\begin{enumerate}
+    \item \textbf{Given an angle $\theta$ (in 2D):} The unit vector is
+    \[
+    \mathbf{u} = \langle \cos\theta, \sin\theta \rangle
+    \]
+    \item \textbf{Given a direction vector $\mathbf{v}$:} Normalize $\mathbf{v}$:
+    \[
+    \mathbf{u} = \frac{\mathbf{v}}{|\mathbf{v}|}
+    \]
+    \item \textbf{Given a direction from point $P$ to point $Q$:} The displacement vector is $\mathbf{v} = \overrightarrow{PQ} = Q - P$, and the unit vector is:
+    \[
+    \mathbf{u} = \frac{\overrightarrow{PQ}}{|\overrightarrow{PQ}|}
+    \]
+\end{enumerate}
+
+\hrulefill
+
+\section*{Problem 23}
+
+Find the directional derivative of $f$ at the given point in the direction indicated by the angle $\theta$.
+
+\textbf{a)} $f(x,y) = xy^3 - x^2, \qquad (1,2), \qquad \theta = \pi/3$.
+
+\textbf{b)} $f(x,y) = y\cos(xy), \qquad (0,1), \qquad \theta = \pi/4$.
+
+\textbf{c)} $f(x,y) = \sqrt{2x + 3y}, \qquad (3,1), \qquad \theta = -\pi/6$.
+
+
+\section*{Problem 24}
+
+Find the directional derivative of the function at the given point in the direction of the vector $\mathbf{v}$.
+
+\textbf{a)} $f(x,y) = e^x \sin y, \qquad (0,\pi/3), \qquad \mathbf{v} = \langle -6, 8 \rangle$.
+
+\textbf{b)} $f(x,y) = \frac{x}{x^2 + y^2}, \qquad (1,2), \qquad \mathbf{v} = \langle 3, 5 \rangle$.
+
+\textbf{c)} $g(s,t) = s\sqrt{t}, \qquad (2,4), \qquad \mathbf{v} = 2\mathbf{i} - \mathbf{j}$.
+
+\textbf{d)} $g(u,v) = u^2 e^{-v}, \qquad (3,0), \qquad \mathbf{v} = 3\mathbf{i} + 4\mathbf{j}$.
+
+\textbf{e)} $f(x,y,z) = x^2 y + y^2 z, \qquad (1,2,3), \qquad \mathbf{v} = \langle 2, -1, 2 \rangle$.
+
+
+\section*{Problem 25}
+
+\textbf{a)} Find the directional derivative of $f(x,y,z) = xy^2 z^3$ at $P(2,1,1)$ in the direction of $Q(0,-3,5)$.
+
+\textbf{b)} Find the directional derivative of $f(x,y) = \sqrt{xy}$ at $P(2,8)$ in the direction of $Q(5,4)$.
+
+
+\section*{Problem 26}
+
+Find the rate of change of $f$ at $P$ in the direction of the vector $\mathbf{u}$.
+
+\textbf{a)} $f(x,y) = x/y, \qquad P(2,1), \qquad \mathbf{u} = \frac{3}{5}\mathbf{i} + \frac{4}{5}\mathbf{j}$.
+
+\textbf{b)} $f(x,y) = x^2 \ln y, \qquad P(3,1), \qquad \mathbf{u} = -\frac{5}{13}\mathbf{i} + \frac{12}{13}\mathbf{j}$.
+
+\textbf{c)} $f(x,y,z) = x^2 yz - xyz^3, \qquad P(2,-1,1), \qquad \mathbf{u} = \left\langle 0, \frac{4}{5}, -\frac{3}{5} \right\rangle$.
+
+\textbf{d)} $f(x,y,z) = y^2 e^{xyz}, \qquad P(0,1,-1), \qquad \mathbf{u} = \left\langle \frac{3}{13}, \frac{4}{13}, \frac{12}{13} \right\rangle$.
+
+
+\end{document}

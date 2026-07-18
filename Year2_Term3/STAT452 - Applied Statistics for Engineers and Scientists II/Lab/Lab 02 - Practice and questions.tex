@@ -1,0 +1,149 @@
+\documentclass[12pt,a4paper]{article}
+
+% ── Packages ──────────────────────────────────────────────────────────────────
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+
+% ── Page style ────────────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textsc{STAT 452}}
+\fancyhead[R]{\textsc{Lab 02}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Title formatting ─────────────────────────────────────────────────────────
+\titleformat{\section}
+  {\large\bfseries}{Exercise \thesection.}{0.5em}{}
+\titleformat{\subsection}
+  {\normalsize\bfseries}{}{0em}{}
+
+% ── Document ──────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── Title block ───────────────────────────────────────────────────────────────
+\begin{center}
+  {\LARGE\bfseries Applied Statistics for Engineers and Scientists~II}\\[6pt]
+  {\Large Lab 02 --- Practice Problems}\\[4pt]
+  {\large Polynomial Regression, Transformations, Ridge, and Lasso}\\[8pt]
+  {\normalsize Author: Ho Huu Binh \hspace{2em} Year: 2026}
+\end{center}
+
+\bigskip
+\hrule
+\bigskip
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Transformation to linearize an exponential relationship}
+% ══════════════════════════════════════════════════════════════════════════════
+
+A laboratory records the number of surviving bacteria after radiation exposure:
+$$
+\begin{array}{c|cccccc}
+\text{time }t & 0 & 1 & 2 & 3 & 4 & 5\\
+\hline
+\text{count }N_t & 100 & 80 & 65 & 51 & 41 & 33
+\end{array}
+$$
+Assume an exponential mean law
+$$
+  N_t = N_0 e^{\beta t},
+  \qquad N_0 > 0.
+$$
+
+\begin{enumerate}[label=(\alph*)]
+  \item Linearize the model by applying an appropriate transformation.
+        Write down the resulting linear model and identify the new intercept
+        in terms of the original parameters.
+
+  \item Fit the transformed regression in R using ordinary least squares.
+        Report the estimated slope $\widehat\beta$ and the estimated initial
+        count $e^{\widehat\alpha}$.
+
+  \item Interpret the slope on the original (count) scale.
+        What is the estimated multiplicative change in expected count for one
+        additional time unit? What is the estimated proportional decrease per
+        time unit?
+
+  \item Check the residuals on the log scale.
+        Explain why residual diagnostics should be performed on the
+        transformed scale rather than the original count scale.
+\end{enumerate}
+
+\bigskip
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Ridge shrinkage}
+% ══════════════════════════════════════════════════════════════════════════════
+
+Suppose a centered standardized design satisfies
+$$
+  X^\top X =
+  \begin{pmatrix}
+  10 & 8 \\
+  8  & 10
+  \end{pmatrix},
+  \qquad
+  X^\top y =
+  \begin{pmatrix}
+  9 \\
+  9
+  \end{pmatrix}.
+$$
+
+\begin{enumerate}[label=(\alph*)]
+  \item Compute the ordinary least-squares estimate
+        $\widehat\beta_{\mathrm{OLS}} = (X^\top X)^{-1} X^\top y$.
+
+  \item Compute the ridge estimate for $\lambda = 2$:
+        $$
+          \widehat\beta_{\lambda} = (X^\top X + \lambda I_2)^{-1} X^\top y.
+        $$
+
+  \item Compute the eigenvalues of $X^\top X$ and of
+        $X^\top X + 2I_2$.
+
+  \item Compute the condition number
+        $\kappa_2(A) = \lambda_{\max}(A) / \lambda_{\min}(A)$
+        for both matrices. Explain why adding $2I_2$ improves numerical
+        stability.
+\end{enumerate}
+
+\bigskip
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Lasso soft-thresholding}
+% ══════════════════════════════════════════════════════════════════════════════
+
+Assume
+$$
+  X^\top X = I_4,
+  \qquad
+  X^\top y = (3,\; 0.7,\; -1.2,\; -4)^\top.
+$$
+
+\begin{enumerate}[label=(\alph*)]
+  \item Using the soft-thresholding formula
+        $$
+          \widehat b_j
+          = \operatorname{sign}(z_j)\bigl(|z_j| - \lambda\bigr)_+,
+          \qquad
+          z = X^\top y,
+        $$
+        compute the lasso solution $\widehat b_{\lambda}$ for $\lambda = 1$.
+        Which variables are selected (i.e.\ have nonzero coefficients)?
+
+  \item Repeat the computation for $\lambda = 2$.
+        Which variables are selected now?
+
+  \item Explain why increasing $\lambda$ makes the selected model smaller
+        (i.e.\ fewer variables are retained).
+\end{enumerate}
+
+\end{document}

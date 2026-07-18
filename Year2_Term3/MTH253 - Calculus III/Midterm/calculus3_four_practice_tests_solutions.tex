@@ -1,0 +1,634 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+
+\setlist[enumerate]{itemsep=0.45em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.4em}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Calculus III Four Practice Tests - Worked Solutions}}
+\end{center}
+
+\section*{Practice Test 1}
+
+\subsection*{Question 1}
+\begin{enumerate}[label=\alph*)]
+\item
+The function is continuous at $(1,-2)$ since the denominator is nonzero:
+\[
+\lim_{(x,y)\to(1,-2)}\frac{x^2y+y^2}{x^2+y^2}
+=\frac{1^2(-2)+(-2)^2}{1^2+(-2)^2}
+=\frac{2}{5}.
+\]
+
+\item
+Along $y=mx^2$,
+\[
+\frac{x^2y}{x^4+y^2}
+=\frac{mx^4}{x^4+m^2x^4}
+=\frac{m}{1+m^2}.
+\]
+This depends on $m$, so the limit does not exist.
+
+\item
+For $(x,y)\ne(0,0)$, write $x=r\cos\theta$, $y=r\sin\theta$:
+\[
+\frac{x^2y^2}{x^2+y^2}
+=r^2\cos^2\theta\sin^2\theta \to 0.
+\]
+Thus the function is continuous at the origin when
+\[
+\boxed{a=0}.
+\]
+\end{enumerate}
+
+\subsection*{Question 2}
+\begin{enumerate}[label=\alph*)]
+\item
+\[
+z=x^2\cos y+ye^x,\qquad x=s^2+t,\qquad y=st.
+\]
+At $(s,t)=(1,0)$, $(x,y)=(1,0)$. Also
+\[
+z_x=2x\cos y+ye^x,\qquad z_y=-x^2\sin y+e^x.
+\]
+So at $(1,0)$,
+\[
+z_x=2,\qquad z_y=e.
+\]
+Also
+\[
+x_s=2s=2,\quad y_s=t=0,\quad x_t=1,\quad y_t=s=1.
+\]
+Therefore
+\[
+\boxed{\frac{\partial z}{\partial s}=z_xx_s+z_yy_s=2(2)+e(0)=4}
+\]
+and
+\[
+\boxed{\frac{\partial z}{\partial t}=z_xx_t+z_yy_t=2(1)+e(1)=2+e}.
+\]
+
+\item
+Let
+\[
+F(x,y,z)=x^2+y^2+z^2+xyz-7=0.
+\]
+Then
+\[
+F_x=2x+yz,\qquad F_y=2y+xz,\qquad F_z=2z+xy.
+\]
+By implicit differentiation,
+\[
+\boxed{\frac{\partial z}{\partial x}=-\frac{2x+yz}{2z+xy}},
+\qquad
+\boxed{\frac{\partial z}{\partial y}=-\frac{2y+xz}{2z+xy}}.
+\]
+
+\item
+\[
+f(x,y)=x^2e^y,\qquad \nabla f=\langle 2xe^y,x^2e^y\rangle.
+\]
+At $(1,0)$,
+\[
+\nabla f(1,0)=\langle 2,1\rangle.
+\]
+The direction from $(1,0)$ to $(4,4)$ is
+\[
+\langle 3,4\rangle,\qquad \mathbf u=\left\langle \frac35,\frac45\right\rangle.
+\]
+Thus
+\[
+D_{\mathbf u}f(1,0)=\langle 2,1\rangle\cdot \left\langle \frac35,\frac45\right\rangle
+=\boxed{2}.
+\]
+\end{enumerate}
+
+\subsection*{Question 3}
+\[
+f(x,y)=x^2+y^2-2x+4y=(x-1)^2+(y+2)^2-5.
+\]
+The center of the level circles is $(1,-2)$, which lies inside the disk $x^2+y^2\le 16$ because $1^2+(-2)^2=5<16$.
+Hence the minimum occurs at $(1,-2)$:
+\[
+\boxed{f_{\min}=-5}.
+\]
+The maximum occurs on the boundary in the direction farthest from $(1,-2)$, namely
+\[
+(x,y)=-4\frac{(1,-2)}{\sqrt5}=\left(-\frac4{\sqrt5},\frac8{\sqrt5}\right).
+\]
+The farthest distance from $(1,-2)$ to the disk is $4+\sqrt5$, so
+\[
+f_{\max}=(4+\sqrt5)^2-5=\boxed{16+8\sqrt5}.
+\]
+
+\subsection*{Question 4}
+The region is enclosed by $x=y^2$ and $x=2y$. The intersections satisfy
+\[
+y^2=2y \implies y=0,2.
+\]
+For $0\le y\le 2$,
+\[
+y^2\le x\le 2y.
+\]
+Thus
+\[
+V=\int_0^2\int_{y^2}^{2y}(2+x+y^2)\,dx\,dy.
+\]
+Integrating,
+\[
+V=\int_0^2\left[(2+y^2)x+\frac{x^2}{2}\right]_{y^2}^{2y}\,dy
+=\int_0^2\left(4y+2y^3-\frac32y^4\right)\,dy.
+\]
+Therefore
+\[
+V=\left[2y^2+\frac12y^4-\frac3{10}y^5\right]_0^2
+=16-\frac{48}{5}
+=\boxed{\frac{32}{5}}.
+\]
+
+\section*{Practice Test 2}
+
+\subsection*{Question 1}
+\begin{enumerate}[label=\alph*)]
+\item
+\[
+\lim_{(x,y)\to(2,1)}\frac{xy^2-2}{x+y-2}
+=\frac{2(1)^2-2}{2+1-2}
+=\boxed{0}.
+\]
+
+\item
+Use polar coordinates:
+\[
+\frac{x^3-3xy^2}{x^2+y^2}
+=\frac{r^3(\cos^3\theta-3\cos\theta\sin^2\theta)}{r^2}
+=r(\cos^3\theta-3\cos\theta\sin^2\theta)\to 0.
+\]
+So the limit exists and equals
+\[
+\boxed{0}.
+\]
+
+\item
+\[
+\lim_{(x,y)\to(0,0)}\frac{\sin(x^2+y^2)}{x^2+y^2}=1.
+\]
+Thus
+\[
+\boxed{a=1}.
+\]
+\end{enumerate}
+
+\subsection*{Question 2}
+\begin{enumerate}[label=\alph*)]
+\item
+Since
+\[
+x=u\cos v,\qquad y=u\sin v,
+\]
+we have
+\[
+x^2+y^2=u^2.
+\]
+Therefore
+\[
+w=\ln(u^2)=2\ln u.
+\]
+Thus
+\[
+\boxed{\frac{\partial w}{\partial u}=\frac2u=1\text{ at }u=2},
+\qquad
+\boxed{\frac{\partial w}{\partial v}=0}.
+\]
+
+\item
+Let
+\[
+F(x,y,z)=e^{xz}+y^2z-x-1=0.
+\]
+Then
+\[
+F_x=ze^{xz}-1,\qquad F_y=2yz,\qquad F_z=xe^{xz}+y^2.
+\]
+Thus
+\[
+\boxed{\frac{\partial z}{\partial x}=\frac{1-ze^{xz}}{xe^{xz}+y^2}},
+\qquad
+\boxed{\frac{\partial z}{\partial y}=-\frac{2yz}{xe^{xz}+y^2}}.
+\]
+
+\item
+\[
+f(x,y)=\ln(x^2+y^2),\qquad
+\nabla f=\left\langle \frac{2x}{x^2+y^2},\frac{2y}{x^2+y^2}\right\rangle.
+\]
+At $(1,1)$,
+\[
+\nabla f(1,1)=\langle 1,1\rangle.
+\]
+The unit vector in the direction $\mathbf v=(-3,4)$ is
+\[
+\mathbf u=\left\langle -\frac35,\frac45\right\rangle.
+\]
+Hence
+\[
+D_{\mathbf u}f(1,1)=\langle 1,1\rangle\cdot\left\langle -\frac35,\frac45\right\rangle
+=\boxed{\frac15}.
+\]
+\end{enumerate}
+
+\subsection*{Question 3}
+On the boundary $x^2+y^2=25$, use Lagrange multipliers:
+\[
+\nabla f=\lambda\nabla g,
+\qquad
+\langle 3,-4\rangle=\lambda\langle 2x,2y\rangle.
+\]
+Thus
+\[
+3=2\lambda x,\qquad -4=2\lambda y.
+\]
+So
+\[
+x=\frac3{2\lambda},\qquad y=-\frac4{2\lambda}.
+\]
+Substitute into $x^2+y^2=25$:
+\[
+\frac9{4\lambda^2}+\frac{16}{4\lambda^2}=25
+\implies
+\lambda=\pm\frac12.
+\]
+If $\lambda=1/2$, then $(x,y)=(3,-4)$ and
+\[
+f(3,-4)=25.
+\]
+If $\lambda=-1/2$, then $(x,y)=(-3,4)$ and
+\[
+f(-3,4)=-25.
+\]
+Therefore
+\[
+\boxed{f_{\max}=25\text{ at }(3,-4)},\qquad
+\boxed{f_{\min}=-25\text{ at }(-3,4)}.
+\]
+
+\subsection*{Question 4}
+The curves $y=x^2$ and $y=2x$ intersect when
+\[
+x^2=2x \implies x=0,2.
+\]
+For $0\le x\le 2$,
+\[
+x^2\le y\le 2x.
+\]
+Thus
+\[
+V=\int_0^2\int_{x^2}^{2x}(xy+4)\,dy\,dx.
+\]
+Then
+\[
+V=\int_0^2\left[\frac{x}{2}y^2+4y\right]_{x^2}^{2x}\,dx
+=\int_0^2\left(2x^3+8x-\frac12x^5-4x^2\right)\,dx.
+\]
+Therefore
+\[
+V=\left[\frac12x^4+4x^2-\frac1{12}x^6-\frac43x^3\right]_0^2
+=\boxed{8}.
+\]
+
+\section*{Practice Test 3}
+
+\subsection*{Question 1}
+\begin{enumerate}[label=\alph*)]
+\item
+The denominator is nonzero at $(-1,2)$, so
+\[
+\lim_{(x,y)\to(-1,2)}
+\frac{x^2+xy+y^2}{1+x^2+y^2}
+=\frac{1-2+4}{1+1+4}
+=\boxed{\frac12}.
+\]
+
+\item
+Along $y=0$,
+\[
+\frac{x^2-y^2}{x^2+y^2}=1.
+\]
+Along $x=0$,
+\[
+\frac{x^2-y^2}{x^2+y^2}=-1.
+\]
+The limit does not exist.
+
+\item
+Using polar coordinates,
+\[
+\frac{x^3y}{x^2+y^2}
+=r^2\cos^3\theta\sin\theta \to 0.
+\]
+Thus
+\[
+\boxed{a=0}.
+\]
+\end{enumerate}
+
+\subsection*{Question 2}
+\begin{enumerate}[label=\alph*)]
+\item
+\[
+z=e^{xy}+x\sin y,\qquad x=r+t^2,\qquad y=rt.
+\]
+At $(r,t)=(0,1)$, $(x,y)=(1,0)$. Also
+\[
+z_x=ye^{xy}+\sin y,\qquad z_y=xe^{xy}+x\cos y.
+\]
+At $(1,0)$,
+\[
+z_x=0,\qquad z_y=2.
+\]
+Also
+\[
+x_r=1,\quad y_r=t=1,\quad x_t=2t=2,\quad y_t=r=0.
+\]
+Thus
+\[
+\boxed{\frac{\partial z}{\partial r}=z_xx_r+z_yy_r=2},
+\qquad
+\boxed{\frac{\partial z}{\partial t}=z_xx_t+z_yy_t=0}.
+\]
+
+\item
+Let
+\[
+F(x,y,z)=x\cos z+y\sin z-2=0.
+\]
+Then
+\[
+F_x=\cos z,\qquad F_y=\sin z,\qquad F_z=-x\sin z+y\cos z.
+\]
+Therefore
+\[
+\boxed{\frac{\partial z}{\partial x}=\frac{\cos z}{x\sin z-y\cos z}},
+\qquad
+\boxed{\frac{\partial z}{\partial y}=\frac{\sin z}{x\sin z-y\cos z}}.
+\]
+
+\item
+\[
+f(x,y)=\sqrt{x^2+2y^2},
+\qquad
+\nabla f=\left\langle \frac{x}{\sqrt{x^2+2y^2}},
+\frac{2y}{\sqrt{x^2+2y^2}}\right\rangle.
+\]
+At $(2,1)$,
+\[
+\nabla f(2,1)=\left\langle \frac2{\sqrt6},\frac2{\sqrt6}\right\rangle.
+\]
+The direction from $(2,1)$ to $(-1,5)$ is $\langle -3,4\rangle$, so
+\[
+\mathbf u=\left\langle -\frac35,\frac45\right\rangle.
+\]
+Hence
+\[
+D_{\mathbf u}f(2,1)
+=\left\langle \frac2{\sqrt6},\frac2{\sqrt6}\right\rangle
+\cdot
+\left\langle -\frac35,\frac45\right\rangle
+=\boxed{\frac{2}{5\sqrt6}}.
+\]
+\end{enumerate}
+
+\subsection*{Question 3}
+\[
+f(x,y)=x^2+2y^2-4x.
+\]
+Interior critical points satisfy
+\[
+f_x=2x-4=0,\qquad f_y=4y=0,
+\]
+so $(x,y)=(2,0)$, which lies inside $x^2+y^2\le 9$. Then
+\[
+f(2,0)=-4.
+\]
+On the boundary $x^2+y^2=9$, use Lagrange multipliers:
+\[
+\langle 2x-4,4y\rangle=\lambda\langle 2x,2y\rangle.
+\]
+Thus
+\[
+x-2=\lambda x,\qquad 2y=\lambda y.
+\]
+If $y=0$, then $x=\pm3$, giving
+\[
+f(3,0)=-3,\qquad f(-3,0)=21.
+\]
+If $y\ne0$, then $\lambda=2$, so
+\[
+x-2=2x \implies x=-2.
+\]
+Using $x^2+y^2=9$ gives $y=\pm\sqrt5$, and
+\[
+f(-2,\pm\sqrt5)=4+10+8=22.
+\]
+Therefore
+\[
+\boxed{f_{\min}=-4\text{ at }(2,0)},\qquad
+\boxed{f_{\max}=22\text{ at }(-2,\pm\sqrt5)}.
+\]
+
+\subsection*{Question 4}
+The curves $y=x^2$ and $y=2-x^2$ intersect when
+\[
+x^2=2-x^2 \implies x=\pm1.
+\]
+For $-1\le x\le 1$,
+\[
+x^2\le y\le 2-x^2.
+\]
+Thus
+\[
+V=\int_{-1}^1\int_{x^2}^{2-x^2}(1+x^2+y)\,dy\,dx.
+\]
+The inner integral gives
+\[
+V=\int_{-1}^1(4-2x^2-2x^4)\,dx.
+\]
+Therefore
+\[
+V=2\int_0^1(4-2x^2-2x^4)\,dx
+=2\left(4-\frac23-\frac25\right)
+=\boxed{\frac{88}{15}}.
+\]
+
+\section*{Practice Test 4}
+
+\subsection*{Question 1}
+\begin{enumerate}[label=\alph*)]
+\item
+\[
+\frac{e^{xy}-1}{x}
+=y\cdot\frac{e^{xy}-1}{xy}.
+\]
+As $(x,y)\to(0,2)$, $xy\to0$, so
+\[
+\frac{e^{xy}-1}{xy}\to1.
+\]
+Therefore
+\[
+\lim_{(x,y)\to(0,2)}\frac{e^{xy}-1}{x}
+=2(1)=\boxed{2}.
+\]
+
+\item
+Along $y=mx^2$,
+\[
+\frac{x^2y}{x^4+y^2}
+=\frac{mx^4}{x^4+m^2x^4}
+=\frac{m}{1+m^2}.
+\]
+Since this depends on $m$, the limit does not exist.
+
+\item
+Let $r^2=x^2+y^2$. Then
+\[
+\frac{1-\cos(x^2+y^2)}{x^2+y^2}
+=\frac{1-\cos(r^2)}{r^2}.
+\]
+Since $1-\cos u\sim u^2/2$ as $u\to0$,
+\[
+\frac{1-\cos(r^2)}{r^2}\to0.
+\]
+Thus
+\[
+\boxed{a=0}.
+\]
+\end{enumerate}
+
+\subsection*{Question 2}
+\begin{enumerate}[label=\alph*)]
+\item
+\[
+w=x\ln y+y\cos x,\qquad x=pq,\qquad y=p+q.
+\]
+At $(p,q)=(1,1)$, $(x,y)=(1,2)$. Also
+\[
+w_x=\ln y-y\sin x,\qquad w_y=\frac{x}{y}+\cos x.
+\]
+So
+\[
+w_x=\ln2-2\sin1,\qquad w_y=\frac12+\cos1.
+\]
+Also
+\[
+x_p=q=1,\quad y_p=1,\quad x_q=p=1,\quad y_q=1.
+\]
+Therefore
+\[
+\boxed{\frac{\partial w}{\partial p}
+=\ln2-2\sin1+\frac12+\cos1},
+\]
+and
+\[
+\boxed{\frac{\partial w}{\partial q}
+=\ln2-2\sin1+\frac12+\cos1}.
+\]
+
+\item
+Let
+\[
+F(x,y,z)=x^2z+yz^2-6=0.
+\]
+Then
+\[
+F_x=2xz,\qquad F_y=z^2,\qquad F_z=x^2+2yz.
+\]
+Thus
+\[
+\boxed{\frac{\partial z}{\partial x}=-\frac{2xz}{x^2+2yz}},
+\qquad
+\boxed{\frac{\partial z}{\partial y}=-\frac{z^2}{x^2+2yz}}.
+\]
+
+\item
+\[
+f(x,y)=\sin(xy),\qquad
+\nabla f=\langle y\cos(xy),x\cos(xy)\rangle.
+\]
+At $(\pi/2,1)$,
+\[
+\cos(xy)=\cos(\pi/2)=0.
+\]
+Therefore
+\[
+\nabla f(\pi/2,1)=\langle 0,0\rangle,
+\]
+so every directional derivative is
+\[
+\boxed{0}.
+\]
+\end{enumerate}
+
+\subsection*{Question 3}
+The only interior critical point of $f(x,y)=xy$ is $(0,0)$, where $f=0$.
+On the boundary $x^2+y^2=8$, use Lagrange multipliers:
+\[
+\nabla f=\lambda\nabla g,
+\qquad
+\langle y,x\rangle=\lambda\langle 2x,2y\rangle.
+\]
+Thus
+\[
+y=2\lambda x,\qquad x=2\lambda y.
+\]
+For nonzero $x,y$, $\lambda=\pm1/2$.
+If $\lambda=1/2$, then $y=x$, and
+\[
+2x^2=8 \implies x=\pm2.
+\]
+This gives $(2,2)$ and $(-2,-2)$, where $xy=4$.
+If $\lambda=-1/2$, then $y=-x$, giving $(2,-2)$ and $(-2,2)$, where $xy=-4$.
+Therefore
+\[
+\boxed{f_{\max}=4\text{ at }(2,2),(-2,-2)},
+\qquad
+\boxed{f_{\min}=-4\text{ at }(2,-2),(-2,2)}.
+\]
+
+\subsection*{Question 4}
+The region is enclosed by
+\[
+x=y^2-1,\qquad x=3-y^2.
+\]
+The intersections satisfy
+\[
+y^2-1=3-y^2
+\implies
+2y^2=4
+\implies
+y=\pm\sqrt2.
+\]
+For $-\sqrt2\le y\le\sqrt2$,
+\[
+y^2-1\le x\le 3-y^2.
+\]
+Thus
+\[
+V=\int_{-\sqrt2}^{\sqrt2}\int_{y^2-1}^{3-y^2}(3-x+y^2)\,dx\,dy.
+\]
+The inner integral simplifies to
+\[
+\int_{y^2-1}^{3-y^2}(3-x+y^2)\,dx=8-2y^4.
+\]
+Therefore
+\[
+V=\int_{-\sqrt2}^{\sqrt2}(8-2y^4)\,dy
+=16\sqrt2-\frac{16\sqrt2}{5}
+=\boxed{\frac{64\sqrt2}{5}}.
+\]
+
+\end{document}

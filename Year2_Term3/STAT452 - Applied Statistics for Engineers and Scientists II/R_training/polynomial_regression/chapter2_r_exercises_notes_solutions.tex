@@ -1,0 +1,42 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.85in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,enumitem,xcolor,listings,fancyhdr,hyperref}
+\definecolor{navy}{RGB}{24,55,95}\definecolor{green}{RGB}{25,100,70}\definecolor{codebg}{RGB}{246,248,250}\definecolor{codecomment}{RGB}{90,110,95}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=navy}\pagestyle{fancy}\fancyhf{}\lhead{STAT452 Chapter 2}\rhead{R Exercises and Notes}\cfoot{\thepage}\setlength{\headheight}{14pt}
+\lstset{language=R,basicstyle=\ttfamily\small,keywordstyle=\color{navy}\bfseries,commentstyle=\color{codecomment}\itshape,backgroundcolor=\color{codebg},frame=single,breaklines=true,columns=fullflexible,keepspaces=true,showstringspaces=false}
+\newenvironment{exercise}[1]{\par\medskip\noindent\color{navy}\textbf{Exercise #1.}\color{black}\ }{\par\medskip}
+\newenvironment{answer}[1]{\par\medskip\noindent\color{green}\textbf{Solution #1.}\color{black}\ }{\hfill$\square$\par\medskip}
+\title{Chapter 2: Polynomial Regression and Transformations in R\\\large Syntax Notes, Exercises, and Worked Solutions}
+\author{STAT452 -- Applied Statistics for Engineers and Scientists II}\date{}
+\begin{document}\maketitle\tableofcontents\bigskip
+\section{What this worksheet covers}
+Polynomial regression models curvature by adding powers of a predictor. A model such as $Y=\beta_0+\beta_1X+\beta_2X^2+\varepsilon$ is nonlinear in $X$ but linear in its coefficients, so it is fit with \texttt{lm()}. We compare transformations, centering, model order, and extrapolation.
+\section{Core R syntax}
+\begin{lstlisting}
+linear <- lm(mpg ~ wt, data=cars)
+quadratic <- lm(mpg ~ wt + I(wt^2), data=cars)
+anova(linear, quadratic)
+AIC(linear, quadratic); BIC(linear, quadratic)
+predict(quadratic, data.frame(wt=3))
+\end{lstlisting}
+Use \texttt{I(wt\^2)} to calculate a numerical square inside a formula. Keep lower-order terms when higher-order terms are present (hierarchy). Centering uses $X_c=X-\bar X$ and often improves numerical conditioning.
+\section{Exercises}
+\begin{exercise}{1: Explore the relationship} Load \texttt{mtcars}, plot \texttt{mpg} against \texttt{wt}, and describe why a straight line may be inadequate.\end{exercise}
+\begin{exercise}{2: Choose polynomial order} Fit first-, second-, and third-order models. Compare nested models with \texttt{anova()}, AIC, and BIC. Which model is defensible and why?\end{exercise}
+\begin{exercise}{3: Interpret curvature} For the quadratic model, calculate $x^*=-\hat\beta_1/(2\hat\beta_2)$. Explain why individual coefficients are less directly interpretable than the fitted curve.\end{exercise}
+\begin{exercise}{4: Centering and collinearity} Compare the condition numbers of uncentered and centered quadratic design matrices.\end{exercise}
+\begin{exercise}{5: Transform and diagnose} Fit $\log(Y)$ on $\log(X)$, inspect residual plots, and predict at in-range and out-of-range weights.\end{exercise}
+\section{Worked solutions}
+\begin{answer}{1} The scatterplot is curved: fuel efficiency falls quickly at low-to-moderate weights and then flattens. A quadratic term is a reasonable first departure from linearity.\end{answer}
+\begin{answer}{2} Use \texttt{anova(linear, quadratic, cubic)}. Retain an extra term only when the improvement justifies complexity. Select the simplest adequate model, not automatically the highest order.\end{answer}
+\begin{answer}{3} Since the derivative is $\beta_1+2\beta_2x$, the stationary point is $-\hat\beta_1/(2\hat\beta_2)$. Interpret slopes locally or through predicted changes.\end{answer}
+\begin{answer}{4} Powers of the same variable are correlated. Centering reduces non-essential ill-conditioning and improves numerical stability.\end{answer}
+\begin{answer}{5} Log transformations can turn multiplicative relationships into additive ones and reduce skewness. A polynomial can behave wildly outside the observed predictor range, so extrapolation requires scientific justification.\end{answer}
+\section*{Checklist}
+\begin{lstlisting}
+plot(y ~ x); fit1 <- lm(y ~ x, d); fit2 <- lm(y ~ x + I(x^2), d)
+anova(fit1, fit2); AIC(fit1, fit2); BIC(fit1, fit2)
+par(mfrow=c(2,2)); plot(fit2); par(mfrow=c(1,1))
+\end{lstlisting}
+\end{document}
+

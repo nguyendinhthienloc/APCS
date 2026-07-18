@@ -1,0 +1,414 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+% ── Theorem-style environments ──
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{example}{Example}
+
+% ── Custom commands ──
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\uvec}[1]{\hat{#1}}
+\newcommand{\grad}{\nabla}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\inner}[2]{\left\langle #1,\, #2 \right\rangle}
+
+\title{\textbf{Midterm Mock Test Solutions} \\ \large MTH253 -- Calculus III}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+%% ================================================================
+%%  QUESTION 2: Directional Derivatives
+%% ================================================================
+\section{Question 2 -- Directional Derivatives}
+
+\subsection{Key Formulas}
+
+\begin{definition}[Directional Derivative]
+The \textbf{directional derivative} of $f(x,y)$ in the direction of a
+\textbf{unit vector} $\vect{u} = \inner{a}{b}$ is
+\[
+  D_{\vect{u}}\, f(x,y)
+    = f_x(x,y)\,a + f_y(x,y)\,b
+    = \grad f(x,y) \cdot \vect{u}.
+\]
+\end{definition}
+
+\medskip
+
+\noindent\textbf{Two common situations:}
+
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Direction given by an angle $\theta$:}
+        Set $\vect{u} = \inner{\cos\theta}{\sin\theta}$, so
+        \[
+          D_{\vect{u}}\, f(x,y)
+            = f_x(x,y)\cos\theta + f_y(x,y)\sin\theta.
+        \]
+
+  \item \textbf{Direction given by a (non-unit) vector $\vect{v}$:}
+        You \textbf{must} first normalise:
+        \[
+          \vect{u} = \frac{\vect{v}}{\norm{\vect{v}}},
+        \]
+        then apply the formula above.
+\end{enumerate}
+
+\subsection{General Solution Method}
+
+Given $f(x,y)$, a point $P=(x_0,y_0)$, and a direction (angle or vector):
+
+\begin{enumerate}
+  \item \textbf{Compute the partial derivatives} $f_x$ and $f_y$.
+  \item \textbf{Evaluate at the point:} $f_x(x_0,y_0)$ and $f_y(x_0,y_0)$.
+  \item \textbf{Form the gradient:}
+        $\grad f(x_0,y_0) = \inner{f_x(x_0,y_0)}{f_y(x_0,y_0)}$.
+  \item \textbf{Obtain the unit direction vector $\vect{u}$:}
+        \begin{itemize}
+          \item If an angle $\theta$ is given:
+                $\vect{u}=\inner{\cos\theta}{\sin\theta}$.
+          \item If a vector $\vect{v}$ is given:
+                $\vect{u}=\dfrac{\vect{v}}{\norm{\vect{v}}}$.
+        \end{itemize}
+  \item \textbf{Dot product:}
+        $D_{\vect{u}}\,f(x_0,y_0) = \grad f(x_0,y_0)\cdot\vect{u}$.
+\end{enumerate}
+
+\subsection{Worked Example 1 -- Direction Given by an Angle}
+
+\begin{example}
+Find the directional derivative of
+$f(x,y) = x^2 y^3 - 4y$
+at the point $(2,-1)$ in the direction $\theta = \pi/6$.
+\end{example}
+
+\textbf{Solution.}
+
+\medskip
+\noindent\textbf{Step 1.} Partial derivatives:
+\[
+  f_x = 2xy^3, \qquad f_y = 3x^2 y^2 - 4.
+\]
+
+\noindent\textbf{Step 2.} Evaluate at $(2,-1)$:
+\[
+  f_x(2,-1) = 2(2)(-1)^3 = -4, \qquad
+  f_y(2,-1) = 3(4)(1) - 4 = 8.
+\]
+
+\noindent\textbf{Step 3.} Gradient:
+\[
+  \grad f(2,-1) = \inner{-4}{8}.
+\]
+
+\noindent\textbf{Step 4.} Unit vector from angle $\theta=\pi/6$:
+\[
+  \vect{u}
+    = \inner{\cos\frac{\pi}{6}}{\sin\frac{\pi}{6}}
+    = \inner{\frac{\sqrt{3}}{2}}{\frac{1}{2}}.
+\]
+
+\noindent\textbf{Step 5.} Directional derivative:
+\[
+  D_{\vect{u}}\,f(2,-1)
+    = \inner{-4}{8} \cdot \inner{\frac{\sqrt{3}}{2}}{\frac{1}{2}}
+    = -4\cdot\frac{\sqrt{3}}{2} + 8\cdot\frac{1}{2}
+    = -2\sqrt{3} + 4.
+\]
+
+\[
+  \boxed{D_{\vect{u}}\,f(2,-1) = 4 - 2\sqrt{3} \approx 0.536}
+\]
+
+\subsection{Worked Example 2 -- Direction Given by a Vector}
+
+\begin{example}
+Find the directional derivative of
+$f(x,y) = e^x \sin y$
+at $(0,\,\pi/3)$ in the direction of $\vect{v}=\inner{3}{4}$.
+\end{example}
+
+\textbf{Solution.}
+
+\medskip
+\noindent\textbf{Step 1.} Partial derivatives:
+\[
+  f_x = e^x \sin y, \qquad f_y = e^x \cos y.
+\]
+
+\noindent\textbf{Step 2.} Evaluate at $(0,\,\pi/3)$:
+\[
+  f_x\!\left(0,\tfrac{\pi}{3}\right) = e^0 \sin\frac{\pi}{3}
+    = \frac{\sqrt{3}}{2}, \qquad
+  f_y\!\left(0,\tfrac{\pi}{3}\right) = e^0 \cos\frac{\pi}{3}
+    = \frac{1}{2}.
+\]
+
+\noindent\textbf{Step 3.} Gradient:
+\[
+  \grad f\!\left(0,\tfrac{\pi}{3}\right)
+    = \inner{\frac{\sqrt{3}}{2}}{\frac{1}{2}}.
+\]
+
+\noindent\textbf{Step 4.} Normalise $\vect{v}=\inner{3}{4}$:
+\[
+  \norm{\vect{v}} = \sqrt{9+16} = 5, \qquad
+  \vect{u} = \inner{\frac{3}{5}}{\frac{4}{5}}.
+\]
+
+\noindent\textbf{Step 5.} Directional derivative:
+\[
+  D_{\vect{u}}\,f\!\left(0,\tfrac{\pi}{3}\right)
+    = \inner{\frac{\sqrt{3}}{2}}{\frac{1}{2}}
+      \cdot \inner{\frac{3}{5}}{\frac{4}{5}}
+    = \frac{3\sqrt{3}}{10} + \frac{4}{10}
+    = \frac{3\sqrt{3}+4}{10}.
+\]
+
+\[
+  \boxed{D_{\vect{u}}\,f\!\left(0,\tfrac{\pi}{3}\right)
+    = \frac{3\sqrt{3}+4}{10} \approx 0.920}
+\]
+
+%% ================================================================
+%%  SECTION 5: QUESTION 3 -- Extreme Values on a Disk
+%% ================================================================
+\newpage
+\section{Question 3 -- Extreme Values on a Closed Disk}
+
+\begin{example}
+Find the extreme values of the function
+\[
+  f(x,y) = x^2 + y^2 + 4x - 4y
+\]
+on the disk $x^2 + y^2 \le 9$.
+\end{example}
+
+\textbf{Solution.}
+
+\medskip
+Since the disk $D = \{(x,y) : x^2+y^2 \le 9\}$ is a \textbf{closed and bounded}
+region, by the Extreme Value Theorem $f$ attains both an absolute maximum and an
+absolute minimum on $D$.  We must check:
+\begin{enumerate}[label=(\alph*)]
+  \item Interior critical points (where $\grad f = \vect{0}$).
+  \item The boundary $x^2+y^2 = 9$.
+\end{enumerate}
+
+%% ── Part (a): Interior ──
+\subsection*{Part (a): Interior critical points}
+
+Compute the partial derivatives and set them to zero:
+\[
+  f_x = 2x + 4 = 0 \;\Longrightarrow\; x = -2, \qquad
+  f_y = 2y - 4 = 0 \;\Longrightarrow\; y = 2.
+\]
+
+The only critical point is $(-2, 2)$.  Check whether it lies inside the disk:
+\[
+  (-2)^2 + 2^2 = 4 + 4 = 8 \le 9 \quad \checkmark
+\]
+
+So $(-2,2)$ is in the disk. Evaluate $f$ there:
+\[
+  f(-2,2) = 4 + 4 + 4(-2) - 4(2) = 8 - 8 - 8 = \mathbf{-8}.
+\]
+
+%% ── Part (b): Boundary ──
+\subsection*{Part (b): Boundary $x^2 + y^2 = 9$}
+
+Parametrise the circle of radius $3$:
+\[
+  x = 3\cos \theta, \qquad y = 3\sin \theta, \qquad 0 \le \theta < 2\pi.
+\]
+
+Substitute into $f$:
+\begin{align*}
+  g(\theta) &= (3\cos \theta)^2 + (3\sin \theta)^2 + 4(3\cos \theta) - 4(3\sin \theta) \\
+       &= 9\cos^2 \theta + 9\sin^2 \theta + 12\cos \theta - 12\sin \theta \\
+       &= 9 + 12\cos \theta - 12\sin \theta.
+\end{align*}
+
+To find extrema of $g(\theta)$, set $g'(\theta) = 0$:
+\[
+  g'(\theta) = -12\sin \theta - 12\cos \theta = 0
+  \;\Longrightarrow\;
+  \sin \theta = -\cos \theta
+  \;\Longrightarrow\;
+  \tan \theta = -1.
+\]
+
+This gives two solutions in $[0, 2\pi)$:
+\[
+  \theta_1 = \frac{3\pi}{4}, \qquad \theta_2 = \frac{7\pi}{4}.
+\]
+
+Evaluate $g$ at each:
+
+\medskip
+\noindent\textbf{At $\theta_1 = \dfrac{3\pi}{4}$:}
+\[
+  \cos\frac{3\pi}{4} = -\frac{\sqrt{2}}{2}, \qquad
+  \sin\frac{3\pi}{4} = \frac{\sqrt{2}}{2}.
+\]
+\[
+  g\!\left(\tfrac{3\pi}{4}\right)
+    = 9 + 12\!\left(-\tfrac{\sqrt{2}}{2}\right) - 12\!\left(\tfrac{\sqrt{2}}{2}\right)
+    = 9 - 6\sqrt{2} - 6\sqrt{2}
+    = 9 - 12\sqrt{2}.
+\]
+
+\noindent\textbf{At $\theta_2 = \dfrac{7\pi}{4}$:}
+\[
+  \cos\frac{7\pi}{4} = \frac{\sqrt{2}}{2}, \qquad
+  \sin\frac{7\pi}{4} = -\frac{\sqrt{2}}{2}.
+\]
+\[
+  g\!\left(\tfrac{7\pi}{4}\right)
+    = 9 + 12\!\left(\tfrac{\sqrt{2}}{2}\right) - 12\!\left(-\tfrac{\sqrt{2}}{2}\right)
+    = 9 + 6\sqrt{2} + 6\sqrt{2}
+    = 9 + 12\sqrt{2}.
+\]
+
+The corresponding points on the boundary are:
+\[
+  \theta_1:\quad \left(-\tfrac{3\sqrt{2}}{2},\;\tfrac{3\sqrt{2}}{2}\right),
+  \qquad
+  \theta_2:\quad \left(\tfrac{3\sqrt{2}}{2},\;-\tfrac{3\sqrt{2}}{2}\right).
+\]
+
+%% ── Conclusion ──
+\subsection*{Conclusion}
+
+Compare all candidate values:
+
+\medskip
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Point} & \textbf{Type} & $\boldsymbol{f(x,y)}$ \\
+\hline
+$(-2,\;2)$ & Interior critical pt. & $-8$ \\
+\hline
+$\left(-\frac{3\sqrt{2}}{2},\;\frac{3\sqrt{2}}{2}\right)$
+  & Boundary & $9 - 12\sqrt{2} \approx -7.97$ \\
+\hline
+$\left(\frac{3\sqrt{2}}{2},\;-\frac{3\sqrt{2}}{2}\right)$
+  & Boundary & $9 + 12\sqrt{2} \approx 25.97$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\bigskip
+\[
+  \boxed{\text{Absolute minimum} = -8
+    \;\text{ at }\; (-2,\,2)}
+\]
+\[
+  \boxed{\text{Absolute maximum} = 9 + 12\sqrt{2}
+    \;\text{ at }\;
+    \left(\tfrac{3\sqrt{2}}{2},\;-\tfrac{3\sqrt{2}}{2}\right)}
+\]
+
+%% ================================================================
+%%  SECTION 6: QUESTION 4 -- Volume via Double Integral
+%% ================================================================
+\newpage
+\section{Question 4 -- Volume via Double Integral}
+
+\begin{example}
+Find the volume of the solid under the surface
+\[
+  z = 1 + x^2 y^2
+\]
+and above the region enclosed by $x = y^2$ and $x = 4$.
+\end{example}
+
+\textbf{Solution.}
+
+\medskip
+The volume is given by the double integral
+\[
+  V = \iint_R \bigl(1 + x^2 y^2\bigr)\, dA,
+\]
+where $R$ is the region in the $xy$-plane bounded by the parabola $x = y^2$
+and the vertical line $x = 4$.
+
+\subsection*{Step 1: Sketch the region and determine limits}
+
+The curves $x = y^2$ and $x = 4$ intersect when
+\[
+  y^2 = 4 \;\Longrightarrow\; y = \pm 2.
+\]
+
+For a fixed $y \in [-2,\,2]$, $x$ runs from the parabola to the line:
+\[
+  y^2 \le x \le 4.
+\]
+
+So the integral becomes
+\[
+  V = \int_{-2}^{2} \int_{y^2}^{4} \bigl(1 + x^2 y^2\bigr)\, dx\, dy.
+\]
+
+\subsection*{Step 2: Evaluate the inner integral (with respect to $x$)}
+
+\begin{align*}
+  \int_{y^2}^{4} \bigl(1 + x^2 y^2\bigr)\, dx
+    &= \left[ x + \frac{x^3}{3}\, y^2 \right]_{x=y^2}^{x=4} \\
+    &= \left(4 + \frac{64}{3}\, y^2\right)
+       - \left(y^2 + \frac{y^6}{3}\, y^2\right) \\
+    &= 4 + \frac{64}{3}\, y^2 - y^2 - \frac{y^8}{3} \\
+    &= 4 + \frac{64 y^2 - 3y^2}{3} - \frac{y^8}{3} \\
+    &= 4 + \frac{61 y^2}{3} - \frac{y^8}{3}.
+\end{align*}
+
+\subsection*{Step 3: Evaluate the outer integral (with respect to $y$)}
+
+Since the integrand $4 + \frac{61 y^2}{3} - \frac{y^8}{3}$ is an
+\textbf{even function} of $y$ (only even powers), we can use symmetry:
+\[
+  V = 2 \int_{0}^{2} \left(4 + \frac{61 y^2}{3} - \frac{y^8}{3}\right) dy.
+\]
+
+Evaluate each term:
+\begin{align*}
+  \int_{0}^{2} 4\, dy &= 4 \cdot 2 = 8, \\[6pt]
+  \int_{0}^{2} \frac{61 y^2}{3}\, dy
+    &= \frac{61}{3} \cdot \frac{y^3}{3}\bigg|_0^2
+     = \frac{61}{3} \cdot \frac{8}{3}
+     = \frac{488}{9}, \\[6pt]
+  \int_{0}^{2} \frac{y^8}{3}\, dy
+    &= \frac{1}{3} \cdot \frac{y^9}{9}\bigg|_0^2
+     = \frac{1}{3} \cdot \frac{512}{9}
+     = \frac{512}{27}.
+\end{align*}
+
+Combine:
+\begin{align*}
+  \frac{V}{2}
+    &= 8 + \frac{488}{9} - \frac{512}{27} \\
+    &= \frac{216}{27} + \frac{1464}{27} - \frac{512}{27}
+     \quad\text{(common denominator 27)} \\
+    &= \frac{216 + 1464 - 512}{27} \\
+    &= \frac{1168}{27}.
+\end{align*}
+
+Therefore:
+\[
+  V = 2 \cdot \frac{1168}{27} = \frac{2336}{27}.
+\]
+
+\[
+  \boxed{V = \dfrac{2336}{27} \approx 86.52}
+\]
+
+\end{document}

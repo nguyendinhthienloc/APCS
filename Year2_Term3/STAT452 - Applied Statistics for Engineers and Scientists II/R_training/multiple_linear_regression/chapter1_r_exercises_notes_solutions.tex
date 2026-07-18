@@ -1,0 +1,689 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=0.85in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,longtable,array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\definecolor{navy}{RGB}{24,55,95}
+\definecolor{green}{RGB}{25,100,70}
+\definecolor{codebg}{RGB}{246,248,250}
+\definecolor{codecomment}{RGB}{90,110,95}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=navy}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{STAT452 Chapter 1}
+\rhead{R Exercises and Notes}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\lstdefinelanguage{Rcustom}{
+  language=R,
+  morekeywords={lm,coef,fitted,resid,model.matrix,confint,predict,anova,
+    df.residual,rstandard,cooks.distance,lower.tail,newdata,interval},
+  sensitive=true
+}
+\lstset{
+  language=Rcustom,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{navy}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{green},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{black!15},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  xleftmargin=0.4em,
+  xrightmargin=0.4em,
+  aboveskip=0.6em,
+  belowskip=0.7em
+}
+
+\newenvironment{exercise}[1]
+ {\par\medskip\noindent\color{navy}\textbf{Exercise #1.}\color{black}\ }
+ {\par\medskip}
+\newenvironment{answer}[1]
+ {\par\medskip\noindent\color{green}\textbf{Solution #1.}\color{black}\ }
+ {\hfill$\square$\par\medskip}
+
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\Var}{\operatorname{Var}}
+
+\title{Chapter 1: Multiple Linear Regression in R\\
+\large Syntax Notes, Mathematical Connections, and Ten Guided Exercises}
+\author{STAT452 -- Applied Statistics for Engineers and Scientists II}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\bigskip
+
+\section{What this worksheet covers}
+
+This worksheet follows Chapter 1 of the course: multiple linear regression,
+least squares, fitted values, residuals, coefficient inference, $R^2$, nested
+model comparison, and residual diagnostics. All examples use \texttt{mtcars},
+a data frame included with R, so no package or download is required.
+
+We will mainly use these variables:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+R name & Meaning & Unit\\
+\midrule
+\texttt{mpg} & fuel efficiency & miles per US gallon\\
+\texttt{wt} & vehicle weight & 1000 pounds\\
+\texttt{hp} & gross horsepower & horsepower\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The main model will be
+\[
+  Y_i=\beta_0+\beta_1x_{i,\mathrm{wt}}
+      +\beta_2x_{i,\mathrm{hp}}+\varepsilon_i,
+\]
+or, in matrix form,
+\[
+  \mathbf Y=\mathbf X\boldsymbol\beta+\boldsymbol\varepsilon.
+\]
+
+\section{R syntax you should know}
+
+\subsection{The basic mental model}
+
+R stores information in \emph{objects}. You create an object with
+\texttt{<-}, then give that object to functions that calculate a result.
+
+\begin{lstlisting}
+x <- c(2, 4, 6, 8)   # Store four values in x
+mean(x)              # Give x to the mean() function
+sd(x)                # Compute its sample standard deviation
+\end{lstlisting}
+
+The symbol \texttt{\#} starts a comment. R ignores everything after it on the
+same line.
+
+\subsection{Common syntax patterns}
+
+\begin{longtable}{>{\ttfamily}p{0.29\textwidth}p{0.63\textwidth}}
+\toprule
+\normalfont Syntax & Meaning\\
+\midrule
+\endhead
+x <- 5 & Assign the value 5 to the name \texttt{x}.\\
+c(2, 4, 6) & Combine values into a vector.\\
+cars\$wt & Select the \texttt{wt} column from the data frame \texttt{cars}.\\
+cars[1:5, ] & Select rows 1 through 5 and every column.\\
+cars[, c("mpg", "wt")] & Select every row and two named columns.\\
+mean(x) & Call a function; \texttt{x} is its argument.\\
+sum(x\^2) & Square every element of \texttt{x}, then add the results.\\
+sqrt(x) & Take square roots element by element.\\
+length(x) & Count the elements of a vector.\\
+nrow(cars) & Count observations in a data frame.\\
+head(cars) & Display the first six rows.\\
+str(cars) & Display the structure and variable types.\\
+summary(cars) & Produce quick summaries of every variable.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Regression formula syntax}
+
+The R formula
+\begin{lstlisting}
+mpg ~ wt + hp
+\end{lstlisting}
+means ``model \texttt{mpg} using an intercept, \texttt{wt}, and \texttt{hp}.''
+It corresponds to
+\[
+  \mathrm{mpg}_i=\beta_0+\beta_1\mathrm{wt}_i
+                  +\beta_2\mathrm{hp}_i+\varepsilon_i.
+\]
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+R formula & Meaning\\
+\midrule
+\texttt{y \textasciitilde{} x} & intercept plus one predictor\\
+\texttt{y \textasciitilde{} x1 + x2} & intercept plus two predictors\\
+\texttt{y \textasciitilde{} .} & use every other column as a predictor\\
+\texttt{y \textasciitilde{} x - 1} & omit the intercept\\
+\texttt{y \textasciitilde{} x1:x2} & interaction only\\
+\texttt{y \textasciitilde{} x1*x2} & both main effects and their interaction\\
+\texttt{y \textasciitilde{} x + I(x\^2)} & linear and quadratic terms\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Important:} In a formula, \texttt{+} means ``include another
+term.'' It does not tell R to numerically add the two columns together.
+
+\section{Translation between mathematics and R}
+
+\begin{longtable}{p{0.30\textwidth}p{0.27\textwidth}p{0.35\textwidth}}
+\toprule
+Statistical object & Mathematics & R\\
+\midrule
+\endhead
+Fit the model & minimize $\sum e_i^2$ & \texttt{fit <- lm(y \textasciitilde{} x1 + x2, data=d)}\\
+Coefficient estimates & $\widehat{\boldsymbol\beta}$ & \texttt{coef(fit)}\\
+Design matrix & $\mathbf X$ & \texttt{model.matrix(fit)}\\
+Fitted values & $\widehat{\mathbf Y}=\mathbf X\widehat{\boldsymbol\beta}$ & \texttt{fitted(fit)}\\
+Residuals & $\mathbf e=\mathbf Y-\widehat{\mathbf Y}$ & \texttt{resid(fit)}\\
+Residual sum of squares & $\mathrm{SSE}=\sum e_i^2$ & \texttt{sum(resid(fit)\^2)}\\
+Error degrees of freedom & $n-p-1$ & \texttt{df.residual(fit)}\\
+MSE & $\mathrm{SSE}/(n-p-1)$ & \texttt{deviance(fit)/df.residual(fit)}\\
+Residual standard error & $\sqrt{\mathrm{MSE}}$ & \texttt{summary(fit)\$sigma}\\
+$R^2$ & $1-\mathrm{SSE}/\mathrm{SST}$ & \texttt{summary(fit)\$r.squared}\\
+Coefficient table & estimate, SE, $t$, $p$ & \texttt{coef(summary(fit))}\\
+Confidence intervals & $\widehat\beta_j\pm t^*\mathrm{SE}$ & \texttt{confint(fit)}\\
+Prediction & $\widehat y(\mathbf x_0)$ & \texttt{predict(fit, newdata=...)}\\
+Nested-model test & partial $F$-test & \texttt{anova(reduced, full)}\\
+Diagnostic plots & assumption checks & \texttt{plot(fit)}\\
+\bottomrule
+\end{longtable}
+
+\subsection{Matrix operations in R}
+
+The following commands translate the matrix least-squares formula directly:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Mathematics & R & Purpose\\
+\midrule
+$\mathbf X^{\mathsf T}$ & \texttt{t(X)} & transpose\\
+$\mathbf X^{\mathsf T}\mathbf X$ & \texttt{t(X) \%*\% X} & matrix multiplication\\
+$(\mathbf X^{\mathsf T}\mathbf X)^{-1}$ & \texttt{solve(t(X) \%*\% X)} & inverse\\
+$\widehat{\boldsymbol\beta}$ & \texttt{solve(t(X) \%*\% X, t(X) \%*\% Y)} & solve normal equations\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Use \texttt{\%*\%} for matrix multiplication. Ordinary \texttt{*} performs
+element-by-element multiplication. For numerical work, \texttt{solve(A, b)}
+is preferable to \texttt{solve(A) \%*\% b} because it solves
+$\mathbf A\mathbf x=\mathbf b$ without explicitly forming the inverse.
+
+\subsection{How to read \texttt{summary(lm(...))}}
+
+The coefficient table contains four columns:
+\begin{enumerate}[leftmargin=*]
+ \item \textbf{Estimate:} the fitted coefficient $\widehat\beta_j$.
+ \item \textbf{Std. Error:} estimated standard deviation of
+ $\widehat\beta_j$ across repeated samples.
+ \item \textbf{t value:} $t=\widehat\beta_j/\mathrm{SE}(\widehat\beta_j)$
+ for testing $H_0:\beta_j=0$.
+ \item \textbf{Pr($>|t|$):} the two-sided $p$-value.
+\end{enumerate}
+
+The last few lines give the residual standard error, $R^2$, adjusted $R^2$,
+and overall $F$-test. A small coefficient $p$-value concerns one predictor
+conditional on the others; the overall $F$-test concerns all slopes together.
+
+\newpage
+\section{Exercises}
+
+Start every exercise with:
+\begin{lstlisting}
+data(mtcars)
+cars <- mtcars
+\end{lstlisting}
+
+\begin{exercise}{1: Inspect the data}
+Use \texttt{head()}, \texttt{dim()}, \texttt{names()}, and \texttt{str()} to
+inspect \texttt{cars}.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+ \item How many observations and variables are present?
+ \item Are \texttt{mpg}, \texttt{wt}, and \texttt{hp} stored as numerical
+ variables?
+ \item What does one row represent?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{2: Summaries and the simple-regression formula}
+Let $X=\texttt{wt}$ and $Y=\texttt{mpg}$.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+ \item Calculate $\bar x$, $\bar y$, $s_x$, and $s_y$ with R.
+ \item Calculate
+ \[
+  S_{xx}=\sum(x_i-\bar x)^2,
+  \qquad
+  S_{xy}=\sum(x_i-\bar x)(y_i-\bar y).
+ \]
+ \item Use $\widehat\beta_1=S_{xy}/S_{xx}$ and
+ $\widehat\beta_0=\bar y-\widehat\beta_1\bar x$.
+\end{enumerate}
+\emph{Syntax hint:} multiplication is \texttt{*}, powers use \texttt{\^},
+and \texttt{sum()} adds a vector.
+\end{exercise}
+
+\begin{exercise}{3: Simple linear regression}
+Fit \texttt{mpg \textasciitilde{} wt} using \texttt{lm()}.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+ \item Extract the coefficients with \texttt{coef()}.
+ \item Write the fitted equation.
+ \item Interpret the slope, remembering that \texttt{wt} is measured in
+ thousands of pounds.
+ \item Confirm that the coefficients agree with Exercise 2.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{4: Multiple linear regression}
+Fit \texttt{mpg \textasciitilde{} wt + hp}.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+ \item Write the fitted equation.
+ \item Interpret the \texttt{wt} coefficient while holding horsepower fixed.
+ \item Interpret the \texttt{hp} coefficient while holding weight fixed.
+ \item Compare the \texttt{wt} coefficient with the simple-regression value.
+ Why might it change?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{5: Fitted values and residual identities}
+For the model in Exercise 4, store
+\begin{lstlisting}
+y_hat <- fitted(full_model)
+e <- resid(full_model)
+\end{lstlisting}
+Then verify numerically that
+\[
+ y_i=\widehat y_i+e_i,
+ \qquad
+ \sum e_i=0,
+ \qquad
+ \sum \mathrm{wt}_i e_i=0,
+ \qquad
+ \sum \mathrm{hp}_i e_i=0.
+\]
+Explain why R may display numbers such as $10^{-13}$ instead of exact zero.
+\end{exercise}
+
+\begin{exercise}{6: Matrix least squares}
+Use
+\begin{lstlisting}
+X <- model.matrix(full_model)
+Y <- matrix(cars$mpg, ncol = 1)
+\end{lstlisting}
+and calculate
+\[
+ \widehat{\boldsymbol\beta}
+ =(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+   \mathbf X^{\mathsf T}\mathbf Y.
+\]
+Compare the result with \texttt{coef(full\_model)}. Also calculate
+\texttt{t(X) \%*\% e}. What does the result mean?
+\end{exercise}
+
+\begin{exercise}{7: SSE, MSE, and $R^2$}
+For the two-predictor model, manually calculate
+\[
+ \mathrm{SSE}=\sum e_i^2,
+ \qquad
+ \mathrm{MSE}=\frac{\mathrm{SSE}}{n-p-1},
+ \qquad
+ R^2=1-\frac{\mathrm{SSE}}{\mathrm{SST}}.
+\]
+Use $n=32$ and $p=2$. Compare your results with
+\texttt{summary(full\_model)}.
+\end{exercise}
+
+\begin{exercise}{8: A coefficient test and confidence interval}
+For the \texttt{hp} coefficient, test
+\[
+ H_0:\beta_{\mathrm{hp}}=0
+ \qquad\text{against}\qquad
+ H_1:\beta_{\mathrm{hp}}\ne0.
+\]
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+ \item Extract its estimate and standard error.
+ \item Calculate the $t$ statistic manually.
+ \item Calculate the two-sided $p$-value using \texttt{pt()}.
+ \item Obtain a 95\% confidence interval using \texttt{confint()}.
+ \item State the conclusion at $\alpha=0.05$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{9: Confidence versus prediction intervals}
+For a car with \texttt{wt = 3} and \texttt{hp = 110}, calculate:
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+ \item the predicted fuel efficiency;
+ \item a 95\% confidence interval for the mean fuel efficiency;
+ \item a 95\% prediction interval for one new car.
+\end{enumerate}
+Explain why the prediction interval is wider.
+\end{exercise}
+
+\begin{exercise}{10: Nested models and diagnostics}
+Let the reduced model be \texttt{mpg \textasciitilde{} wt} and the full model
+be \texttt{mpg \textasciitilde{} wt + hp}.
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+ \item Use \texttt{anova(reduced\_model, full\_model)} to test whether adding
+ \texttt{hp} significantly improves the model.
+ \item Verify that this partial $F$ statistic equals the square of the
+ \texttt{hp} $t$ statistic from Exercise 8.
+ \item Run \texttt{plot(full\_model)}. State what each of the four standard
+ plots is designed to check.
+ \item Identify the observations with the largest absolute standardized
+ residual and largest Cook's distance. Should they be deleted automatically?
+\end{enumerate}
+\end{exercise}
+
+\newpage
+\section{Worked solutions}
+
+\begin{answer}{1}
+\begin{lstlisting}
+head(cars)
+dim(cars)
+names(cars)
+str(cars)
+\end{lstlisting}
+There are 32 observations and 11 variables. The three variables used here are
+stored as numerical variables. Each row represents one car model.
+\end{answer}
+
+\begin{answer}{2}
+\begin{lstlisting}
+x <- cars$wt
+y <- cars$mpg
+x_bar <- mean(x)
+y_bar <- mean(y)
+s_x <- sd(x)
+s_y <- sd(y)
+c(x_bar=x_bar, y_bar=y_bar, s_x=s_x, s_y=s_y)
+\end{lstlisting}
+The results are
+\[
+ \bar x=3.21725,
+ \qquad \bar y=20.090625,
+ \qquad s_x=0.978457,
+ \qquad s_y=6.026948.
+\]
+Next,
+\begin{lstlisting}
+Sxx <- sum((x - x_bar)^2)
+Sxy <- sum((x - x_bar) * (y - y_bar))
+b1 <- Sxy / Sxx
+b0 <- y_bar - b1 * x_bar
+c(Sxx=Sxx, Sxy=Sxy, b0=b0, b1=b1)
+\end{lstlisting}
+This gives
+\[
+ S_{xx}=29.678748,
+ \qquad S_{xy}=-158.617225,
+\]
+\[
+ \widehat\beta_0=37.285126,
+ \qquad \widehat\beta_1=-5.344472.
+\]
+\end{answer}
+
+\begin{answer}{3}
+\begin{lstlisting}
+simple_model <- lm(mpg ~ wt, data = cars)
+coef(simple_model)
+\end{lstlisting}
+The output is
+\begin{lstlisting}
+(Intercept)          wt
+  37.285126   -5.344472
+\end{lstlisting}
+Therefore
+\[
+ \widehat{\mathrm{mpg}}=37.2851-5.3445\,\mathrm{wt}.
+\]
+A 1000-pound increase in weight is associated with an estimated decrease of
+about 5.34 mpg. This is an association, not automatically a causal effect.
+The coefficients agree with the manual least-squares calculation.
+\end{answer}
+
+\begin{answer}{4}
+\begin{lstlisting}
+full_model <- lm(mpg ~ wt + hp, data = cars)
+coef(full_model)
+\end{lstlisting}
+R returns
+\begin{lstlisting}
+(Intercept)          wt          hp
+37.22727012 -3.87783074 -0.03177295
+\end{lstlisting}
+Thus
+\[
+ \widehat{\mathrm{mpg}}
+ =37.2273-3.8778\,\mathrm{wt}-0.031773\,\mathrm{hp}.
+\]
+Holding horsepower fixed, an additional 1000 pounds is associated with about
+3.88 fewer mpg. Holding weight fixed, one additional horsepower is associated
+with about 0.0318 fewer mpg. The weight coefficient changes from $-5.3445$ to
+$-3.8778$ because weight and horsepower contain overlapping information; a
+multiple-regression coefficient isolates the contribution of one predictor
+conditional on the other.
+\end{answer}
+
+\begin{answer}{5}
+\begin{lstlisting}
+y_hat <- fitted(full_model)
+e <- resid(full_model)
+max(abs(cars$mpg - (y_hat + e)))
+sum(e)
+sum(cars$wt * e)
+sum(cars$hp * e)
+\end{lstlisting}
+The first result is exactly 0 in this run. The remaining results are
+approximately
+\[
+ 3.44\times10^{-15},\quad
+ 4.47\times10^{-15},\quad
+ 2.86\times10^{-13}.
+\]
+Mathematically, all three are zero. Computers store most decimal values with
+finite binary precision, so tiny rounding errors remain. They should be read as
+numerical zero, not as violations of the least-squares identities.
+\end{answer}
+
+\begin{answer}{6}
+\begin{lstlisting}
+X <- model.matrix(full_model)
+Y <- matrix(cars$mpg, ncol = 1)
+beta_matrix <- solve(t(X) %*% X, t(X) %*% Y)
+beta_matrix
+coef(full_model)
+\end{lstlisting}
+Both methods give
+\[
+ \widehat{\boldsymbol\beta}
+ =\begin{pmatrix}
+ 37.22727012\\-3.87783074\\-0.03177295
+ \end{pmatrix}.
+\]
+The check
+\begin{lstlisting}
+drop(t(X) %*% matrix(e, ncol = 1))
+\end{lstlisting}
+produces values on the order of $10^{-13}$ or smaller. Thus
+$\mathbf X^{\mathsf T}\mathbf e=\mathbf0$: residuals are orthogonal to the
+intercept column and both predictor columns. This condition is the matrix form
+of the normal equations.
+\end{answer}
+
+\begin{answer}{7}
+\begin{lstlisting}
+n <- nrow(cars)
+p <- 2
+SSE <- sum(e^2)
+MSE <- SSE / (n - p - 1)
+SST <- sum((cars$mpg - mean(cars$mpg))^2)
+R2 <- 1 - SSE / SST
+c(SSE=SSE, MSE=MSE, residual_SE=sqrt(MSE), R2=R2)
+\end{lstlisting}
+The results are
+\[
+ \mathrm{SSE}=195.047755,
+ \qquad
+ \mathrm{MSE}=6.725785,
+\]
+\[
+ \sqrt{\mathrm{MSE}}=2.593412,
+ \qquad
+ R^2=0.826786.
+\]
+The error degrees of freedom are $32-2-1=29$. The residual standard error and
+$R^2$ agree with \texttt{summary(full\_model)}. The adjusted value is
+$R^2_{\mathrm{adj}}=0.814840$.
+\end{answer}
+
+\begin{answer}{8}
+\begin{lstlisting}
+tab <- coef(summary(full_model))
+t_hp <- tab["hp", "Estimate"] / tab["hp", "Std. Error"]
+df_error <- df.residual(full_model)
+p_hp <- 2 * pt(abs(t_hp), df=df_error, lower.tail=FALSE)
+c(t_hp=t_hp, df=df_error, p_value=p_hp)
+confint(full_model, "hp", level=0.95)
+\end{lstlisting}
+For horsepower,
+\[
+ \widehat\beta_{\mathrm{hp}}=-0.03177295,
+ \qquad
+ \mathrm{SE}(\widehat\beta_{\mathrm{hp}})=0.00902971.
+\]
+Therefore
+\[
+ t=\frac{-0.03177295}{0.00902971}=-3.518712,
+ \qquad df=29,
+\]
+and the two-sided $p$-value is $0.001451$. The 95\% confidence interval is
+\[
+ (-0.050241,-0.013305).
+\]
+Because $p<0.05$, reject $H_0$. There is evidence that horsepower is associated
+with mpg after controlling for weight. The confidence interval supports the
+same conclusion because it excludes zero.
+\end{answer}
+
+\begin{answer}{9}
+\begin{lstlisting}
+new_car <- data.frame(wt=3, hp=110)
+predict(full_model, newdata=new_car,
+        interval="confidence", level=0.95)
+predict(full_model, newdata=new_car,
+        interval="prediction", level=0.95)
+\end{lstlisting}
+The predicted value is $22.09875$ mpg. The 95\% confidence interval for the
+mean response is
+\[
+ (21.01879,23.17871),
+\]
+while the 95\% prediction interval for one new car is
+\[
+ (16.68580,27.51170).
+\]
+The prediction interval is wider because it includes both uncertainty in the
+estimated mean and the natural car-to-car error $\varepsilon_{\mathrm{new}}$.
+\end{answer}
+
+\begin{answer}{10}
+\begin{lstlisting}
+reduced_model <- lm(mpg ~ wt, data=cars)
+anova(reduced_model, full_model)
+\end{lstlisting}
+The comparison reports
+\[
+ F=12.381,
+ \qquad p=0.001451.
+\]
+Adding horsepower significantly reduces SSE, so the full model is preferred by
+this test. Also
+\[
+ (-3.518712)^2=12.381,
+\]
+confirming $F=t^2$ when one coefficient is added.
+
+Run the standard plots with
+\begin{lstlisting}
+par(mfrow=c(2, 2))
+plot(full_model)
+par(mfrow=c(1, 1))
+\end{lstlisting}
+Their main purposes are:
+\begin{enumerate}[leftmargin=*]
+ \item \textbf{Residuals vs Fitted:} check linearity and look for changing
+ spread.
+ \item \textbf{Normal Q--Q:} check whether residuals are approximately normal.
+ \item \textbf{Scale--Location:} check constant error variance.
+ \item \textbf{Residuals vs Leverage:} find potentially influential cases.
+\end{enumerate}
+Observation 20 (Toyota Corolla) has the largest absolute standardized residual,
+and observation 17 (Chrysler Imperial) has the largest Cook's distance. A flag
+means ``investigate,'' not ``delete.'' Removal requires a data-quality or
+scientific justification.
+\end{answer}
+
+\newpage
+\section*{One-page R regression checklist}
+\addcontentsline{toc}{section}{One-page R regression checklist}
+
+\begin{lstlisting}
+# 1. Inspect
+head(d); str(d); summary(d)
+
+# 2. Fit and read
+fit <- lm(y ~ x1 + x2, data=d)
+summary(fit)
+coef(fit)
+confint(fit)
+
+# 3. Extract
+y_hat <- fitted(fit)
+e <- resid(fit)
+X <- model.matrix(fit)
+
+# 4. Verify the math
+sum(e)                       # approximately 0
+t(X) %*% e                  # approximately zero vector
+SSE <- sum(e^2)
+MSE <- SSE / df.residual(fit)
+R2 <- 1 - SSE / sum((d$y - mean(d$y))^2)
+
+# 5. Predict
+new_case <- data.frame(x1=..., x2=...)
+predict(fit, new_case, interval="confidence")
+predict(fit, new_case, interval="prediction")
+
+# 6. Compare and diagnose
+anova(reduced_fit, full_fit)
+par(mfrow=c(2, 2)); plot(fit)
+\end{lstlisting}
+
+\noindent\textbf{Final memory rule:}
+\[
+ \boxed{\text{formula} \longrightarrow \texttt{lm()}
+ \longrightarrow \texttt{summary()}
+ \longrightarrow \text{residual checks}}
+\]
+
+\section*{Common mistakes}
+\begin{itemize}[leftmargin=*]
+ \item Use \texttt{==} to test equality; use \texttt{<-} to assign a value.
+ \item Use \texttt{\%*\%} for matrix multiplication, not \texttt{*}.
+ \item Put new predictor values in a data frame with exactly the original
+ variable names before calling \texttt{predict()}.
+ \item In $n-p-1$, $p$ counts predictors but not the intercept.
+ \item Do not interpret a multiple-regression slope without saying ``holding
+ the other predictors fixed.''
+ \item A small $p$-value does not measure practical importance or prove
+ causation.
+ \item Diagnostic flags do not automatically justify deleting observations.
+\end{itemize}
+
+\end{document}

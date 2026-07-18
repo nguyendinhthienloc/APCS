@@ -1,0 +1,4 @@
+\contentsline {section}{\numberline {1}What this worksheet covers}{1}{section.1}%
+\contentsline {section}{\numberline {2}Core R syntax}{1}{section.2}%
+\contentsline {section}{\numberline {3}Exercises}{1}{section.3}%
+\contentsline {section}{\numberline {4}Worked solutions}{2}{section.4}%

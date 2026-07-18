@@ -1,0 +1,585 @@
+﻿\documentclass[11pt]{article}
+
+\usepackage[margin=0.82in,headheight=22pt]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Courier New}[Scale=0.84]
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs,longtable,array,colortbl}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{bookmark}
+
+\definecolor{navy}{RGB}{24,55,95}
+\definecolor{teal}{RGB}{20,112,104}
+\definecolor{codebg}{RGB}{246,248,250}
+\definecolor{rulegray}{RGB}{210,216,222}
+\definecolor{codecomment}{RGB}{80,100,90}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=navy,
+  urlcolor=teal,
+  pdftitle={STAT452 Practical Midterm: Complete R Solution},
+  pdfauthor={STAT452 Study Guide}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\sffamily\small STAT452 Practical Midterm}
+\rhead{\sffamily\small Complete R Solution}
+\cfoot{\sffamily\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{navy!45}\leaders\hrule height \headrulewidth\hfill}}
+
+\titleformat{\section}{\sffamily\LARGE\bfseries\color{navy}}{\thesection}{0.65em}{}
+\titleformat{\subsection}{\sffamily\Large\bfseries\color{teal}}{\thesubsection}{0.65em}{}
+\titleformat{\subsubsection}{\sffamily\large\bfseries\color{navy!85}}{\thesubsubsection}{0.65em}{}
+\titlespacing*{\section}{0pt}{2em}{0.75em}
+\titlespacing*{\subsection}{0pt}{1.45em}{0.55em}
+\titlespacing*{\subsubsection}{0pt}{1.15em}{0.4em}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\setlength{\emergencystretch}{1.5em}
+\setlist{leftmargin=1.55em,itemsep=0.25em,topsep=0.35em}
+\renewcommand{\arraystretch}{1.18}
+\setlength{\LTpre}{0.4em}
+\setlength{\LTpost}{0.6em}
+
+\lstset{
+  language=R,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{navy}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{teal!80!black},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{rulegray},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  xleftmargin=0.45em,
+  xrightmargin=0.45em,
+  aboveskip=0.6em,
+  belowskip=0.7em
+}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+
+\begin{titlepage}
+  \centering
+  \vspace*{1.0in}
+  {\sffamily\color{navy}\Huge\bfseries STAT452 Practical Midterm\par}
+  \vspace{0.25in}
+  {\sffamily\color{teal}\LARGE Complete Solution Using R\par}
+  \vspace{0.5in}
+  {\color{navy!45}\rule{0.78\textwidth}{1.1pt}\par}
+  \vspace{0.5in}
+  {\Large OLS, Diagnostics, Ridge, LASSO, and Prediction\par}
+  \vfill
+  \begin{minipage}{0.82\textwidth}
+    \colorbox{navy!7}{\parbox{0.94\linewidth}{
+      \textbf{R-only workflow.} Every requested calculation is performed with
+      R. The document shows executable code, the important output, and the
+      conclusion that should be written for each exam part. No calculator or
+      hand-computation route is used.
+    }}
+  \end{minipage}
+  \vfill
+  {\sffamily\small Based on \texttt{Midterm\_Practical.pdf},
+  \texttt{seatpos.csv}, \texttt{newdata.csv}, and Notes Chapters 1 and 3\par}
+\end{titlepage}
+
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\section{Reproducible setup}
+
+The practical dataset contains 38 drivers, eight predictors, and the response
+\texttt{hipcenter}. Chapter 1 of the Notes supplies the OLS and residual-analysis
+workflow; Chapter 3 supplies cross-validation, ridge, and LASSO.
+
+Run the companion script from the repository root:
+
+\begin{lstlisting}
+source("R_training/midterm/practical_test_solution.R")
+\end{lstlisting}
+
+Only \texttt{glmnet} is required beyond base R:
+
+\begin{lstlisting}
+install.packages("glmnet")  # Run once only, if needed
+library(glmnet)
+\end{lstlisting}
+
+\subsection{Read and validate the files}
+
+\begin{lstlisting}
+seatpos <- read.csv("R_training/midterm/seatpos.csv")
+newdata <- read.csv("R_training/midterm/newdata.csv")
+
+dim(seatpos)                 # 38 9
+names(seatpos)
+str(seatpos)
+summary(seatpos)
+colSums(is.na(seatpos))      # all zero
+
+stopifnot(nrow(seatpos) == 38, ncol(seatpos) == 9)
+stopifnot(identical(
+  names(newdata),
+  setdiff(names(seatpos), "hipcenter")
+))
+\end{lstlisting}
+
+These checks prevent silent errors from a wrong file, altered column name, or
+missing data. The training data contain no missing values.
+
+\section{Part (a): Full OLS model and residual analysis}
+
+\subsection{Fit the full model}
+
+\begin{lstlisting}
+full_ols <- lm(hipcenter ~ ., data = seatpos)
+summary(full_ols)
+confint(full_ols)
+\end{lstlisting}
+
+The coefficient output is:
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+\rowcolor{navy!10}\textbf{Term}&\textbf{Estimate}&\textbf{Std. error}&\textbf{$p$-value}\\
+\midrule
+Intercept&436.4321&166.5716&0.014\\
+Age&0.7757&0.5703&0.184\\
+Weight&0.0263&0.3310&0.937\\
+HtShoes&-2.6924&9.7530&0.784\\
+Ht&0.6013&10.1299&0.953\\
+Seated&0.5338&3.7619&0.888\\
+Arm&-1.3281&3.9002&0.736\\
+Thigh&-1.1431&2.6600&0.671\\
+Leg&-6.4390&4.7139&0.182\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The fitted R model is
+\begin{align*}
+\widehat{\texttt{hipcenter}}
+={}&436.4321+0.7757\,\texttt{Age}
++0.0263\,\texttt{Weight}\\
+&-2.6924\,\texttt{HtShoes}
++0.6013\,\texttt{Ht}
++0.5338\,\texttt{Seated}\\
+&-1.3281\,\texttt{Arm}
+-1.1431\,\texttt{Thigh}
+-6.4390\,\texttt{Leg}.
+\end{align*}
+
+Each slope is interpreted while the other seven predictors are held fixed. For
+example, the fitted coordinate increases by $0.776$ mm per additional year of
+age, holding weight and all body dimensions fixed. A one-centimeter increase in
+lower-leg length is associated with a $6.439$ mm decrease in the fitted
+coordinate, holding the other predictors fixed.
+
+The intercept is the fitted coordinate when every predictor equals zero, which
+is far outside the observed anthropometric range and has no useful physical
+interpretation.
+
+\subsection{Model fit and the apparent coefficient paradox}
+
+R reports
+\[
+R^2=0.687,\qquad R^2_{\mathrm{adj}}=0.600,
+\qquad F(8,29)=7.94,\qquad p=1.31\times10^{-5}.
+\]
+The predictors are highly useful jointly, yet none of the eight individual
+slopes has $p<0.05$. This is expected under severe multicollinearity: correlated
+predictors inflate individual standard errors even when the group explains the
+response well.
+
+\subsection{Standard residual plots in R}
+
+\begin{lstlisting}
+old_par <- par(mfrow = c(2, 2))
+plot(full_ols)
+par(old_par)
+\end{lstlisting}
+
+Interpret the four R plots as follows:
+
+\begin{itemize}
+  \item \textbf{Residuals vs Fitted}: check linearity and look for a random cloud
+  around zero.
+  \item \textbf{Normal Q-Q}: points near the reference line support normality.
+  \item \textbf{Scale-Location}: a roughly horizontal band supports constant
+  error variance.
+  \item \textbf{Residuals vs Leverage}: identify high-leverage observations with
+  large Cook's distance.
+\end{itemize}
+
+\subsection{Normality and constant variance in R}
+
+\begin{lstlisting}
+shapiro.test(resid(full_ols))
+
+# Base-R Breusch-Pagan LM test
+predictor_data <- seatpos[setdiff(names(seatpos), "hipcenter")]
+bp_aux <- lm(I(resid(full_ols)^2) ~ ., data = predictor_data)
+bp_stat <- nrow(seatpos) * summary(bp_aux)$r.squared
+bp_df <- length(coef(full_ols)) - 1
+bp_p <- pchisq(bp_stat, df = bp_df, lower.tail = FALSE)
+c(BP = bp_stat, df = bp_df, p_value = bp_p)
+\end{lstlisting}
+
+The Shapiro-Wilk result is $W=0.9715$, $p=0.434$. R therefore gives no evidence
+against residual normality at $\alpha=0.05$. The Breusch-Pagan calculation gives
+$BP=14.037$, $df=8$, $p=0.0808$, so R does not detect significant
+heteroscedasticity at $5\%$, although the scale-location plot should still be
+checked.
+
+\subsection{Influence diagnostics in R}
+
+\begin{lstlisting}
+influence_table <- data.frame(
+  row = seq_len(nrow(seatpos)),
+  studentized_residual = rstudent(full_ols),
+  leverage = hatvalues(full_ols),
+  cooks_distance = cooks.distance(full_ols)
+)
+
+influence_table <- influence_table[
+  order(influence_table$cooks_distance, decreasing = TRUE),
+]
+head(influence_table, 5)
+
+4 / nrow(seatpos)                         # Cook's D guide
+2 * length(coef(full_ols)) / nrow(seatpos) # leverage guide
+\end{lstlisting}
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+\rowcolor{navy!10}\textbf{Row}&\textbf{Studentized residual}&\textbf{Leverage}&\textbf{Cook's $D$}\\
+\midrule
+31& 2.390&0.560&0.695\\
+23& 1.938&0.270&0.141\\
+35&-2.323&0.183&0.117\\
+33& 1.528&0.248&0.082\\
+17&-0.914&0.401&0.063\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Row 31 exceeds the rough Cook's-distance guide $4/n=0.105$ and leverage guide
+$2k/n=0.474$, where $k=9$ fitted coefficients including the intercept. It should
+be checked and used in a sensitivity analysis, not automatically deleted.
+
+\subsection{Multicollinearity in R}
+
+\begin{lstlisting}
+predictors <- setdiff(names(seatpos), "hipcenter")
+
+vif <- vapply(predictors, function(variable) {
+  others <- setdiff(predictors, variable)
+  auxiliary <- lm(
+    reformulate(others, response = variable),
+    data = seatpos
+  )
+  1 / (1 - summary(auxiliary)$r.squared)
+}, numeric(1))
+
+sort(vif, decreasing = TRUE)
+kappa(scale(seatpos[predictors]), exact = TRUE)
+\end{lstlisting}
+
+\begin{center}
+\begin{tabular}{lr@{\qquad}lr}
+\toprule
+\rowcolor{navy!10}\textbf{Variable}&\textbf{VIF}&\textbf{Variable}&\textbf{VIF}\\
+\midrule
+Ht&333.138&Arm&4.496\\
+HtShoes&307.429&Weight&3.647\\
+Seated&8.951&Thigh&2.763\\
+Leg&6.694&Age&1.998\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The standardized-predictor condition number is $59.77$. The extreme VIF values
+for \texttt{Ht} and \texttt{HtShoes} confirm severe collinearity, explaining the
+unstable OLS slopes and motivating ridge/LASSO.
+
+\section{Part (b): Full model versus noise-only model}
+
+Fit the intercept-only model and ask R for the nested-model partial $F$-test:
+
+\begin{lstlisting}
+null_ols <- lm(hipcenter ~ 1, data = seatpos)
+anova(null_ols, full_ols)
+\end{lstlisting}
+
+\begin{center}
+\begin{tabular}{lrrrrr}
+\toprule
+\rowcolor{navy!10}\textbf{Model}&\textbf{Res.Df}&\textbf{RSS}&\textbf{Df}&\textbf{$F$}&\textbf{$p$}\\
+\midrule
+Intercept only&37&131639&&&\\
+Full model&29&41262&8&7.94&$1.31\times10^{-5}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+At $\alpha=0.05$, R gives $p<0.05$, so reject the null hypothesis that all
+eight slopes equal zero. The full model improves significantly on the
+noise-only model.
+
+\section{Parts (c)--(f): Shared \texttt{glmnet} setup}
+
+\texttt{glmnet} requires a numeric predictor matrix rather than a data frame.
+The same fold IDs must be used for ridge and LASSO to make the comparison fair.
+
+\begin{lstlisting}
+library(glmnet)
+
+X <- model.matrix(hipcenter ~ ., data = seatpos)[, -1, drop = FALSE]
+y <- seatpos$hipcenter
+X_new <- model.matrix(~ ., data = newdata)[, -1, drop = FALSE]
+
+lambda_grid <- seq(1e-3, 50, by = 1e-3)
+set.seed(452)
+fold_id <- sample(rep(1:10, length.out = nrow(X)))
+\end{lstlisting}
+
+The explicit \texttt{fold\_id} makes the answer reproducible. A different random
+fold allocation can produce a slightly different optimal penalty.
+
+\section{Part (c): Full ridge regression}
+
+Set \texttt{alpha = 0}. The exam's 50,000-point grid is unusually dense, so the
+current \texttt{glmnet} version may warn near the smallest penalties. The selected
+penalty occurs safely before that path limit.
+
+\begin{lstlisting}
+ridge_cv <- suppressWarnings(cv.glmnet(
+  x = X,
+  y = y,
+  alpha = 0,
+  lambda = lambda_grid,
+  foldid = fold_id,
+  type.measure = "mse",
+  standardize = TRUE
+))
+
+ridge_cv$lambda.min
+ridge_cv$lambda.1se
+coef(ridge_cv, s = "lambda.min")
+plot(ridge_cv)
+abline(v = log(ridge_cv$lambda.min), col = "red", lty = 2)
+\end{lstlisting}
+
+R returns
+\[
+\lambda_{\min}=36.521,
+\qquad
+\lambda_{1\mathrm{se}}=50.000.
+\]
+Because $\lambda_{1\mathrm{se}}$ equals the grid's upper boundary, a real
+analysis using the 1-SE rule should expand the upper end beyond 50.
+
+At $\lambda_{\min}$, R reports:
+
+\begin{center}
+\begin{tabular}{lr@{\qquad}lr}
+\toprule
+\rowcolor{navy!10}\textbf{Term}&\textbf{Ridge}&\textbf{Term}&\textbf{Ridge}\\
+\midrule
+Intercept&399.992503&Seated&-1.203317\\
+Age&0.473581&Arm&-1.354624\\
+Weight&-0.106186&Thigh&-1.304223\\
+HtShoes&-0.738541&Leg&-3.109081\\
+Ht&-0.737116&&\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Ridge keeps every slope nonzero but shrinks the unstable OLS estimates. This
+matches Chapter 3: the $L_2$ penalty trades a small amount of bias for lower
+variance under multicollinearity. \texttt{glmnet} standardizes predictors
+internally, leaves the intercept unpenalised, and returns coefficients on the
+original variable scales.
+
+\section{Part (d): Ridge predictions}
+
+\begin{lstlisting}
+ridge_prediction <- drop(predict(
+  ridge_cv,
+  newx = X_new,
+  s = "lambda.min"
+))
+ridge_prediction
+\end{lstlisting}
+
+\begin{center}
+\begin{tabular}{rr}
+\toprule
+\rowcolor{navy!10}\textbf{New row}&\textbf{Ridge prediction (mm)}\\
+\midrule
+1&-139.711\\
+2&-112.954\\
+3&-219.990\\
+4&-149.057\\
+5&-228.157\\
+6&-102.596\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Part (e): Full LASSO model}
+
+Set \texttt{alpha = 1} and reuse the same grid and folds:
+
+\begin{lstlisting}
+lasso_cv <- cv.glmnet(
+  x = X,
+  y = y,
+  alpha = 1,
+  lambda = lambda_grid,
+  foldid = fold_id,
+  type.measure = "mse",
+  standardize = TRUE
+)
+
+lasso_cv$lambda.min
+lasso_cv$lambda.1se
+lasso_coef <- as.matrix(coef(lasso_cv, s = "lambda.min"))
+lasso_coef
+
+nonzero <- rownames(lasso_coef)[
+  lasso_coef[, 1] != 0 & rownames(lasso_coef) != "(Intercept)"
+]
+nonzero
+\end{lstlisting}
+
+R returns
+\[
+\lambda_{\min}=5.748,
+\qquad
+\lambda_{1\mathrm{se}}=20.288.
+\]
+At $\lambda_{\min}$, the nonzero predictors are
+\[
+\boxed{\texttt{Age},\quad\texttt{Ht},\quad\texttt{Leg}.}
+\]
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+\rowcolor{navy!10}\textbf{Term}&\textbf{OLS}&\textbf{Ridge}&\textbf{LASSO}\\
+\midrule
+Intercept&436.432128&399.992503&397.696648\\
+Age&0.775716&0.473581&0.221804\\
+Weight&0.026313&-0.106186&0\\
+HtShoes&-2.692408&-0.738541&0\\
+Ht&0.601345&-0.737116&-2.200605\\
+Seated&0.533752&-1.203317&0\\
+Arm&-1.328069&-1.354624&0\\
+Thigh&-1.143119&-1.304223&0\\
+Leg&-6.439046&-3.109081&-5.468787\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The LASSO solution is sparse: five slopes are exactly zero. With strongly
+correlated height measurements, LASSO may select one representative and discard
+another, so the selected set can vary with the fold split. Ridge is usually more
+stable when all correlated measurements carry signal; LASSO is more useful when
+a compact predictive model is required.
+
+For an optional post-LASSO comparison in R:
+
+\begin{lstlisting}
+post_lasso_ols <- lm(
+  reformulate(nonzero, response = "hipcenter"),
+  data = seatpos
+)
+summary(post_lasso_ols)
+\end{lstlisting}
+
+The refitted OLS slopes are approximately $0.581$ for Age, $-2.325$ for Ht, and
+$-6.739$ for Leg. These are unpenalised estimates and therefore have larger
+magnitudes than the LASSO coefficients. The refit is a different estimator; it
+must not be labelled as the LASSO model.
+
+\section{Part (f): Compare ridge and LASSO predictions}
+
+\begin{lstlisting}
+lasso_prediction <- drop(predict(
+  lasso_cv,
+  newx = X_new,
+  s = "lambda.min"
+))
+
+prediction_comparison <- data.frame(
+  row = seq_len(nrow(newdata)),
+  ridge = ridge_prediction,
+  LASSO = lasso_prediction,
+  difference = ridge_prediction - lasso_prediction
+)
+prediction_comparison
+\end{lstlisting}
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+\rowcolor{navy!10}\textbf{Row}&\textbf{Ridge}&\textbf{LASSO}&\textbf{Ridge $-$ LASSO}\\
+\midrule
+1&-139.711&-130.368&-9.344\\
+2&-112.954&-112.470&-0.485\\
+3&-219.990&-218.053&-1.937\\
+4&-149.057&-151.148& 2.091\\
+5&-228.157&-229.846& 1.689\\
+6&-102.596&-100.072&-2.524\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The two models give similar predictions for five rows; row 1 differs by about
+$9.34$ mm. The prediction file does not contain observed
+\texttt{hipcenter} values, so R can compare the predictions but cannot determine
+which model is more accurate on these six cases. That requires observed test
+responses or repeated cross-validation performance.
+
+\section{Exam-ready R workflow}
+
+\begin{enumerate}
+  \item Read the files and check dimensions, names, structure, and missing values.
+  \item Fit \texttt{lm(hipcenter \textasciitilde\ ., data = seatpos)}.
+  \item Report coefficient interpretations, $R^2$, adjusted $R^2$, and the
+  overall $F$ test.
+  \item Run the four standard R diagnostic plots and calculate influence and VIF.
+  \item Compare the null and full models with \texttt{anova(null\_ols, full\_ols)}.
+  \item Build \texttt{X} and \texttt{X\_new} with \texttt{model.matrix}.
+  \item Fix the seed and fold IDs, then use the same folds for ridge and LASSO.
+  \item State explicitly whether \texttt{lambda.min} or \texttt{lambda.1se} is
+  used.
+  \item Extract nonzero LASSO slopes from \texttt{coef()}.
+  \item Predict with both models and compare the resulting values without
+  claiming a winner when test outcomes are unavailable.
+\end{enumerate}
+
+\end{document}
+

@@ -1,0 +1,33 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.85in]{geometry}\usepackage{amsmath,amssymb,booktabs,enumitem,xcolor,listings,fancyhdr,hyperref}
+\definecolor{navy}{RGB}{24,55,95}\definecolor{green}{RGB}{25,100,70}\definecolor{codebg}{RGB}{246,248,250}\definecolor{codecomment}{RGB}{90,110,95}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=navy}\pagestyle{fancy}\fancyhf{}\lhead{STAT452 Chapter 3}\rhead{R Exercises and Notes}\cfoot{\thepage}\setlength{\headheight}{14pt}
+\lstset{language=R,basicstyle=\ttfamily\small,keywordstyle=\color{navy}\bfseries,commentstyle=\color{codecomment}\itshape,backgroundcolor=\color{codebg},frame=single,breaklines=true,columns=fullflexible,keepspaces=true,showstringspaces=false}
+\newenvironment{exercise}[1]{\par\medskip\noindent\color{navy}\textbf{Exercise #1.}\color{black}\ }{\par\medskip}\newenvironment{answer}[1]{\par\medskip\noindent\color{green}\textbf{Solution #1.}\color{black}\ }{\hfill$\square$\par\medskip}
+\title{Chapter 3: Regularization and Variable Selection in R\\\large Syntax Notes, Exercises, and Worked Solutions}\author{STAT452 -- Applied Statistics for Engineers and Scientists II}\date{}
+\begin{document}\maketitle\tableofcontents\bigskip
+\section{Core ideas}
+OLS can be unstable under multicollinearity or when many predictors are available. Ridge minimizes $\mathrm{SSE}+\lambda\sum_j\beta_j^2$ and shrinks coefficients toward zero. LASSO minimizes $\mathrm{SSE}+\lambda\sum_j|\beta_j|$ and can set coefficients exactly to zero. Predictors should usually be standardized before penalization. Selection should be evaluated by cross-validation or information criteria, not p-values alone.
+\section{R syntax}
+\begin{lstlisting}
+library(MASS)
+ridge <- lm.ridge(mpg ~ wt + hp + qsec + disp + drat + gear,
+                  data=cars, lambda=seq(0,30,length.out=100))
+select <- which.min(ridge$GCV)
+full <- lm(mpg ~ wt + hp + qsec + disp + drat + gear, data=cars)
+step(full, direction="both", trace=0)
+\end{lstlisting}
+\section{Exercises}
+\begin{exercise}{1: OLS baseline} Fit a full model and inspect correlations among predictors. Which coefficients might be unstable?\end{exercise}
+\begin{exercise}{2: Ridge path} Fit ridge over a grid of $\lambda$, plot coefficient paths, and choose $\lambda$ by GCV. Explain the bias--variance trade-off.\end{exercise}
+\begin{exercise}{3: LASSO} Use the supplied coordinate-descent function to plot LASSO paths. Identify coefficients that become zero first and explain standardization.\end{exercise}
+\begin{exercise}{4: Information criteria} Compare stepwise selection using AIC and BIC. Why might formulas differ?\end{exercise}
+\begin{exercise}{5: Cross-validation} Compare small and full models using five-fold CV. Explain why lower training SSE is not enough.\end{exercise}
+\section{Worked solutions}
+\begin{answer}{1} Strong correlations indicate overlapping information. OLS can be unbiased under the model, but coefficient variance and sensitivity can be large.\end{answer}
+\begin{answer}{2} As $\lambda$ grows, ridge coefficients move smoothly toward zero but generally do not equal zero. It trades a little bias for lower variance.\end{answer}
+\begin{answer}{3} LASSO paths are piecewise and some coefficients hit zero. Standardization makes the penalty comparable across units.\end{answer}
+\begin{answer}{4} AIC uses a lighter complexity penalty and often keeps more variables; BIC is more parsimonious. Both are heuristics, not proofs.\end{answer}
+\begin{answer}{5} CV estimates performance on observations not used to fit each fold. A larger model may lower training error while increasing validation error through overfitting.\end{answer}
+\section*{Checklist}\texttt{standardize -> fit path -> tune lambda -> validate out of sample -> interpret sparsity}.\end{document}
+

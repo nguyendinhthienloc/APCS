@@ -1,0 +1,795 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\definecolor{navy}{RGB}{24,55,95}
+\definecolor{darkgreen}{RGB}{25,100,70}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=navy}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{STAT452 Midterm Review}
+\rhead{Regression Proofs}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\newcommand{\Sxx}{S_{xx}}
+\newcommand{\Sxy}{S_{xy}}
+\newcommand{\Syy}{S_{yy}}
+\newcommand{\bzero}{\widehat{\beta}_0}
+\newcommand{\bone}{\widehat{\beta}_1}
+\newcommand{\yhat}{\widehat{y}}
+\newcommand{\e}{\widehat{e}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\tr}{\operatorname{tr}}
+
+\newenvironment{question}
+  {\par\medskip\noindent\color{navy}\bfseries}
+  {\par\medskip\color{black}}
+\newenvironment{solution}
+  {\noindent\color{darkgreen}\textbf{Solution.}\color{black}\ }
+  {\hfill$\square$\par\medskip}
+
+\title{Ten Common Proof Questions for Regression\\
+       \large Midterm Practice with Complete Solutions}
+\author{STAT452 -- Applied Statistics for Engineers and Scientists II}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\bigskip
+
+\section*{Setup and notation}
+\addcontentsline{toc}{section}{Setup and notation}
+
+Unless a question states otherwise, use the simple linear regression model
+\[
+  Y_i=\beta_0+\beta_1x_i+\varepsilon_i,\qquad i=1,\ldots,n,
+\]
+where the predictor values $x_i$ are fixed, $\E(\varepsilon_i)=0$,
+$\Var(\varepsilon_i)=\sigma^2$, and the errors are uncorrelated. Define
+\[
+\bar x=\frac1n\sum_{i=1}^n x_i,\qquad
+\bar y=\frac1n\sum_{i=1}^n y_i,
+\]
+\[
+\Sxx=\sum_{i=1}^n(x_i-\bar x)^2,qquad
+\Sxy=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y),
+\qquad
+\Syy=\sum_{i=1}^n(y_i-\bar y)^2.
+\]
+We assume $\Sxx>0$, so not all predictor values are equal. The fitted values
+and residuals are
+\[
+  \yhat_i=\bzero+\bone x_i,
+  \qquad
+  \e_i=y_i-\yhat_i.
+\]
+
+\noindent\textbf{Exam strategy.} For most proofs, first write the model and
+the relevant estimator in a centered form. Then use one of the key identities
+\[
+\sum_{i=1}^n(x_i-\bar x)=0,
+\qquad
+\sum_{i=1}^n(y_i-\bar y)=0,
+\qquad
+\sum_{i=1}^n \e_i=\sum_{i=1}^n x_i\e_i=0.
+\]
+
+\newpage
+
+\section{Derive the least-squares estimators}
+
+\begin{question}
+Question 1. Starting from the residual sum of squares
+\[
+  Q(b_0,b_1)=\sum_{i=1}^n(y_i-b_0-b_1x_i)^2,
+\]
+prove that its unique minimizers are
+\[
+  \boxed{\bone=\frac{\Sxy}{\Sxx}},
+  \qquad
+  \boxed{\bzero=\bar y-\bone\bar x}.
+\]
+\end{question}
+
+\begin{solution}
+Differentiate $Q$ with respect to the two unknown coefficients:
+\begin{align*}
+\frac{\partial Q}{\partial b_0}
+  &=-2\sum_{i=1}^n(y_i-b_0-b_1x_i),\\
+\frac{\partial Q}{\partial b_1}
+  &=-2\sum_{i=1}^n x_i(y_i-b_0-b_1x_i).
+\end{align*}
+Setting both derivatives equal to zero gives the normal equations
+\begin{align}
+  \sum_{i=1}^n y_i&=nb_0+b_1\sum_{i=1}^n x_i, \label{eq:normal1}\\
+  \sum_{i=1}^n x_i y_i&=b_0\sum_{i=1}^n x_i+b_1\sum_{i=1}^n x_i^2. \label{eq:normal2}
+\end{align}
+Divide \eqref{eq:normal1} by $n$:
+\[
+  \bar y=b_0+b_1\bar x,
+\]
+so
+\[
+  b_0=\bar y-b_1\bar x.
+\]
+Substitute this expression into \eqref{eq:normal2}:
+\begin{align*}
+\sum x_i y_i
+  &=(\bar y-b_1\bar x)\sum x_i+b_1\sum x_i^2\\
+  &=n\bar x\bar y+b_1\left(\sum x_i^2-n\bar x^2\right).
+\end{align*}
+Therefore
+\[
+ b_1=
+ \frac{\sum x_i y_i-n\bar x\bar y}
+      {\sum x_i^2-n\bar x^2}.
+\]
+The numerator and denominator are exactly the centered sums
+\[
+\sum x_i y_i-n\bar x\bar y=\Sxy,
+\qquad
+\sum x_i^2-n\bar x^2=\Sxx.
+\]
+Hence $b_1=\Sxy/\Sxx$ and $b_0=\bar y-b_1\bar x$.
+
+It remains to verify that the stationary point is the unique minimum. The
+Hessian matrix is
+\[
+  2\begin{pmatrix}
+      n & \sum x_i\\
+      \sum x_i & \sum x_i^2
+    \end{pmatrix}.
+\]
+Its first leading principal minor is $2n>0$, and its determinant is
+\[
+  4\left(n\sum x_i^2-\left(\sum x_i\right)^2\right)
+  =4n\Sxx>0.
+\]
+Thus the Hessian is positive definite, so the stationary point is the unique
+global minimizer.
+\end{solution}
+
+\section{Prove equivalent formulas for the slope}
+
+\begin{question}
+Question 2. Prove the computational identities
+\[
+\Sxx=\sum x_i^2-\frac{(\sum x_i)^2}{n},
+\qquad
+\Sxy=\sum x_iy_i-\frac{(\sum x_i)(\sum y_i)}{n},
+\]
+and then prove
+\[
+  \boxed{\bone=r\frac{s_y}{s_x}},
+\]
+where $r$ is the sample correlation and $s_x,s_y$ are the sample standard
+deviations.
+\end{question}
+
+\begin{solution}
+Expand the definition of $\Sxx$:
+\begin{align*}
+\Sxx
+ &=\sum(x_i-\bar x)^2\\
+ &=\sum x_i^2-2\bar x\sum x_i+n\bar x^2\\
+ &=\sum x_i^2-2n\bar x^2+n\bar x^2\\
+ &=\sum x_i^2-n\bar x^2
+ =\sum x_i^2-\frac{(\sum x_i)^2}{n}.
+\end{align*}
+Similarly,
+\begin{align*}
+\Sxy
+ &=\sum(x_i-\bar x)(y_i-\bar y)\\
+ &=\sum x_iy_i-\bar y\sum x_i-\bar x\sum y_i+n\bar x\bar y\\
+ &=\sum x_iy_i-n\bar x\bar y\\
+ &=\sum x_iy_i-\frac{(\sum x_i)(\sum y_i)}{n}.
+\end{align*}
+Now use
+\[
+ r=\frac{\Sxy}{\sqrt{\Sxx\Syy}},
+ \qquad
+ s_x=\sqrt{\frac{\Sxx}{n-1}},
+ \qquad
+ s_y=\sqrt{\frac{\Syy}{n-1}}.
+\]
+Then
+\begin{align*}
+r\frac{s_y}{s_x}
+ &=\frac{\Sxy}{\sqrt{\Sxx\Syy}}
+   \sqrt{\frac{\Syy/(n-1)}{\Sxx/(n-1)}}\\
+ &=\frac{\Sxy}{\sqrt{\Sxx\Syy}}
+   \sqrt{\frac{\Syy}{\Sxx}}
+ =\frac{\Sxy}{\Sxx}
+ =\bone.
+\end{align*}
+Thus the least-squares slope equals the correlation multiplied by the ratio
+of the sample standard deviations.
+\end{solution}
+
+\section{Prove the fundamental residual identities}
+
+\begin{question}
+Question 3. For a least-squares line containing an intercept, prove that
+\[
+ \boxed{\sum_{i=1}^n\e_i=0},
+ \qquad
+ \boxed{\sum_{i=1}^n x_i\e_i=0},
+ \qquad
+ \boxed{\sum_{i=1}^n\yhat_i=\sum_{i=1}^n y_i}.
+\]
+Deduce that $\overline{\widehat y}=\bar y$ and that the fitted line passes
+through $(\bar x,\bar y)$.
+\end{question}
+
+\begin{solution}
+At the least-squares solution, the two normal equations obtained by
+differentiating the residual sum of squares are
+\[
+ \sum_{i=1}^n(y_i-\bzero-\bone x_i)=0
+ \quad\text{and}\quad
+ \sum_{i=1}^n x_i(y_i-\bzero-\bone x_i)=0.
+\]
+Because $\e_i=y_i-\bzero-\bone x_i$, these equations are precisely
+\[
+  \sum_{i=1}^n\e_i=0,
+  \qquad
+  \sum_{i=1}^n x_i\e_i=0.
+\]
+Also $y_i=\yhat_i+\e_i$, so summing over $i$ gives
+\[
+ \sum y_i=\sum\yhat_i+\sum\e_i=\sum\yhat_i.
+\]
+Dividing by $n$ yields $\overline{\widehat y}=\bar y$. Finally, evaluate the
+fitted line at $x=\bar x$:
+\[
+ \widehat y(\bar x)
+ =\bzero+\bone\bar x
+ =(\bar y-\bone\bar x)+\bone\bar x
+ =\bar y.
+\]
+Therefore the least-squares line passes through the data centroid
+$(\bar x,\bar y)$.
+\end{solution}
+
+\section{Prove the regression sum-of-squares decomposition}
+
+\begin{question}
+Question 4. Define
+\[
+ \mathrm{SST}=\sum(y_i-\bar y)^2,
+ \quad
+ \mathrm{SSR}=\sum(\yhat_i-\bar y)^2,
+ \quad
+ \mathrm{SSE}=\sum(y_i-\yhat_i)^2.
+\]
+Prove the ANOVA identity
+\[
+  \boxed{\mathrm{SST}=\mathrm{SSR}+\mathrm{SSE}}.
+\]
+State clearly why the cross-product term vanishes.
+\end{question}
+
+\begin{solution}
+For each observation, add and subtract the fitted value:
+\[
+ y_i-\bar y=(\yhat_i-\bar y)+(y_i-\yhat_i)
+             =(\yhat_i-\bar y)+\e_i.
+\]
+Square and sum:
+\begin{align*}
+\sum(y_i-\bar y)^2
+ &=\sum(\yhat_i-\bar y)^2+\sum\e_i^2
+   +2\sum(\yhat_i-\bar y)\e_i.
+\end{align*}
+The cross-product term is zero because
+\begin{align*}
+\sum(\yhat_i-\bar y)\e_i
+ &=\sum(\bzero+\bone x_i-\bar y)\e_i\\
+ &=(\bzero-\bar y)\sum\e_i+\bone\sum x_i\e_i\\
+ &=0,
+\end{align*}
+where the last line uses both normal-equation identities from Question 3.
+Consequently,
+\[
+ \mathrm{SST}=\mathrm{SSR}+\mathrm{SSE}.
+\]
+Geometrically, the centered fitted-value vector is orthogonal to the residual
+vector, so this is the Pythagorean theorem for the three sums of squares.
+\end{solution}
+
+\section{Prove unbiasedness of the coefficient estimators}
+
+\begin{question}
+Question 5. Under the fixed-$x$ simple linear regression model, prove that
+\[
+  \boxed{\E(\bone)=\beta_1},
+  \qquad
+  \boxed{\E(\bzero)=\beta_0}.
+\]
+\end{question}
+
+\begin{solution}
+Substitute $Y_i=\beta_0+\beta_1x_i+\varepsilon_i$ into the centered slope
+formula. Since
+\[
+ Y_i-\bar Y=\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon),
+\]
+we have
+\begin{align*}
+\bone
+ &=\frac{\sum(x_i-\bar x)(Y_i-\bar Y)}{\Sxx}\\
+ &=\frac{\beta_1\sum(x_i-\bar x)^2
+   +\sum(x_i-\bar x)(\varepsilon_i-\bar\varepsilon)}{\Sxx}.
+\end{align*}
+Because $\sum(x_i-\bar x)=0$, the term containing $\bar\varepsilon$
+vanishes. Therefore
+\[
+  \bone=\beta_1+
+  \frac{\sum(x_i-\bar x)\varepsilon_i}{\Sxx}.
+\]
+Taking expectation conditional on the fixed $x_i$ values,
+\[
+ \E(\bone)
+ =\beta_1+\frac{\sum(x_i-\bar x)\E(\varepsilon_i)}{\Sxx}
+ =\beta_1.
+\]
+For the intercept,
+\begin{align*}
+\bzero
+ &=\bar Y-\bone\bar x\\
+ &=\beta_0+\beta_1\bar x+\bar\varepsilon-\bone\bar x\\
+ &=\beta_0+\bar\varepsilon-\bar x(\bone-\beta_1).
+\end{align*}
+Thus
+\[
+ \E(\bzero)
+ =\beta_0+\E(\bar\varepsilon)
+  -\bar x\{\E(\bone)-\beta_1\}
+ =\beta_0.
+\]
+Normality is not required for either unbiasedness result; zero-mean errors
+are sufficient.
+\end{solution}
+
+\section{Derive variances, covariance, and fitted-mean variance}
+
+\begin{question}
+Question 6. Assuming uncorrelated errors with common variance $\sigma^2$,
+prove
+\[
+ \boxed{\Var(\bone)=\frac{\sigma^2}{\Sxx}},
+\]
+\[
+ \boxed{\Var(\bzero)=\sigma^2\left(\frac1n+
+              \frac{\bar x^2}{\Sxx}\right)},
+ \qquad
+ \boxed{\Cov(\bzero,\bone)=-\frac{\bar x\sigma^2}{\Sxx}}.
+\]
+Then prove that, at a fixed $x_0$,
+\[
+ \boxed{\Var\{\widehat{\mu}(x_0)\}
+ =\sigma^2\left[\frac1n+\frac{(x_0-\bar x)^2}{\Sxx}\right]},
+\]
+where $\widehat{\mu}(x_0)=\bzero+\bone x_0$.
+\end{question}
+
+\begin{solution}
+From Question 5,
+\[
+ \bone-\beta_1=\sum_{i=1}^n a_i\varepsilon_i,
+ \qquad
+ a_i=\frac{x_i-\bar x}{\Sxx}.
+\]
+Using uncorrelated errors with variance $\sigma^2$,
+\begin{align*}
+\Var(\bone)
+ &=\sigma^2\sum a_i^2
+ =\sigma^2\frac{\sum(x_i-\bar x)^2}{\Sxx^2}
+ =\frac{\sigma^2}{\Sxx}.
+\end{align*}
+Also
+\[
+ \bzero-\beta_0=\bar\varepsilon-\bar x(\bone-\beta_1).
+\]
+We first calculate
+\begin{align*}
+\Cov(\bar\varepsilon,\bone-\beta_1)
+ &=\Cov\left(\frac1n\sum\varepsilon_i,
+        \sum a_i\varepsilon_i\right)\\
+ &=\frac{\sigma^2}{n}\sum a_i
+ =\frac{\sigma^2}{n\Sxx}\sum(x_i-\bar x)
+ =0.
+\end{align*}
+Hence
+\begin{align*}
+\Var(\bzero)
+ &=\Var(\bar\varepsilon)
+  +\bar x^2\Var(\bone)
+  -2\bar x\Cov(\bar\varepsilon,\bone)\\
+ &=\frac{\sigma^2}{n}+\bar x^2\frac{\sigma^2}{\Sxx}.
+\end{align*}
+Furthermore,
+\begin{align*}
+\Cov(\bzero,\bone)
+ &=\Cov\{\bar\varepsilon-\bar x(\bone-\beta_1),\bone\}\\
+ &=0-\bar x\Var(\bone)
+ =-\frac{\bar x\sigma^2}{\Sxx}.
+\end{align*}
+For the fitted mean, it is helpful to rewrite the estimation error in
+centered form:
+\begin{align*}
+\widehat{\mu}(x_0)-(\beta_0+\beta_1x_0)
+ &=\bar\varepsilon+(x_0-\bar x)(\bone-\beta_1).
+\end{align*}
+The two terms on the right are uncorrelated, as shown above. Thus
+\begin{align*}
+\Var\{\widehat{\mu}(x_0)\}
+ &=\Var(\bar\varepsilon)+(x_0-\bar x)^2\Var(\bone)\\
+ &=\sigma^2\left[\frac1n+\frac{(x_0-\bar x)^2}{\Sxx}\right].
+\end{align*}
+For a new individual response $Y_0$, independent of the fitted sample, the
+prediction error also contains the new error $\varepsilon_0$. Therefore its
+variance is the displayed expression plus $\sigma^2$.
+\end{solution}
+
+\section{Prove that MSE is unbiased for the error variance}
+
+\begin{question}
+Question 7. In simple linear regression, prove
+\[
+  \boxed{\E(\mathrm{SSE})=(n-2)\sigma^2}
+  \qquad\text{and hence}\qquad
+  \boxed{\E(\mathrm{MSE})=\sigma^2},
+\]
+where $\mathrm{MSE}=\mathrm{SSE}/(n-2)$. You may use matrix notation.
+\end{question}
+
+\begin{solution}
+Let
+\[
+ \mathbf Y=\mathbf X\boldsymbol\beta+\boldsymbol\varepsilon,
+ \qquad
+ \mathbf X=
+ \begin{pmatrix}
+ 1&x_1\\ \vdots&\vdots\\1&x_n
+ \end{pmatrix},
+\]
+where $\mathbf X$ has rank $2$. Define the hat matrix and residual-maker
+matrix
+\[
+ \mathbf H=\mathbf X(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+              \mathbf X^{\mathsf T},
+ \qquad
+ \mathbf M=\mathbf I-\mathbf H.
+\]
+Because $\mathbf H\mathbf X=\mathbf X$, the residual vector is
+\begin{align*}
+ \mathbf e
+ &=\mathbf Y-\widehat{\mathbf Y}
+ =\mathbf M\mathbf Y\\
+ &=\mathbf M(\mathbf X\boldsymbol\beta+\boldsymbol\varepsilon)
+ =\mathbf M\boldsymbol\varepsilon.
+\end{align*}
+Both $\mathbf H$ and $\mathbf M$ are symmetric and idempotent. Therefore
+\[
+ \mathrm{SSE}=\mathbf e^{\mathsf T}\mathbf e
+ =\boldsymbol\varepsilon^{\mathsf T}\mathbf M^{\mathsf T}
+  \mathbf M\boldsymbol\varepsilon
+ =\boldsymbol\varepsilon^{\mathsf T}\mathbf M\boldsymbol\varepsilon.
+\]
+For any fixed matrix $\mathbf A$ and random vector with mean zero and
+covariance $\sigma^2\mathbf I$,
+\[
+ \E(\boldsymbol\varepsilon^{\mathsf T}\mathbf A
+       \boldsymbol\varepsilon)
+ =\sigma^2\tr(\mathbf A).
+\]
+To see this, expand the quadratic form. All off-diagonal expectations are
+zero, while each diagonal expectation is $\E(\varepsilon_i^2)=\sigma^2$.
+Thus
+\[
+ \E(\mathrm{SSE})=\sigma^2\tr(\mathbf M)
+ =\sigma^2\{\tr(\mathbf I)-\tr(\mathbf H)\}.
+\]
+Since $\mathbf H$ is the projection onto the two-dimensional column space of
+$\mathbf X$, its rank is $2$. An idempotent matrix has eigenvalues only $0$
+and $1$, so its trace equals its rank. Consequently,
+\[
+ \tr(\mathbf M)=n-2
+ \quad\Longrightarrow\quad
+ \E(\mathrm{SSE})=(n-2)\sigma^2.
+\]
+Finally,
+\[
+ \E(\mathrm{MSE})
+ =\E\left(\frac{\mathrm{SSE}}{n-2}\right)
+ =\sigma^2.
+\]
+The loss of two degrees of freedom occurs because two coefficients,
+$\beta_0$ and $\beta_1$, are estimated from the data.
+\end{solution}
+
+\section{Prove the Gauss--Markov result for the slope}
+
+\begin{question}
+Question 8. Let $\widetilde\beta_1=\sum_{i=1}^n c_iY_i$ be any linear
+unbiased estimator of $\beta_1$. Prove that
+\[
+  \Var(\widetilde\beta_1)\geq \Var(\bone)
+  =\frac{\sigma^2}{\Sxx}.
+\]
+Thus prove that the least-squares slope is BLUE: the best linear unbiased
+estimator of $\beta_1$.
+\end{question}
+
+\begin{solution}
+First determine the conditions required for unbiasedness. Since
+\begin{align*}
+\E(\widetilde\beta_1)
+ &=\sum c_i(\beta_0+\beta_1x_i)\\
+ &=\beta_0\sum c_i+\beta_1\sum c_ix_i,
+\end{align*}
+this equals $\beta_1$ for every $\beta_0,\beta_1$ exactly when
+\[
+ \sum c_i=0,
+ \qquad
+ \sum c_ix_i=1.
+\]
+The OLS slope is a linear estimator with weights
+\[
+ a_i=\frac{x_i-\bar x}{\Sxx},
+ \qquad
+ \bone=\sum a_iY_i.
+\]
+These weights satisfy
+\[
+ \sum a_i=0,
+ \qquad
+ \sum a_ix_i
+ =\frac{\sum(x_i-\bar x)x_i}{\Sxx}=1.
+\]
+For any other linear unbiased estimator, write $c_i=a_i+d_i$. The two
+unbiasedness conditions imply
+\[
+ \sum d_i=0,
+ \qquad
+ \sum d_ix_i=0.
+\]
+The OLS weights are orthogonal to the perturbation weights because
+\[
+ \sum a_id_i
+ =\frac1{\Sxx}\sum(x_i-\bar x)d_i
+ =\frac1{\Sxx}\left(\sum x_id_i-\bar x\sum d_i\right)
+ =0.
+\]
+Using the common error variance and lack of correlation,
+\begin{align*}
+\Var(\widetilde\beta_1)
+ &=\sigma^2\sum c_i^2\\
+ &=\sigma^2\sum(a_i+d_i)^2\\
+ &=\sigma^2\sum a_i^2
+   +2\sigma^2\sum a_id_i
+   +\sigma^2\sum d_i^2\\
+ &=\Var(\bone)+\sigma^2\sum d_i^2\\
+ &\geq\Var(\bone).
+\end{align*}
+Equality holds only when all $d_i=0$, meaning the competing estimator is the
+OLS estimator itself. This proof does not require normally distributed errors.
+\end{solution}
+
+\section{Prove R-squared equals squared correlation and F equals t-squared}
+
+\begin{question}
+Question 9. In simple linear regression with an intercept, prove
+\[
+ \boxed{R^2=r_{xy}^2}.
+\]
+Also prove that the overall regression $F$ statistic for testing
+$H_0:\beta_1=0$ is the square of the usual slope $t$ statistic:
+\[
+ \boxed{F=t^2}.
+\]
+\end{question}
+
+\begin{solution}
+Because the fitted line passes through $(\bar x,\bar y)$,
+\[
+ \yhat_i-\bar y
+ =\bzero+\bone x_i-\bar y
+ =\bone(x_i-\bar x).
+\]
+Therefore
+\begin{align*}
+\mathrm{SSR}
+ &=\sum(\yhat_i-\bar y)^2
+ =\bone^2\sum(x_i-\bar x)^2\\
+ &=\left(\frac{\Sxy}{\Sxx}\right)^2\Sxx
+ =\frac{\Sxy^2}{\Sxx}.
+\end{align*}
+Since $\mathrm{SST}=\Syy$,
+\[
+ R^2=\frac{\mathrm{SSR}}{\mathrm{SST}}
+ =\frac{\Sxy^2}{\Sxx\Syy}
+ =\left(\frac{\Sxy}{\sqrt{\Sxx\Syy}}\right)^2
+ =r_{xy}^2.
+\]
+
+For the test of $H_0:\beta_1=0$, the estimated standard error of the slope is
+\[
+ \operatorname{se}(\bone)=\sqrt{\frac{\mathrm{MSE}}{\Sxx}}.
+\]
+Thus
+\[
+ t^2
+ =\left(\frac{\bone}{\sqrt{\mathrm{MSE}/\Sxx}}\right)^2
+ =\frac{\bone^2\Sxx}{\mathrm{MSE}}
+ =\frac{\mathrm{SSR}}{\mathrm{MSE}}.
+\]
+The regression has one numerator degree of freedom, so its overall statistic is
+\[
+ F=\frac{\mathrm{MSR}}{\mathrm{MSE}}
+ =\frac{\mathrm{SSR}/1}{\mathrm{MSE}}
+ =\frac{\mathrm{SSR}}{\mathrm{MSE}}.
+\]
+Hence $F=t^2$. The tests therefore give identical $p$-values for this
+two-sided slope hypothesis.
+\end{solution}
+
+\section{Derive the multiple-regression matrix formulas}
+
+\begin{question}
+Question 10. Consider the multiple linear regression model
+\[
+ \mathbf Y=\mathbf X\boldsymbol\beta+\boldsymbol\varepsilon,
+ \qquad
+ \E(\boldsymbol\varepsilon)=\mathbf 0,
+ \qquad
+ \Var(\boldsymbol\varepsilon)=\sigma^2\mathbf I_n,
+\]
+where $\mathbf X$ is an $n\times p$ matrix of full column rank. Prove
+\[
+ \boxed{\widehat{\boldsymbol\beta}
+   =(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+     \mathbf X^{\mathsf T}\mathbf Y},
+\]
+\[
+ \boxed{\E(\widehat{\boldsymbol\beta})=\boldsymbol\beta},
+ \qquad
+ \boxed{\Var(\widehat{\boldsymbol\beta})
+   =\sigma^2(\mathbf X^{\mathsf T}\mathbf X)^{-1}}.
+\]
+Also prove that the hat matrix
+\[
+ \mathbf H=\mathbf X(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+             \mathbf X^{\mathsf T}
+\]
+is symmetric and idempotent.
+\end{question}
+
+\begin{solution}
+The residual sum of squares is
+\[
+ S(\mathbf b)
+ =(\mathbf Y-\mathbf X\mathbf b)^{\mathsf T}
+   (\mathbf Y-\mathbf X\mathbf b).
+\]
+Expanding,
+\[
+ S(\mathbf b)
+ =\mathbf Y^{\mathsf T}\mathbf Y
+  -2\mathbf b^{\mathsf T}\mathbf X^{\mathsf T}\mathbf Y
+  +\mathbf b^{\mathsf T}\mathbf X^{\mathsf T}\mathbf X\mathbf b.
+\]
+Differentiating with respect to $\mathbf b$ gives
+\[
+ \frac{\partial S}{\partial\mathbf b}
+ =-2\mathbf X^{\mathsf T}\mathbf Y
+  +2\mathbf X^{\mathsf T}\mathbf X\mathbf b.
+\]
+At the minimum,
+\[
+ \mathbf X^{\mathsf T}\mathbf X\widehat{\boldsymbol\beta}
+ =\mathbf X^{\mathsf T}\mathbf Y.
+\]
+Full column rank makes $\mathbf X^{\mathsf T}\mathbf X$ positive definite
+and invertible. Therefore
+\[
+ \widehat{\boldsymbol\beta}
+ =(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+   \mathbf X^{\mathsf T}\mathbf Y.
+\]
+The Hessian is $2\mathbf X^{\mathsf T}\mathbf X$, which is positive
+definite, so this stationary point is the unique minimizer.
+
+Substitute the model into the estimator:
+\begin{align*}
+\widehat{\boldsymbol\beta}
+ &=(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+   \mathbf X^{\mathsf T}
+   (\mathbf X\boldsymbol\beta+\boldsymbol\varepsilon)\\
+ &=\boldsymbol\beta
+  +(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+    \mathbf X^{\mathsf T}\boldsymbol\varepsilon.
+\end{align*}
+Taking expectations gives
+\[
+ \E(\widehat{\boldsymbol\beta})=\boldsymbol\beta.
+\]
+For the covariance matrix, use $\Var(\mathbf A\mathbf Z)
+=\mathbf A\Var(\mathbf Z)\mathbf A^{\mathsf T}$:
+\begin{align*}
+\Var(\widehat{\boldsymbol\beta})
+ &=(\mathbf X^{\mathsf T}\mathbf X)^{-1}\mathbf X^{\mathsf T}
+   (\sigma^2\mathbf I)
+   \mathbf X(\mathbf X^{\mathsf T}\mathbf X)^{-1}\\
+ &=\sigma^2(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+   \mathbf X^{\mathsf T}\mathbf X
+   (\mathbf X^{\mathsf T}\mathbf X)^{-1}\\
+ &=\sigma^2(\mathbf X^{\mathsf T}\mathbf X)^{-1}.
+\end{align*}
+Finally,
+\begin{align*}
+\mathbf H^{\mathsf T}
+ &=\left\{\mathbf X(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+             \mathbf X^{\mathsf T}\right\}^{\mathsf T}\\
+ &=\mathbf X\left\{(\mathbf X^{\mathsf T}\mathbf X)^{-1}\right\}^{\mathsf T}
+   \mathbf X^{\mathsf T}
+ =\mathbf H,
+\end{align*}
+because $\mathbf X^{\mathsf T}\mathbf X$ and its inverse are symmetric. Also
+\begin{align*}
+\mathbf H^2
+ &=\mathbf X(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+   \mathbf X^{\mathsf T}\mathbf X
+   (\mathbf X^{\mathsf T}\mathbf X)^{-1}\mathbf X^{\mathsf T}\\
+ &=\mathbf X(\mathbf X^{\mathsf T}\mathbf X)^{-1}
+   \mathbf X^{\mathsf T}
+ =\mathbf H.
+\end{align*}
+Thus $\mathbf H$ is symmetric and idempotent; it is the orthogonal projection
+matrix onto the column space of $\mathbf X$.
+\end{solution}
+
+\newpage
+\section*{One-page proof checklist}
+\addcontentsline{toc}{section}{One-page proof checklist}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.55em]
+ \item \textbf{OLS coefficients:} Differentiate SSE, obtain the normal
+ equations, solve them, and mention positive definiteness for uniqueness.
+ \item \textbf{Centering trick:} Use $\sum(x_i-\bar x)=0$ immediately.
+ \item \textbf{Residual orthogonality:} With an intercept,
+ $\sum\e_i=0$; with a predictor, $\sum x_i\e_i=0$.
+ \item \textbf{ANOVA decomposition:} Expand
+ $y_i-\bar y=(\yhat_i-\bar y)+\e_i$ and kill the cross term using the normal
+ equations.
+ \item \textbf{Unbiasedness:} Write the estimator as the true parameter plus
+ a weighted sum of zero-mean errors.
+ \item \textbf{Variance:} For uncorrelated equal-variance errors,
+ $\Var(\sum a_i\varepsilon_i)=\sigma^2\sum a_i^2$.
+ \item \textbf{MSE:} Write $\mathrm{SSE}=\boldsymbol\varepsilon^{\mathsf T}
+ (\mathbf I-\mathbf H)\boldsymbol\varepsilon$ and use trace $=$ residual
+ degrees of freedom.
+ \item \textbf{Gauss--Markov:} Express any competing unbiased weights as OLS
+ weights plus an orthogonal perturbation.
+ \item \textbf{Simple regression identities:}
+ $\mathrm{SSR}=\bone^2\Sxx=\Sxy^2/\Sxx$, which quickly gives both
+ $R^2=r^2$ and $F=t^2$.
+ \item \textbf{Matrix regression:} The normal equations are
+ $\mathbf X^{\mathsf T}\mathbf X\widehat{\boldsymbol\beta}
+ =\mathbf X^{\mathsf T}\mathbf Y$.
+\end{enumerate}
+
+\end{document}

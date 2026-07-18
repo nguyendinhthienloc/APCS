@@ -1,0 +1,646 @@
+---
+title: "Applied Statistics for Engineers and Scientists II"
+subtitle: "Week 02 Practice Problems: Polynomial Regression, Transformations, Ridge, and Lasso - Solutions"
+author: "Ho Huu Binh"
+date: "2026"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: false
+    theme: cosmo
+  pdf:
+    toc: true
+    number-sections: true
+    pdf-engine: xelatex
+    include-in-header:
+      text: |
+        \usepackage{amsmath,amssymb,mathtools}
+        \usepackage{booktabs}
+        \usepackage{enumitem}
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## R setup
+
+```{r}
+#| label: setup
+library(tidyverse)
+
+theme_set(theme_minimal(base_size = 13))
+```
+
+## Exercise 1. Transformation to linearize an exponential relationship
+
+### Problem statement
+
+A laboratory records the number of surviving bacteria after radiation exposure:
+$$
+\begin{array}{c|cccccc}
+\text{time }t & 0 & 1 & 2 & 3 & 4 & 5\\
+\hline
+\text{count }N_t & 100 & 80 & 65 & 51 & 41 & 33
+\end{array}
+$$
+Assume an exponential mean law
+$$
+  N_t=N_0e^{\beta t},
+  \qquad N_0>0.
+$$
+Linearize the model, fit the transformed regression in R, interpret the slope, and check residuals on the log scale.
+
+### Intuition
+
+Exponential decay is nonlinear on the original count scale because equal increments of time multiply the expected count by the same factor rather than subtracting the same amount. Taking logarithms converts multiplication into addition. After transformation, the decay rate becomes the slope of a straight line.
+
+### Solution, part (a): algebraic linearization
+
+Assume
+$$
+  N_t=N_0e^{\beta t},
+  \qquad N_t>0,
+  \qquad N_0>0.
+$$
+Because both sides are positive, the natural logarithm is defined on both sides. Applying $\log$ gives
+$$
+  \log N_t=\log(N_0e^{\beta t}).
+$$
+Using the elementary logarithm identities
+$$
+  \log(ab)=\log a+
+  \log b
+  \quad(a>0,b>0),
+  \qquad
+  \log(e^u)=u
+  \quad(u\in\mathbb R),
+$$
+we obtain
+$$
+  \log N_t=
+  \log N_0+
+  \log(e^{\beta t})=
+  \log N_0+
+  \beta t.
+$$
+Setting
+$$
+  \alpha=\log N_0
+$$
+gives the linear model
+$$
+  \log N_t=\alpha+\beta t.
+$$
+Thus, if the exponential mean law is reasonable, a scatterplot of $\log N_t$ against $t$ should look approximately linear.
+
+### Solution, parts (b) and (c): fitted log-linear model and interpretation
+
+For the six observations, ordinary least squares fits
+$$
+  \log(N_t)=\alpha+\beta t+e_t.
+$$
+The estimated slope is approximately
+$$
+  \widehat\beta\approx -0.2226068.
+$$
+Therefore
+$$
+  e^{\widehat\beta}
+  \approx e^{-0.2226068}
+  \approx 0.8004295.
+$$
+This number is the estimated multiplicative change in expected count for one additional time unit. Thus the fitted model says that each time unit multiplies the expected bacterial count by approximately $0.8004$. Equivalently, the estimated proportional decrease per time unit is
+$$
+  1-e^{\widehat\beta}
+  \approx 1-0.8004295
+  \approx 0.1995705,
+$$
+or approximately $20\%$.
+
+The fitted intercept is approximately
+$$
+  \widehat\alpha\approx 4.6070986.
+$$
+The estimated initial count on the original scale is
+$$
+  e^{\widehat\alpha}
+  \approx e^{4.6070986}
+  \approx 100.1930,
+$$
+which is close to the observed initial count $100$.
+
+### Solution, part (d): why residuals should be checked on the fitted scale
+
+The model fitted by least squares is not
+$$
+  N_t=\alpha+\beta t+e_t.
+$$
+It is
+$$
+  \log N_t=\alpha+\beta t+e_t.
+$$
+Therefore the residuals are
+$$
+  e_t=
+  \log N_t-(\widehat\alpha+\widehat\beta t).
+$$
+The least-squares assumptions of linearity and roughly constant error variance are assumptions about this transformed regression. Hence residual diagnostics should first be checked on the log scale. A good residual plot on the log scale supports the claim that the exponential decay model is reasonable.
+
+Back-transforming fitted values gives predictions on the original count scale:
+$$
+  \widehat N_t
+  =\exp(\widehat\alpha+\widehat\beta t).
+$$
+This back-transformation is appropriate for displaying the fitted mean curve under the deterministic exponential model. In a stochastic model with additive Gaussian errors on the log scale, $\exp(\widehat\alpha+\widehat\beta t)$ estimates a median on the original scale; mean prediction on the original scale would require an additional variance correction. That correction is outside the scope of this introductory problem.
+
+### R solution
+
+```{r}
+#| label: ex2-transformation-code
+bacteria <- tibble(
+  time = 0:5,
+  count = c(100, 80, 65, 51, 41, 33),
+  log_count = log(count)
+)
+
+fit_log <- lm(log_count ~ time, data = bacteria)
+coef(fit_log)
+
+multiplicative_change <- exp(coef(fit_log)[["time"]])
+proportional_decrease <- 1 - multiplicative_change
+
+initial_count_hat <- exp(coef(fit_log)[["(Intercept)"]])
+
+list(
+  multiplicative_change_per_time_unit = multiplicative_change,
+  proportional_decrease_per_time_unit = proportional_decrease,
+  estimated_initial_count = initial_count_hat
+)
+
+bacteria_aug <- bacteria |>
+  mutate(
+    fitted_log = fitted(fit_log),
+    residual_log = residuals(fit_log),
+    fitted_count = exp(fitted_log)
+  )
+
+bacteria_aug
+
+ggplot(bacteria_aug, aes(x = time, y = log_count)) +
+  geom_point(size = 3) +
+  geom_line(aes(y = fitted_log), linewidth = 1) +
+  labs(
+    title = "Linear fit after log transformation",
+    x = "time",
+    y = "log(count)"
+  )
+
+ggplot(bacteria_aug, aes(x = time, y = residual_log)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_point(size = 3) +
+  geom_line(linewidth = 0.8) +
+  labs(
+    title = "Residuals on the log scale",
+    x = "time",
+    y = "log-scale residual"
+  )
+
+ggplot(bacteria_aug, aes(x = time, y = count)) +
+  geom_point(size = 3) +
+  geom_line(aes(y = fitted_count), linewidth = 1) +
+  labs(
+    title = "Back-transformed exponential fit",
+    x = "time",
+    y = "count"
+  )
+```
+
+## Exercise 2. Ridge shrinkage
+
+### Problem statement
+
+Suppose a centered standardized design satisfies
+$$
+  X^\top X=
+  \begin{pmatrix}
+  10&8\\
+  8&10
+  \end{pmatrix},
+  \qquad
+  X^\top y=
+  \begin{pmatrix}
+  9\\
+  9
+  \end{pmatrix}.
+$$
+Compute the ordinary least-squares estimate, the ridge estimate for $\lambda=2$, the eigenvalues of $X^\top X$ and $X^\top X+2I_2$, and explain why adding $2I_2$ improves numerical stability.
+
+### Intuition
+
+The off-diagonal entries $8$ are large relative to the diagonal entries $10$, so the two columns of the design are strongly aligned. Ordinary least squares must invert the Gram matrix $X^\top X$. Ridge regression replaces this matrix by $X^\top X+\lambda I$, which pushes every eigenvalue upward by $\lambda$. The smallest eigenvalue is the fragile direction. Increasing it makes the inverse less sensitive.
+
+### Solution, part (a): ordinary least squares
+
+Let
+$$
+  G=X^\top X=
+  \begin{pmatrix}10&8\\8&10\end{pmatrix},
+  \qquad
+  z=X^\top y=
+  \begin{pmatrix}9\\9\end{pmatrix}.
+$$
+The determinant of $G$ is
+$$
+  \det(G)=10\cdot10-8\cdot8=100-64=36>0.
+$$
+Hence $G$ is invertible. For a $2\times2$ matrix,
+$$
+  \begin{pmatrix}a&b\\c&d\end{pmatrix}^{-1}
+  ={1\over ad-bc}
+  \begin{pmatrix}d&-b\\-c&a\end{pmatrix}
+$$
+whenever $ad-bc\ne0$. Applying this identity gives
+$$
+  G^{-1}
+  ={1\over 36}
+  \begin{pmatrix}10&-8\\-8&10\end{pmatrix}.
+$$
+Therefore
+$$
+\begin{aligned}
+  \widehat\beta_{\mathrm{OLS}}
+  &=G^{-1}z \\
+  &={1\over 36}
+    \begin{pmatrix}10&-8\\-8&10\end{pmatrix}
+    \begin{pmatrix}9\\9\end{pmatrix} \\
+  &={1\over 36}
+    \begin{pmatrix}90-72\\-72+90\end{pmatrix}
+    ={1\over 36}
+    \begin{pmatrix}18\\18\end{pmatrix}
+    =
+    \begin{pmatrix}1/2\\1/2\end{pmatrix}.
+\end{aligned}
+$$
+
+### Solution, part (b): ridge estimate for $\lambda=2$
+
+The ridge estimate under the convention
+$$
+  \widehat\beta_\lambda=(X^\top X+\lambda I_2)^{-1}X^\top y
+$$
+is
+$$
+  \widehat\beta_2=(G+2I_2)^{-1}z.
+$$
+Now
+$$
+  G+2I_2
+  =
+  \begin{pmatrix}12&8\\8&12\end{pmatrix}.
+$$
+Its determinant is
+$$
+  12\cdot12-8\cdot8=144-64=80>0,
+$$
+so
+$$
+  (G+2I_2)^{-1}
+  ={1\over 80}
+  \begin{pmatrix}12&-8\\-8&12\end{pmatrix}.
+$$
+Consequently
+$$
+\begin{aligned}
+  \widehat\beta_2
+  &={1\over 80}
+    \begin{pmatrix}12&-8\\-8&12\end{pmatrix}
+    \begin{pmatrix}9\\9\end{pmatrix} \\
+  &={1\over 80}
+    \begin{pmatrix}108-72\\-72+108\end{pmatrix}
+    ={1\over 80}
+    \begin{pmatrix}36\\36\end{pmatrix}
+    =
+    \begin{pmatrix}9/20\\9/20\end{pmatrix}.
+\end{aligned}
+$$
+Thus ridge shrinks both coefficients from $0.5$ to $0.45$.
+
+### Solution, part (c): eigenvalues
+
+For a matrix of the form
+$$
+  A=
+  \begin{pmatrix}a&b\\b&a\end{pmatrix},
+$$
+the vector $u_+=(1,1)^\top$ satisfies
+$$
+  Au_+
+  =
+  \begin{pmatrix}a&b\\b&a\end{pmatrix}
+  \begin{pmatrix}1\\1\end{pmatrix}
+  =
+  \begin{pmatrix}a+b\\a+b\end{pmatrix}
+  =(a+b)u_+.
+$$
+The vector $u_-=(1,-1)^\top$ satisfies
+$$
+  Au_-
+  =
+  \begin{pmatrix}a&b\\b&a\end{pmatrix}
+  \begin{pmatrix}1\\-1\end{pmatrix}
+  =
+  \begin{pmatrix}a-b\\b-a\end{pmatrix}
+  =(a-b)u_-.
+$$
+Since $u_+$ and $u_-$ are nonzero and linearly independent, the eigenvalues are $a+b$ and $a-b$.
+
+For
+$$
+  G=\begin{pmatrix}10&8\\8&10\end{pmatrix},
+$$
+we have $a=10$ and $b=8$, so the eigenvalues are
+$$
+  10+8=18,
+  \qquad
+  10-8=2.
+$$
+For
+$$
+  G+2I_2=\begin{pmatrix}12&8\\8&12\end{pmatrix},
+$$
+we have $a=12$ and $b=8$, so the eigenvalues are
+$$
+  12+8=20,
+  \qquad
+  12-8=4.
+$$
+
+### Solution, part (d): condition number and numerical stability
+
+For a symmetric positive definite matrix, the spectral condition number is
+$$
+  \kappa_2(A)={\lambda_{\max}(A)\over \lambda_{\min}(A)}.
+$$
+For $G$,
+$$
+  \kappa_2(G)={18\over 2}=9.
+$$
+For $G+2I_2$,
+$$
+  \kappa_2(G+2I_2)={20\over 4}=5.
+$$
+Thus ridge reduces the condition number from $9$ to $5$.
+
+The sensitivity mechanism can be seen directly from the inverse eigenvalues. The eigenvalues of $G^{-1}$ are
+$$
+  {1\over18},
+  \qquad
+  {1\over2},
+$$
+so the largest inverse amplification is $1/2$. The eigenvalues of $(G+2I_2)^{-1}$ are
+$$
+  {1\over20},
+  \qquad
+  {1\over4},
+$$
+so the largest inverse amplification is $1/4$. The most unstable direction is therefore amplified only half as much after adding $2I_2$. This is the finite-dimensional algebra behind the numerical stabilization of ridge regression.
+
+### R solution
+
+```{r}
+#| label: ex3-ridge-code
+G <- matrix(c(10, 8,
+              8, 10), nrow = 2, byrow = TRUE)
+z <- c(9, 9)
+lambda <- 2
+
+beta_ols <- solve(G, z)
+beta_ridge <- solve(G + lambda * diag(2), z)
+
+eig_G <- eigen(G, symmetric = TRUE)$values
+eig_G_ridge <- eigen(G + lambda * diag(2), symmetric = TRUE)$values
+
+condition_G <- max(eig_G) / min(eig_G)
+condition_G_ridge <- max(eig_G_ridge) / min(eig_G_ridge)
+
+list(
+  beta_ols = beta_ols,
+  beta_ridge_lambda_2 = beta_ridge,
+  eigenvalues_G = eig_G,
+  eigenvalues_G_plus_2I = eig_G_ridge,
+  condition_number_G = condition_G,
+  condition_number_G_plus_2I = condition_G_ridge
+)
+```
+
+## Exercise 3. Lasso soft-thresholding
+
+### Problem statement
+
+Assume
+$$
+  X^\top X=I_4,
+  \qquad
+  X^\top y=(3,0.7,-1.2,-4)^\top.
+$$
+Using the soft-thresholding formula, compute the lasso solution for $\lambda=1$ and $\lambda=2$, identify the selected variables, and explain why increasing $\lambda$ makes the selected model smaller.
+
+### Intuition
+
+Under an orthonormal design, the lasso problem separates into four independent one-dimensional problems. Each coordinate compares the unpenalized score $z_j=(X^\top y)_j$ against the penalty level $\lambda$. If the score is not large enough to overcome the penalty, the coefficient is set exactly to zero.
+
+### Derivation of the soft-thresholding rule
+
+Let
+$$
+  z=X^\top y=(z_1,z_2,z_3,z_4)^\top.
+$$
+Under the convention
+$$
+  \widehat b_\lambda
+  \in
+  \operatorname*{arg\,min}_{b\in\mathbb R^4}
+  \left\{
+    {1\over2}\|y-Xb\|_2^2+\lambda\|b\|_1
+  \right\},
+$$
+and under $X^\top X=I_4$, expand the squared loss:
+$$
+\begin{aligned}
+  {1\over2}\|y-Xb\|_2^2
+  &= {1\over2}(y-Xb)^\top(y-Xb) \\
+  &= {1\over2}\{y^\top y-2b^\top X^\top y+b^\top X^\top Xb\} \\
+  &= {1\over2}y^\top y-b^\top z+{1\over2}b^\top b \\
+  &= {1\over2}y^\top y+
+     \sum_{j=1}^4\left({1\over2}b_j^2-z_jb_j\right).
+\end{aligned}
+$$
+Also,
+$$
+  \lambda\|b\|_1=\lambda\sum_{j=1}^4|b_j|.
+$$
+Thus the objective equals
+$$
+  {1\over2}y^\top y+
+  \sum_{j=1}^4
+  \left\{
+    {1\over2}b_j^2-z_jb_j+\lambda|b_j|
+  \right\}.
+$$
+The constant $(1/2)y^\top y$ does not depend on $b$. Therefore the minimization separates coordinatewise. For a fixed coordinate $j$, define
+$$
+  q_j(t)={1\over2}t^2-z_jt+\lambda|t|,
+  \qquad t\in\mathbb R.
+$$
+We minimize this function by considering three cases.
+
+If $t>0$, then $|t|=t$, so
+$$
+  q_j(t)={1\over2}t^2-z_jt+\lambda t.
+$$
+Differentiating within the open interval $(0,\infty)$ gives
+$$
+  q_j'(t)=t-z_j+\lambda.
+$$
+The stationary point is
+$$
+  t=z_j-\lambda.
+$$
+This point lies in $(0,\infty)$ exactly when $z_j>\lambda$.
+
+If $t<0$, then $|t|=-t$, so
+$$
+  q_j(t)={1\over2}t^2-z_jt-\lambda t.
+$$
+Differentiating within $(-\infty,0)$ gives
+$$
+  q_j'(t)=t-z_j-\lambda.
+$$
+The stationary point is
+$$
+  t=z_j+\lambda.
+$$
+This point lies in $(-\infty,0)$ exactly when $z_j<-\lambda$.
+
+It remains to verify the zero case. Suppose $|z_j|\le\lambda$. For every $t\in\mathbb R$,
+$$
+  tz_j\le |t||z_j|.
+$$
+Therefore
+$$
+\begin{aligned}
+  q_j(t)-q_j(0)
+  &= {1\over2}t^2-z_jt+
+     \lambda|t| \\
+  &\ge {1\over2}t^2-|z_j||t|+
+     \lambda|t| \\
+  &= {1\over2}t^2+(\lambda-|z_j|)|t| \\
+  &\ge 0,
+\end{aligned}
+$$
+because $t^2/2\ge0$, $|t|\ge0$, and $\lambda-|z_j|\ge0$. Hence $t=0$ is a minimizer when $|z_j|\le\lambda$. Combining the three cases gives
+$$
+  \widehat b_j
+  =
+  \begin{cases}
+    z_j-\lambda, & z_j>\lambda,\\
+    0, & |z_j|\le\lambda,\\
+    z_j+\lambda, & z_j<-\lambda.
+  \end{cases}
+$$
+Equivalently,
+$$
+  \widehat b_j=\operatorname{sign}(z_j)(|z_j|-\lambda)_+,
+$$
+where $(a)_+=\max(a,0)$.
+
+### Solution for $\lambda=1$
+
+Here
+$$
+  z=(3,0.7,-1.2,-4)^\top.
+$$
+Apply the formula coordinate by coordinate:
+$$
+\begin{aligned}
+  \widehat b_1&=\operatorname{sign}(3)(3-1)_+=2,\\
+  \widehat b_2&=\operatorname{sign}(0.7)(0.7-1)_+=0,\\
+  \widehat b_3&=\operatorname{sign}(-1.2)(1.2-1)_+=-0.2,\\
+  \widehat b_4&=\operatorname{sign}(-4)(4-1)_+=-3.
+\end{aligned}
+$$
+Thus
+$$
+  \widehat b_{\lambda=1}=(2,0,-0.2,-3)^\top.
+$$
+The selected variables are those with nonzero coefficients:
+$$
+  \{1,3,4\}.
+$$
+
+### Solution for $\lambda=2$
+
+Again apply the same formula:
+$$
+\begin{aligned}
+  \widehat b_1&=\operatorname{sign}(3)(3-2)_+=1,\\
+  \widehat b_2&=\operatorname{sign}(0.7)(0.7-2)_+=0,\\
+  \widehat b_3&=\operatorname{sign}(-1.2)(1.2-2)_+=0,\\
+  \widehat b_4&=\operatorname{sign}(-4)(4-2)_+=-2.
+\end{aligned}
+$$
+Thus
+$$
+  \widehat b_{\lambda=2}=(1,0,0,-2)^\top.
+$$
+The selected variables are
+$$
+  \{1,4\}.
+$$
+
+### Why increasing $\lambda$ makes the selected model smaller
+
+The lasso coefficient is nonzero if and only if
+$$
+  |z_j|>
+  \lambda.
+$$
+When $\lambda$ increases, the interval
+$$
+  [-\lambda,
+  \lambda]
+$$
+widens. More coordinates satisfy $|z_j|\le\lambda$, and those coordinates are set exactly to zero. In this example, variable $3$ is selected when $\lambda=1$ because $|-1.2|=1.2>1$, but it is not selected when $\lambda=2$ because $1.2\le2$.
+
+### R solution
+
+```{r}
+#| label: ex4-lasso-code
+soft_threshold <- function(z, lambda) {
+  sign(z) * pmax(abs(z) - lambda, 0)
+}
+
+z <- c(3, 0.7, -1.2, -4)
+
+lasso_lambda_1 <- soft_threshold(z, lambda = 1)
+lasso_lambda_2 <- soft_threshold(z, lambda = 2)
+
+selected_lambda_1 <- which(lasso_lambda_1 != 0)
+selected_lambda_2 <- which(lasso_lambda_2 != 0)
+
+tibble(
+  variable = paste0("X", seq_along(z)),
+  z = z,
+  lasso_lambda_1 = lasso_lambda_1,
+  selected_lambda_1 = lasso_lambda_1 != 0,
+  lasso_lambda_2 = lasso_lambda_2,
+  selected_lambda_2 = lasso_lambda_2 != 0
+)
+
+list(
+  selected_variables_lambda_1 = selected_lambda_1,
+  selected_variables_lambda_2 = selected_lambda_2
+)
+```

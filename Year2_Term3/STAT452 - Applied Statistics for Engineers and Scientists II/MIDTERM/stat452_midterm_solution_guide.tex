@@ -1,0 +1,1036 @@
+﻿\documentclass[11pt]{article}
+
+\usepackage[margin=0.82in,headheight=22pt]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Courier New}[Scale=0.86]
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs,longtable,array,colortbl}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{bookmark}
+
+\definecolor{navy}{RGB}{24,55,95}
+\definecolor{teal}{RGB}{20,112,104}
+\definecolor{codebg}{RGB}{246,248,250}
+\definecolor{codecomment}{RGB}{80,100,90}
+\definecolor{rulegray}{RGB}{210,216,222}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=navy,
+  urlcolor=teal,
+  pdftitle={STAT452 Midterm Tests: Comprehensive Solutions and R Guide},
+  pdfauthor={STAT452 Study Guide}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\sffamily\small STAT452 Midterm Solutions}
+\rhead{\sffamily\small Written and Practical Guide}
+\cfoot{\sffamily\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{navy!45}\leaders\hrule height \headrulewidth\hfill}}
+
+\titleformat{\section}{\sffamily\LARGE\bfseries\color{navy}}{\thesection}{0.65em}{}
+\titleformat{\subsection}{\sffamily\Large\bfseries\color{teal}}{\thesubsection}{0.65em}{}
+\titleformat{\subsubsection}{\sffamily\large\bfseries\color{navy!85}}{\thesubsubsection}{0.65em}{}
+\titlespacing*{\section}{0pt}{2.1em}{0.8em}
+\titlespacing*{\subsection}{0pt}{1.6em}{0.6em}
+\titlespacing*{\subsubsection}{0pt}{1.2em}{0.45em}
+
+\setlist{leftmargin=1.55em,itemsep=0.28em,topsep=0.35em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.52em}
+\setlength{\LTpre}{0.45em}
+\setlength{\LTpost}{0.65em}
+\renewcommand{\arraystretch}{1.22}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{navy}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{teal!80!black},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{rulegray},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  xleftmargin=0.45em,
+  xrightmargin=0.45em,
+  aboveskip=0.65em,
+  belowskip=0.75em
+}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+
+\begin{titlepage}
+  \centering
+  \vspace*{1.1in}
+  {\sffamily\color{navy}\Huge\bfseries STAT452 Midterm Tests\par}
+  \vspace{0.28in}
+  {\sffamily\color{teal}\LARGE Comprehensive Solutions and R Guide\par}
+  \vspace{0.55in}
+  {\color{navy!45}\rule{0.78\textwidth}{1.1pt}\par}
+  \vspace{0.55in}
+  {\Large Applied Statistics for Engineers and Scientists II\par}
+  \vspace{0.2in}
+  {\large Written Midterm and Practical Midterm\par}
+  \vfill
+  \begin{minipage}{0.78\textwidth}
+    \colorbox{navy!7}{\parbox{0.94\linewidth}{
+      \textbf{Included:} full paper-based derivations, R verification,
+      calculator checks, OLS diagnostics, nested-model testing, ridge and
+      LASSO cross-validation, coefficient interpretation, and predictions.
+    }}
+  \end{minipage}
+  \vfill
+  {\sffamily\small Prepared from the course midterm materials in \texttt{R\_training}\par}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\section*{Guide Overview}
+\addcontentsline{toc}{section}{Guide Overview}
+
+This guide covers both papers in this folder:
+
+\begin{itemize}
+\item \texttt{MidTerm\_STAT452\_23TT2.pdf} - written midterm
+\item \texttt{Midterm\_Practical.pdf} - R practical midterm
+\end{itemize}
+
+The companion script \texttt{midterm\_solutions.R} reproduces all numerical results. The
+two linked datasets from the practical paper are saved as \texttt{seatpos.csv} and
+\texttt{newdata.csv}.
+
+\subsection{Quick answer sheet}
+
+\begin{center}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.68\textwidth}}
+\toprule
+\rowcolor{navy!10} \textbf{Item} & \textbf{Main result} \\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10} \textbf{Item} & \textbf{Main result} \\
+\midrule
+\endhead
+Written 1(a) & \texttt{y\_hat = 1.819205 + 0.486520 x1 + 0.558644 x2}; R-squared = 0.984959 \\
+Written 1(b) & Add \texttt{x2}; partial F = 117.42, p = 0.008409 \\
+Written 1(c) & Predicted score = 7.603669 \\
+Written 2(a) & \texttt{log(y\_hat) = 0.924456 + 0.241221 x} \\
+Written 2(b) & Year-5 plug-in prediction = 8.419576 million \\
+Written 3(a) & \texttt{logit(p\_hat) = -3.449548 + 0.002294 x1 + 0.777014 x2 - 0.560031 x3} \\
+Written 3(b) & Predicted classes: 0, 0, 1, 0 \\
+Practical OLS & R-squared = 0.687; adjusted R-squared = 0.600; overall p = 1.31e-5 \\
+Practical ridge & With the fixed folds in the script, lambda.min = 36.521 \\
+Practical LASSO & lambda.min = 5.748; nonzero predictors are Age, Ht, and Leg \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\medskip\hrule\medskip
+
+\section{Part I - Written Midterm}
+
+\subsection{Problem 1 - Multiple linear regression}
+
+\subsubsection{Core idea}
+
+Multiple regression chooses the plane that minimizes the sum of squared vertical
+residuals. Here the plane uses both self-study time (\texttt{x1}) and tutoring time
+(\texttt{x2}) to predict the score \texttt{y}.
+
+The model is
+
+\begin{lstlisting}
+y_i = beta_0 + beta_1 x1_i + beta_2 x2_i + error_i.
+\end{lstlisting}
+
+\subsubsection{1(a) Estimate the coefficients and R-squared}
+
+Write the model in matrix form as \texttt{y = X beta + error}, where the first column
+of \texttt{X} is a column of ones:
+
+\begin{lstlisting}
+X = [1  5  1]       y = [ 5.0]
+    [1  9  0]           [ 6.0]
+    [1  7  7]           [ 9.5]
+    [1  9  7]           [10.0]
+    [1  3  8]           [ 7.5]
+\end{lstlisting}
+
+The least-squares estimator is
+
+\begin{lstlisting}
+beta_hat = (X'X)^(-1) X'y.
+\end{lstlisting}
+
+For these data,
+
+\begin{lstlisting}
+X'X = [  5   33   23]       X'y = [ 38.0]
+       [ 33  245  141]              [258.0]
+       [ 23  141  163]              [201.5]
+\end{lstlisting}
+
+Solving the normal equations gives
+
+\begin{lstlisting}
+beta_0_hat = 1.819205
+beta_1_hat = 0.486520
+beta_2_hat = 0.558644
+\end{lstlisting}
+
+Therefore,
+
+\begin{lstlisting}
+y_hat = 1.819205 + 0.486520 x1 + 0.558644 x2.
+\end{lstlisting}
+
+Interpretation, always holding the other predictor fixed:
+
+\begin{itemize}
+\item One additional hour of self-study is associated with an estimated 0.4865-point
+increase in score.
+\item One additional hour of tutoring is associated with an estimated 0.5586-point
+increase in score.
+\item The intercept is the fitted score at \texttt{x1 = x2 = 0}. It is mathematically needed,
+but the dataset contains no student near that combination, so it should not be
+given a strong practical interpretation.
+\end{itemize}
+
+The fitted residual sum of squares and total sum of squares are
+
+\begin{lstlisting}
+SSE = sum((y_i - y_hat_i)^2) = 0.281267
+SST = sum((y_i - y_bar)^2)   = 18.700000
+\end{lstlisting}
+
+Thus,
+
+\begin{lstlisting}
+R-squared = 1 - SSE/SST
+          = 1 - 0.281267/18.7
+          = 0.984959.
+\end{lstlisting}
+
+About 98.50\% of the observed score variation in these five students is explained
+by the fitted model. This is an in-sample description, not proof that study hours
+cause higher scores, and the sample is extremely small.
+
+R verification:
+
+\begin{lstlisting}[language=R]
+d <- data.frame(
+  x1 = c(5, 9, 7, 9, 3),
+  x2 = c(1, 0, 7, 7, 8),
+  y  = c(5, 6, 9.5, 10, 7.5)
+)
+fit <- lm(y ~ x1 + x2, data = d)
+coef(fit)
+summary(fit)$r.squared
+\end{lstlisting}
+
+\subsubsection{1(b) Compare \texttt{y \textasciitilde{} x1} with \texttt{y \textasciitilde{} x1 + x2}}
+
+The reduced model is nested inside the full model. The partial F test asks:
+
+\begin{lstlisting}
+H0: beta_2 = 0  (x2 adds no linear information after x1)
+H1: beta_2 != 0.
+\end{lstlisting}
+
+From the supplied ANOVA table,
+
+\begin{lstlisting}
+F = 117.42, p = 0.008409.
+\end{lstlisting}
+
+At significance level 0.05, \texttt{p < 0.05}, so reject \texttt{H0}. The tutoring variable
+significantly reduces RSS after self-study time has already been included. Among
+the two proposed models, use the full model \texttt{y \textasciitilde{} x1 + x2}.
+
+Do not compare the two models merely by noting that the full model has a smaller
+RSS: adding a predictor can never increase training RSS. The F test determines
+whether the reduction is large relative to the remaining error and degrees of
+freedom.
+
+\subsubsection{1(c) Prediction}
+
+At \texttt{x1 = 5} and \texttt{x2 = 6},
+
+\begin{lstlisting}
+y_hat = 1.819205 + 0.486520(5) + 0.558644(6)
+      = 7.603669.
+\end{lstlisting}
+
+The predicted math score is approximately \textbf{7.60}.
+
+R verification:
+
+\begin{lstlisting}[language=R]
+predict(fit, newdata = data.frame(x1 = 5, x2 = 6))
+\end{lstlisting}
+
+\subsubsection{Casio fx-580VN X verification}
+
+The calculator does not have a direct two-predictor regression menu. Use matrix
+mode to solve the three normal equations.
+
+\begin{enumerate}
+\item Open \texttt{MENU -> Matrix}.
+\item Define \texttt{MatA} as the 3-by-3 matrix \texttt{X'X} shown above.
+\item Define \texttt{MatB} as the 3-by-1 matrix \texttt{X'y} shown above.
+\item Calculate \texttt{MatA\textasciicircum{}(-1) * MatB}.
+\item The display should give approximately \texttt{(1.819205, 0.486520, 0.558644)'}.
+\item In ordinary calculation mode, substitute the five fitted values, compute the
+five squared residuals, and add them to verify \texttt{SSE = 0.281267}.
+\end{enumerate}
+
+Menu wording can differ slightly with calculator language and firmware.
+
+\medskip\hrule\medskip
+
+\subsection{Problem 2 - Exponential regression}
+
+\subsubsection{Core idea}
+
+Taking logarithms turns multiplicative growth into an ordinary straight-line
+regression.
+
+The model is
+
+\begin{lstlisting}
+y = exp(beta_0 + beta_1 x + error).
+\end{lstlisting}
+
+Taking natural logarithms gives
+
+\begin{lstlisting}
+z = log(y) = beta_0 + beta_1 x + error,
+\end{lstlisting}
+
+where \texttt{z = log(y)}. The transformed observations are approximately
+
+\begin{center}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.54\textwidth}}
+\toprule
+\rowcolor{navy!10} \textbf{x} & \textbf{y} & \textbf{log(y)} \\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10} \textbf{x} & \textbf{y} & \textbf{log(y)} \\
+\midrule
+\endhead
+1 & 2.98 & 1.091923 \\
+2 & 4.65 & 1.536867 \\
+3 & 5.00 & 1.609438 \\
+4 & 6.50 & 1.871802 \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\subsubsection{2(a) Estimate the transformed linear model}
+
+For simple linear regression,
+
+\begin{lstlisting}
+beta_1_hat = S_xz/S_xx,
+beta_0_hat = z_bar - beta_1_hat x_bar.
+\end{lstlisting}
+
+Using the four transformed observations gives
+
+\begin{lstlisting}
+beta_1_hat = 0.241221
+beta_0_hat = 0.924456.
+\end{lstlisting}
+
+Hence,
+
+\begin{lstlisting}
+log(y_hat) = 0.924456 + 0.241221 x.
+\end{lstlisting}
+
+Equivalently, on the original scale,
+
+\begin{lstlisting}
+y_hat = exp(0.924456) exp(0.241221)^x
+      = 2.52050 (1.27280)^x.
+\end{lstlisting}
+
+The fitted population multiplies by about 1.2728 for each additional year, an
+estimated 27.28\% year-to-year increase under this model.
+
+R verification:
+
+\begin{lstlisting}[language=R]
+d <- data.frame(x = 1:4, y = c(2.98, 4.65, 5.00, 6.50))
+fit_exp <- lm(log(y) ~ x, data = d)
+coef(fit_exp)
+\end{lstlisting}
+
+\subsubsection{2(b) Predict year 5}
+
+\begin{lstlisting}
+log(y_hat_5) = 0.924456 + 0.241221(5) = 2.130559,
+y_hat_5 = exp(2.130559) = 8.419576.
+\end{lstlisting}
+
+The exam-style prediction is approximately \textbf{8.42 million people}.
+
+A technical nuance: because the error is normal on the log scale,
+\texttt{exp(beta\_0 + beta\_1 x)} estimates the conditional median on the original scale.
+The conditional mean would include the lognormal correction
+\texttt{exp(sigma\textasciicircum{}2/2)}. The question asks for a prediction based on the fitted values,
+so the usual expected answer is the plug-in value 8.4196.
+
+\subsubsection{Casio fx-580VN X verification}
+
+\begin{enumerate}
+\item Compute \texttt{ln(y)} for each of the four populations.
+\item Open \texttt{MENU -> Statistics -> A+BX}.
+\item Enter \texttt{x} in the first column and \texttt{ln(y)} in the second.
+\item Open the regression calculation results and read the intercept \texttt{a} and slope
+\texttt{b}; they should be approximately \texttt{a = 0.924456}, \texttt{b = 0.241221}.
+\item Evaluate \texttt{exp(a + 5b)} to obtain approximately \texttt{8.419576}.
+\end{enumerate}
+
+\medskip\hrule\medskip
+
+\subsection{Problem 3 - Logistic regression}
+
+\subsubsection{Core idea}
+
+Logistic regression predicts a probability while keeping it between zero and
+one. Its linear predictor describes log-odds rather than the probability itself.
+
+Let \texttt{p(x) = P(y = 1 | x1, x2, x3)}. The estimated model is
+
+\begin{lstlisting}
+log(p_hat/(1-p_hat))
+  = -3.449548 + 0.002294 x1 + 0.777014 x2 - 0.560031 x3.
+\end{lstlisting}
+
+Equivalently,
+
+\begin{lstlisting}
+p_hat = exp(eta_hat)/(1 + exp(eta_hat)),
+\end{lstlisting}
+
+where \texttt{eta\_hat} is the right-hand side of the logit equation.
+
+\subsubsection{3(a) Interpret the coefficients}
+
+Each coefficient is a change in log-odds when that predictor rises by one unit,
+holding the other predictors fixed. Exponentiating gives the easier odds-ratio
+interpretation.
+
+\begin{center}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.46\textwidth}}
+\toprule
+\rowcolor{navy!10} \textbf{Term} & \textbf{Estimate} & \textbf{Odds ratio} & \textbf{Interpretation} \\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10} \textbf{Term} & \textbf{Estimate} & \textbf{Odds ratio} & \textbf{Interpretation} \\
+\midrule
+\endhead
+\texttt{x1} & 0.002294 & 1.002297 & A one-unit increase multiplies the odds of class 1 by 1.0023, about a 0.23\% increase. \\
+\texttt{x2} & 0.777014 & 2.174968 & A one-unit increase multiplies the odds by about 2.175, a 117.5\% increase. \\
+\texttt{x3} & -0.560031 & 0.571191 & A one-unit increase multiplies the odds by 0.571, about a 42.9\% decrease. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+For \texttt{x1}, one unit may be too small to communicate well. A 100-unit increase
+multiplies the odds by \texttt{exp(100 * 0.002294)}, approximately 1.258.
+
+The p-values for \texttt{x1}, \texttt{x2}, and \texttt{x3} are all below 0.05, so each is statistically
+significant at the 5\% level in the fitted model. Significance does not by itself
+prove causation.
+
+\subsubsection{3(b) Classify the four observations}
+
+Use the standard cutoff 0.5: predict class 1 when \texttt{p\_hat >= 0.5}, equivalently
+when \texttt{eta\_hat >= 0}.
+
+\begin{center}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.46\textwidth}}
+\toprule
+\rowcolor{navy!10} \textbf{Row} & \textbf{eta\_hat} & \textbf{p\_hat} & \textbf{Predicted class} \\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10} \textbf{Row} & \textbf{eta\_hat} & \textbf{p\_hat} & \textbf{Predicted class} \\
+\midrule
+\endhead
+1 & -1.058484 & 0.257599 & 0 \\
+2 & -0.940450 & 0.280809 & 0 \\
+3 & 0.362391 & 0.589619 & 1 \\
+4 & -0.684196 & 0.335326 & 0 \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+Thus the predicted classes are \textbf{0, 0, 1, 0}.
+
+R verification:
+
+\begin{lstlisting}[language=R]
+b <- c(-3.449548, 0.002294, 0.777014, -0.560031)
+new <- data.frame(
+  x1 = c(640, 600, 700, 620),
+  x2 = c(3.35, 3.62, 3.56, 3.17),
+  x3 = c(3, 3, 1, 2)
+)
+eta <- drop(cbind(1, as.matrix(new)) %*% b)
+p <- plogis(eta)
+cbind(new, eta, p, class = as.integer(p >= 0.5))
+\end{lstlisting}
+
+\subsubsection{Casio fx-580VN X verification}
+
+For each row, use ordinary calculation mode:
+
+\begin{enumerate}
+\item Compute \texttt{eta = -3.449548 + 0.002294*x1 + 0.777014*x2 - 0.560031*x3}.
+\item Compute \texttt{1/(1 + exp(-eta))}.
+\item Compare the result with 0.5.
+\end{enumerate}
+
+For the first row the display should give \texttt{eta} about -1.05848 and probability
+about 0.25760, so the class is 0.
+
+\medskip\hrule\medskip
+
+\subsection{Problem 4 - Ridge estimator when the intercept is penalized}
+
+\subsubsection{What we are trying to show}
+
+We want to minimize
+
+\begin{lstlisting}
+L = sum((y_k - beta_0 - beta_1 x_k)^2) + lambda(beta_0^2 + beta_1^2)
+\end{lstlisting}
+
+and derive the two formulas printed in the question.
+
+The strategy is to differentiate with respect to both coefficients, solve the
+first normal equation for \texttt{beta\_0}, and substitute it into the second.
+
+\subsubsection{Step 1: Differentiate with respect to beta\_0}
+
+Set the derivative equal to zero:
+
+\begin{lstlisting}
+-2 sum(y_k - beta_0 - beta_1 x_k) + 2 lambda beta_0 = 0.
+\end{lstlisting}
+
+Using \texttt{sum(y\_k) = n y\_bar} and \texttt{sum(x\_k) = n x\_bar} gives
+
+\begin{lstlisting}
+(n + lambda) beta_0 + n x_bar beta_1 = n y_bar.
+\end{lstlisting}
+
+Therefore,
+
+\begin{lstlisting}
+beta_0_hat = n/(n + lambda) (y_bar - beta_1_hat x_bar).
+\end{lstlisting}
+
+This differs from ordinary least squares because the question penalizes the
+intercept. Without an intercept penalty, the familiar result would be
+\texttt{beta\_0\_hat = y\_bar - beta\_1\_hat x\_bar}.
+
+\subsubsection{Step 2: Differentiate with respect to beta\_1}
+
+Set the second derivative equation to zero:
+
+\begin{lstlisting}
+-2 sum[x_k(y_k - beta_0 - beta_1 x_k)] + 2 lambda beta_1 = 0,
+\end{lstlisting}
+
+so
+
+\begin{lstlisting}
+sum(x_k y_k) = n x_bar beta_0 + beta_1[sum(x_k^2) + lambda].
+\end{lstlisting}
+
+Substitute the expression for \texttt{beta\_0}:
+
+\begin{lstlisting}
+sum(x_k y_k)
+ = n x_bar * n/(n+lambda)(y_bar - beta_1 x_bar)
+   + beta_1[sum(x_k^2) + lambda].
+\end{lstlisting}
+
+Collect the terms involving \texttt{beta\_1}:
+
+\begin{lstlisting}
+beta_1 * [sum(x_k^2) + lambda - n^2 x_bar^2/(n+lambda)]
+ = sum(x_k y_k) - n^2 x_bar y_bar/(n+lambda).
+\end{lstlisting}
+
+\subsubsection{Step 3: Convert to centered sums}
+
+Use
+
+\begin{lstlisting}
+sum(x_k y_k) = S_xy + n x_bar y_bar,
+sum(x_k^2)   = S_xx + n x_bar^2.
+\end{lstlisting}
+
+The numerator becomes
+
+\begin{lstlisting}
+S_xy + n x_bar y_bar - n^2 x_bar y_bar/(n+lambda)
+= S_xy + [n lambda/(n+lambda)] x_bar y_bar.
+\end{lstlisting}
+
+The denominator becomes
+
+\begin{lstlisting}
+S_xx + n x_bar^2 + lambda - n^2 x_bar^2/(n+lambda)
+= S_xx + lambda + [n lambda/(n+lambda)] x_bar^2
+= S_xx + lambda[1 + n x_bar^2/(n+lambda)].
+\end{lstlisting}
+
+Hence,
+
+\begin{lstlisting}
+beta_1_hat =
+  {S_xy + [n lambda/(n+lambda)] x_bar y_bar}
+  --------------------------------------------------
+  {S_xx + lambda[1 + n x_bar^2/(n+lambda)]},
+\end{lstlisting}
+
+and
+
+\begin{lstlisting}
+beta_0_hat = n/(n+lambda)(y_bar - beta_1_hat x_bar),
+\end{lstlisting}
+
+which are exactly the required formulas.
+
+\subsubsection{Important distinction from \texttt{glmnet}}
+
+The theoretical problem explicitly adds \texttt{lambda * beta\_0\textasciicircum{}2}, so it penalizes the
+intercept. By default, \texttt{glmnet} does \textbf{not} penalize the intercept. Do not expect
+the practical ridge intercept to follow this written-problem formula.
+
+There is no useful direct calculator shortcut for this symbolic derivation. The
+exam expects the normal-equation argument above.
+
+\medskip\hrule\medskip
+
+\section{Part II - Practical Midterm}
+
+\subsection{Reproducible setup}
+
+The training file has 38 rows and these columns:
+
+\begin{lstlisting}
+Age Weight HtShoes Ht Seated Arm Thigh Leg hipcenter
+\end{lstlisting}
+
+Run the complete analysis from the repository root with:
+
+\begin{lstlisting}[language={}]
+Rscript R_training/midterm/midterm_solutions.R
+\end{lstlisting}
+
+Or, in RStudio:
+
+\begin{lstlisting}[language=R]
+source("R_training/midterm/midterm_solutions.R")
+\end{lstlisting}
+
+Only \texttt{glmnet} is required beyond base R.
+
+\subsection{Practical (a) - Full OLS model and residual analysis}
+
+The estimated model is
+
+\begin{lstlisting}
+hipcenter_hat = 436.4321
+  + 0.7757 Age
+  + 0.0263 Weight
+  - 2.6924 HtShoes
+  + 0.6013 Ht
+  + 0.5338 Seated
+  - 1.3281 Arm
+  - 1.1431 Thigh
+  - 6.4390 Leg.
+\end{lstlisting}
+
+Every slope is interpreted while all seven other variables are held fixed. For
+example, one additional year of age is associated with a 0.776 mm increase in
+the fitted \texttt{hipcenter} coordinate at the same weight and body dimensions. A
+one-centimeter increase in lower-leg length is associated with a 6.439 mm
+decrease in the fitted coordinate, holding the remaining measurements fixed.
+
+Be cautious: holding \texttt{Ht} fixed while changing \texttt{HtShoes}, or vice versa, is nearly
+an impossible comparison. The coefficient table reflects severe collinearity.
+
+\subsubsection{Model fit}
+
+\begin{lstlisting}
+Residual standard error = 37.7 mm on 29 df
+R-squared              = 0.687
+Adjusted R-squared     = 0.600
+Overall F(8,29)        = 7.94
+Overall p-value        = 1.31e-5
+\end{lstlisting}
+
+The model explains about 68.7\% of the observed training variation, or 60.0\% after
+the adjusted-R-squared penalty for eight predictors.
+
+\subsubsection{Individual coefficients}
+
+None of the eight slopes has an individual p-value below 0.05. This does not
+contradict the highly significant overall F test. The predictors can be useful
+collectively while their individual standard errors are inflated by
+multicollinearity.
+
+The clearest evidence is:
+
+\begin{lstlisting}
+VIF(Ht)      = 333.14
+VIF(HtShoes) = 307.43
+standardized-predictor condition number = 59.77
+\end{lstlisting}
+
+\texttt{Ht} and \texttt{HtShoes} measure almost the same physical quantity. Their OLS
+coefficients can therefore become large, unstable, and even change sign while
+their combined fitted contribution remains useful. This is exactly the setting
+where ridge or LASSO can help.
+
+\subsubsection{Residual checks}
+
+\begin{enumerate}
+\item \textbf{Centering and shape.} The residual median is -3.68 mm and the residual range
+is about -73.83 to 62.34 mm. OLS residuals sum to zero by construction.
+\item \textbf{Normality.} Shapiro-Wilk gives \texttt{W = 0.9715}, \texttt{p = 0.434}. At 5\%, there is no
+evidence against normal residuals. This is not proof of exact normality.
+\item \textbf{Constant variance.} The base-R Breusch-Pagan calculation gives
+\texttt{LM = 14.037}, \texttt{df = 8}, \texttt{p = 0.0808}. At 5\%, there is no statistically
+significant evidence of heteroscedasticity, although the p-value is close
+enough to justify checking the scale-location plot.
+\item \textbf{Influence.} Row 31 has Cook's distance 0.695 and leverage 0.560. It exceeds
+both rough thresholds \texttt{4/n = 0.105} and \texttt{2k/n = 0.474}, so it deserves data
+verification and a sensitivity refit. Rows 23 and 35 also have Cook's
+distances above \texttt{4/n}.
+\item \textbf{Linearity.} Inspect the residuals-versus-fitted plot. A random cloud around
+zero supports the linear mean structure; curvature suggests transformations
+or nonlinear terms.
+\end{enumerate}
+
+Interactive diagnostic plots:
+
+\begin{lstlisting}[language=R]
+par(mfrow = c(2, 2))
+plot(full_ols)
+par(mfrow = c(1, 1))
+\end{lstlisting}
+
+Do not delete an influential row only because Cook's distance is large. First
+check for a recording error, understand why it is unusual, and report whether the
+scientific conclusion changes when it is included or excluded.
+
+\subsection{Practical (b) - Full model versus noise-only model}
+
+The hypotheses are
+
+\begin{lstlisting}
+H0: beta_Age = beta_Weight = ... = beta_Leg = 0
+H1: at least one slope is nonzero.
+\end{lstlisting}
+
+The nested-model ANOVA gives
+
+\begin{lstlisting}
+RSS(null) = 131639
+RSS(full) =  41262
+F(8,29)  = 7.94
+p        = 1.31e-5.
+\end{lstlisting}
+
+Because \texttt{p < 0.05}, reject \texttt{H0}. The full set of anthropometric predictors gives
+a statistically significant improvement over an intercept-only model.
+
+R code:
+
+\begin{lstlisting}[language=R]
+null_ols <- lm(hipcenter ~ 1, data = seatpos)
+full_ols <- lm(hipcenter ~ ., data = seatpos)
+anova(null_ols, full_ols)
+\end{lstlisting}
+
+\subsection{Practical (c) - Ridge regression with cross-validation}
+
+Ridge minimizes squared error plus an L2 penalty:
+
+\begin{lstlisting}
+SSE + lambda * sum(beta_j^2).
+\end{lstlisting}
+
+It shrinks correlated coefficients toward zero but normally keeps all of them
+nonzero. The script uses:
+
+\begin{itemize}
+\item \texttt{alpha = 0} for ridge;
+\item the exam grid \texttt{seq(1e-3, 50, by = 1e-3)};
+\item 10-fold CV;
+\item \texttt{set.seed(452)} and explicit fold IDs;
+\item \texttt{type.measure = "mse"};
+\item \texttt{standardize = TRUE}, the \texttt{glmnet} default.
+\end{itemize}
+
+With those fixed folds:
+
+\begin{lstlisting}
+lambda.min = 36.521
+lambda.1se = 50.000
+\end{lstlisting}
+
+\texttt{lambda.min} minimizes estimated cross-validation MSE. \texttt{lambda.1se} is the
+largest penalty whose error is within one standard error of the minimum and is a
+reasonable more-regularized alternative. Because \texttt{lambda.1se} hits the upper
+edge 50, a real analysis using the 1-SE rule should expand the grid above 50.
+
+Ridge coefficients at \texttt{lambda.min}:
+
+\begin{center}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.68\textwidth}}
+\toprule
+\rowcolor{navy!10} \textbf{Term} & \textbf{Ridge estimate} \\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10} \textbf{Term} & \textbf{Ridge estimate} \\
+\midrule
+\endhead
+Intercept & 399.992503 \\
+Age & 0.473581 \\
+Weight & -0.106186 \\
+HtShoes & -0.738541 \\
+Ht & -0.737116 \\
+Seated & -1.203317 \\
+Arm & -1.354624 \\
+Thigh & -1.304223 \\
+Leg & -3.109081 \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+Compared with OLS, the unstable height coefficients and other slopes have been
+pulled toward a more balanced set of values. Ridge is especially appropriate
+when prediction is more important than choosing a small subset of variables.
+
+\texttt{glmnet} standardizes predictors internally when fitting, does not penalize the
+intercept, and transforms the displayed coefficients back to the original units.
+
+\subsection{Practical (d) - Ridge predictions}
+
+Using \texttt{lambda.min = 36.521}:
+
+\begin{center}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.68\textwidth}}
+\toprule
+\rowcolor{navy!10} \textbf{New row} & \textbf{Ridge prediction (mm)} \\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10} \textbf{New row} & \textbf{Ridge prediction (mm)} \\
+\midrule
+\endhead
+1 & -139.711 \\
+2 & -112.954 \\
+3 & -219.990 \\
+4 & -149.057 \\
+5 & -228.157 \\
+6 & -102.596 \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+R code:
+
+\begin{lstlisting}[language=R]
+predict(ridge_cv, newx = X_new, s = "lambda.min")
+\end{lstlisting}
+
+Use \texttt{model.matrix} for both training and new data so that columns and encoding
+match exactly.
+
+\subsection{Practical (e) - LASSO and comparison with OLS}
+
+LASSO uses an L1 penalty:
+
+\begin{lstlisting}
+SSE + lambda * sum(abs(beta_j)).
+\end{lstlisting}
+
+The corners of the L1 constraint allow some estimated slopes to be exactly zero,
+so LASSO performs shrinkage and variable selection at the same time.
+
+With the same fixed folds:
+
+\begin{lstlisting}
+lambda.min = 5.748
+lambda.1se = 20.288
+\end{lstlisting}
+
+At \texttt{lambda.min}, the nonzero predictors are \textbf{Age, Ht, and Leg}.
+
+\begin{center}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.46\textwidth}}
+\toprule
+\rowcolor{navy!10} \textbf{Term} & \textbf{Full OLS} & \textbf{Ridge} & \textbf{LASSO} \\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10} \textbf{Term} & \textbf{Full OLS} & \textbf{Ridge} & \textbf{LASSO} \\
+\midrule
+\endhead
+Intercept & 436.432128 & 399.992503 & 397.696648 \\
+Age & 0.775716 & 0.473581 & 0.221804 \\
+Weight & 0.026313 & -0.106186 & 0 \\
+HtShoes & -2.692408 & -0.738541 & 0 \\
+Ht & 0.601345 & -0.737116 & -2.200605 \\
+Seated & 0.533752 & -1.203317 & 0 \\
+Arm & -1.328069 & -1.354624 & 0 \\
+Thigh & -1.143119 & -1.304223 & 0 \\
+Leg & -6.439046 & -3.109081 & -5.468787 \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+The LASSO model is therefore
+
+\begin{lstlisting}
+hipcenter_hat = 397.696648
+  + 0.221804 Age
+  - 2.200605 Ht
+  - 5.468787 Leg.
+\end{lstlisting}
+
+If ordinary least squares is refitted using only these three selected variables,
+the estimates are approximately
+
+\begin{lstlisting}
+Intercept = 452.198
+Age       =   0.581
+Ht        =  -2.325
+Leg       =  -6.739
+\end{lstlisting}
+
+The post-LASSO OLS values are less shrunken because that refit has no penalty.
+It is useful as a comparison, but it is not the LASSO estimator and naive OLS
+p-values after data-driven variable selection should not be treated as ordinary
+pre-specified inference.
+
+Selection among highly correlated measurements can be unstable: another fold
+split may choose \texttt{HtShoes} instead of \texttt{Ht}, or slightly change the optimal lambda.
+Report the seed and folds, and focus on predictive validation rather than treating
+one selected set as a scientific law.
+
+\subsection{Practical (f) - Ridge versus LASSO predictions}
+
+\begin{center}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.46\textwidth}}
+\toprule
+\rowcolor{navy!10} \textbf{Row} & \textbf{Ridge} & \textbf{LASSO} & \textbf{Ridge - LASSO} \\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10} \textbf{Row} & \textbf{Ridge} & \textbf{LASSO} & \textbf{Ridge - LASSO} \\
+\midrule
+\endhead
+1 & -139.711 & -130.368 & -9.344 \\
+2 & -112.954 & -112.470 & -0.485 \\
+3 & -219.990 & -218.053 & -1.937 \\
+4 & -149.057 & -151.148 & 2.091 \\
+5 & -228.157 & -229.846 & 1.689 \\
+6 & -102.596 & -100.072 & -2.524 \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+The two regularized models give similar predictions for five of the six rows.
+Row 1 differs by about 9.34 mm. Without observed \texttt{hipcenter} values for these six
+rows, the table compares predictions but cannot determine which model predicts
+better. That requires held-out outcomes or repeated cross-validation error.
+
+\medskip\hrule\medskip
+
+\section{Practical Exam Workflow}
+
+Use this order under time pressure:
+
+\begin{enumerate}
+\item Read the CSV files and immediately check \texttt{dim}, \texttt{names}, \texttt{str}, and missing
+values.
+\item Fit \texttt{lm(hipcenter \textasciitilde{} ., data = seatpos)} and save the model object.
+\item Interpret slopes with the phrase "holding all other predictors fixed."
+\item Report R-squared, adjusted R-squared, residual standard error, and the overall
+F test.
+\item Inspect residual plots, normality, constant variance, leverage, Cook's
+distance, and multicollinearity.
+\item Compare the null and full OLS models with \texttt{anova(null\_ols, full\_ols)}.
+\item Construct \texttt{X} with \texttt{model.matrix} and remove only its intercept column.
+\item Fix the random seed and fold IDs before fitting both ridge and LASSO.
+\item Use the same folds for a fair comparison.
+\item State whether \texttt{lambda.min} or \texttt{lambda.1se} is used for coefficients and
+predictions.
+\item Build \texttt{X\_new} with the same column construction as \texttt{X}.
+\item Compare predictions numerically; do not claim a winner without actual test
+outcomes.
+\end{enumerate}
+
+\subsection{Common mistakes}
+
+\begin{itemize}
+\item Interpreting a logistic coefficient as a direct change in probability.
+\item Forgetting to back-transform the exponential model with \texttt{exp()}.
+\item Claiming that high R-squared proves causation.
+\item Saying the full OLS model is useless because no individual slope is significant,
+despite a significant overall F test and severe collinearity.
+\item Passing a data frame directly to \texttt{glmnet}; it needs a numeric matrix.
+\item Leaving the intercept column in \texttt{X} when \texttt{glmnet} already fits an intercept.
+\item Using different CV folds for ridge and LASSO when comparing them.
+\item Reporting an optimal lambda without a seed or fold definition.
+\item Treating the LASSO-selected variables as stable when predictors are highly
+correlated.
+\item Comparing ridge and LASSO predictions without observed outcomes and declaring
+one model more accurate.
+\end{itemize}
+
+\subsection{One-line summary}
+
+The written test checks whether you can translate models into estimators and
+interpretations; the practical test shows why regularization is valuable when a
+small dataset contains strongly correlated predictors.
+
+
+\end{document}
+
+
+
+
