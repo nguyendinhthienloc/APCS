@@ -9,7 +9,7 @@ backgroundColor: #fdfbf7
 ---
 
 # Ethics in Real Life
-## Analyzing IP Case Studies Through Multiple Ethical Lenses
+## Analyzing 2 Intellectual Property Case Studies Through Multiple Ethical Lenses
 
 **Presenter: 24125093 - Nguyen Dinh Thien Loc**  
 **Social, Ethical & Legal Issues | HCMUS-FITUS**
@@ -17,8 +17,10 @@ backgroundColor: #fdfbf7
 
 <br>
 
-<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ7OwGHPX2kxhixecCKdrG6M-0BcOlHBuqa7TAnm5cbA&s=10" width="120" style="margin-right: 15px; border-radius: 4px;" />
-<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_NmRjb7lAz7Tl-L0clz7exBom1F7C0LQpWWfMBjzivA&s" width="120" style="border-radius: 4px;" />
+<div style="text-align: right;">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ7OwGHPX2kxhixecCKdrG6M-0BcOlHBuqa7TAnm5cbA&s=10" width="120" style="margin-right: 15px; border-radius: 4px;" />
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_NmRjb7lAz7Tl-L0clz7exBom1F7C0LQpWWfMBjzivA&s" width="120" style="border-radius: 4px;" />
+</div>
 
 ---
 
@@ -84,6 +86,13 @@ backgroundColor: #fdfbf7
 | Virtue Ethics | Wrong | Wrong |
 | Cultural Relativism | Contested | Tension |
 | Utilitarianism | Split | Split |
+---
+
+# Conclusion
+
+
+- **Legal Difference:** Michael Jackson bought a contractual right to music, while the AI creators infringed upon a fundamental personality right.
+- **Moral Commonality:** Despite the legal difference, morally they are the same.
 
 ---
 

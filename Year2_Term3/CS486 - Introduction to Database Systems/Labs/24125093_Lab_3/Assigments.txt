@@ -1,0 +1,50 @@
+In-class Assignments
+
+1.  Using CTE, for each department, find all the top 2 students based on
+    the average grade. Include all the students that tied for the top 2.
+
+2.  Find all courses that directly or indirectly depend on course CS07
+    as a prerequisite.
+
+3.  Create the following table with necessary constraints (PK, FK,
+    value-domain constraints):
+
+TeachingCapacity - instructor_id: varchar(9) NOT NULL PRIMARY KEY,
+references Instructor. - course_id: varchar(9) NOT NULL PRIMARY KEY,
+references Course. - nb_year: int (>0).
+
+4.  Insert data into the above table using a query.
+
+5.  Update the grade_ABC column of the GradeReport table based on
+    grade_100:
+
+-   90–100: A
+-   80–89: B
+-   70–79: C
+-   65–69: D
+-   50–65: E
+-   <50: F
+
+6.  Find the ID and name of each student, along with the average grade
+    (grade_100) of the sections they have passed (grade_100 >= 50).
+
+7.  Retrieve the code and name of ALL students, along with the count of
+    courses they have passed (grade_100 >= 50).
+
+8.  For each department, find the student(s) with the highest average
+    grade across all enrolled sections. Return department_id, department
+    name, student_id, student name, and average grade.
+
+9.  List students whose average grade is higher than the average of all
+    students in their department.
+
+10. Create the StudentStatistics table with primary and foreign keys.
+    Include:
+
+-   student_id
+-   student_name
+-   school_year
+-   semester
+-   nb_credits
+
+Populate the table using data extracted from the existing database.
