@@ -1,0 +1,461 @@
+﻿\documentclass[11pt]{article}
+\usepackage[a4paper,margin=0.85in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{lmodern}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\newcommand{\yvec}{\mathbf y}
+\newcommand{\bvec}{\boldsymbol\beta}
+\newcommand{\evec}{\boldsymbol\varepsilon}
+\newcommand{\xmat}{\mathbf X}
+\newcommand{\R}{\mathbb R}
+
+\title{Mock Proof Questions and Solutions\\[2mm]
+\large Multiple Linear Regression and Polynomial Regression}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\textit{Focus: ordinary derivatives, matrix transformations, gradients, and substitution.}
+\end{center}
+
+\section*{Notation and derivative rules}
+For the MLR model, let
+\[
+\yvec=\xmat\bvec+\evec,
+\qquad
+\yvec\in\R^{n\times1},\quad
+\xmat\in\R^{n\times p},\quad
+\bvec\in\R^{p\times1}.
+\]
+The $i$th row of $\xmat$ is
+\[
+\mathbf x_i^\top=(1,x_{i1},\ldots,x_{i,p-1}).
+\]
+
+The most useful matrix identities are
+\[
+(AB)^\top=B^\top A^\top,
+\qquad
+(A+B)^\top=A^\top+B^\top,
+\qquad
+(A^{-1})^\top=(A^\top)^{-1},
+\]
+and
+\[
+\xmat^\top\xmat\text{ is symmetric because }
+(\xmat^\top\xmat)^\top=\xmat^\top\xmat.
+\]
+
+For a vector $\bvec$ and a constant vector $a$,
+\[
+\nabla_{\bvec}(a^\top\bvec)=a.
+\]
+For a constant matrix $A$,
+\[
+\nabla_{\bvec}(\bvec^\top A\bvec)=(A+A^\top)\bvec.
+\]
+If $A$ is symmetric, this becomes
+\[
+\nabla_{\bvec}(\bvec^\top A\bvec)=2A\bvec.
+\]
+
+\newpage
+\section*{Question 1 --- Derive the MLR OLS estimator}
+Consider the model
+\[
+\yvec=\xmat\bvec+\evec.
+\]
+Define the ordinary least-squares loss
+\[
+L(\bvec)=(\yvec-\xmat\bvec)^\top(\yvec-\xmat\bvec).
+\]
+\begin{enumerate}[label=(\alph*)]
+\item Expand $L(\bvec)$.
+\item Compute the gradient $\nabla_{\bvec}L$ clearly.
+\item Set the gradient equal to zero and derive the normal equations.
+\item Assuming $\xmat^\top\xmat$ is invertible, derive the OLS estimator.
+\end{enumerate}
+
+\subsection*{Solution}
+First expand the loss:
+\begin{align*}
+L(\bvec)
+&=(\yvec^\top-\bvec^\top\xmat^\top)(\yvec-\xmat\bvec)\\
+&=\yvec^\top\yvec-\yvec^\top\xmat\bvec
+-\bvec^\top\xmat^\top\yvec
++\bvec^\top\xmat^\top\xmat\bvec.
+\end{align*}
+The two middle terms are scalars, and
+\[
+\yvec^\top\xmat\bvec
+=\left(\yvec^\top\xmat\bvec\right)^\top
+=\bvec^\top\xmat^\top\yvec.
+\]
+Therefore,
+\[
+L(\bvec)=\yvec^\top\yvec
+-2\bvec^\top\xmat^\top\yvec
++\bvec^\top\xmat^\top\xmat\bvec.
+\]
+
+Now differentiate term by term:
+\[
+\nabla_{\bvec}(\yvec^\top\yvec)=0,
+\]
+\[
+\nabla_{\bvec}(-2\bvec^\top\xmat^\top\yvec)
+=-2\xmat^\top\yvec,
+\]
+and, because $\xmat^\top\xmat$ is symmetric,
+\[
+\nabla_{\bvec}
+\left(\bvec^\top\xmat^\top\xmat\bvec\right)
+=2\xmat^\top\xmat\bvec.
+\]
+Hence,
+\[
+\boxed{
+\nabla_{\bvec}L
+=-2\xmat^\top\yvec+2\xmat^\top\xmat\bvec
+}.
+\]
+At the minimizer $\widehat{\bvec}$, the gradient is zero:
+\[
+-2\xmat^\top\yvec
++2\xmat^\top\xmat\widehat{\bvec}=0.
+\]
+Divide by $2$:
+\[
+\xmat^\top\xmat\widehat{\bvec}=\xmat^\top\yvec.
+\]
+These are the normal equations. Premultiplying by $(\xmat^\top\xmat)^{-1}$ gives
+\[
+\boxed{
+\widehat{\bvec}=(\xmat^\top\xmat)^{-1}\xmat^\top\yvec
+}.
+\]
+
+\textbf{Dimension check:}
+\[
+(p\times n)(n\times n)(n\times1)=p\times1,
+\]
+so the result has the correct dimension for $\widehat{\bvec}$.
+
+\newpage
+\section*{Question 2 --- Derive the MLR normal equations using ordinary derivatives}
+For
+\[
+y_i=\beta_0+\beta_1x_{i1}+\cdots+\beta_{p-1}x_{i,p-1}+\varepsilon_i,
+\]
+define
+\[
+L(\beta_0,\ldots,\beta_{p-1})
+=\sum_{i=1}^n
+\left(y_i-\beta_0-\sum_{j=1}^{p-1}\beta_jx_{ij}\right)^2.
+\]
+Show using only ordinary partial derivatives that the normal equations are
+\[
+\sum_{i=1}^n x_{ij}
+\left(y_i-\sum_{k=0}^{p-1}x_{ik}\beta_k\right)=0,
+\qquad j=0,1,\ldots,p-1,
+\]
+where $x_{i0}=1$. Then show that these equations are exactly
+\[
+\xmat^\top\xmat\bvec=\xmat^\top\yvec.
+\]
+
+\subsection*{Solution}
+Let
+\[
+r_i=y_i-\sum_{k=0}^{p-1}x_{ik}\beta_k.
+\]
+For a fixed coefficient $\beta_j$,
+\[
+\frac{\partial r_i}{\partial\beta_j}=-x_{ij}.
+\]
+Using the chain rule,
+\begin{align*}
+\frac{\partial L}{\partial\beta_j}
+&=\sum_{i=1}^n2r_i\frac{\partial r_i}{\partial\beta_j}\\
+&=-2\sum_{i=1}^n x_{ij}r_i.
+\end{align*}
+Set this equal to zero:
+\[
+\sum_{i=1}^n x_{ij}
+\left(y_i-\sum_{k=0}^{p-1}x_{ik}\beta_k\right)=0.
+\]
+Rearrange:
+\[
+\sum_{k=0}^{p-1}
+\left(\sum_{i=1}^n x_{ij}x_{ik}\right)\beta_k
+=\sum_{i=1}^n x_{ij}y_i.
+\]
+
+The $(j,k)$ entry of $\xmat^\top\xmat$ is
+\[
+(\xmat^\top\xmat)_{jk}=\sum_{i=1}^n x_{ij}x_{ik},
+\]
+and the $j$th entry of $\xmat^\top\yvec$ is
+\[
+(\xmat^\top\yvec)_j=\sum_{i=1}^n x_{ij}y_i.
+\]
+Thus all $p$ scalar equations combine into
+\[
+\boxed{\xmat^\top\xmat\bvec=\xmat^\top\yvec}.
+\]
+
+\newpage
+\section*{Question 3 --- Prove that the OLS estimator is unbiased}
+Assume
+\[
+\yvec=\xmat\bvec+\evec,
+\qquad E(\evec)=\mathbf0,
+\]
+and
+\[
+\widehat{\bvec}=(\xmat^\top\xmat)^{-1}\xmat^\top\yvec.
+\]
+Prove that
+\[
+E(\widehat{\bvec})=\bvec.
+\]
+
+\subsection*{Solution}
+Substitute the model into the estimator:
+\begin{align*}
+\widehat{\bvec}
+&=(\xmat^\top\xmat)^{-1}\xmat^\top
+(\xmat\bvec+\evec)\\
+&=(\xmat^\top\xmat)^{-1}\xmat^\top\xmat\bvec
++(\xmat^\top\xmat)^{-1}\xmat^\top\evec\\
+&=\bvec+(\xmat^\top\xmat)^{-1}\xmat^\top\evec.
+\end{align*}
+Taking expectations and treating $\xmat$ and $\bvec$ as fixed:
+\begin{align*}
+E(\widehat{\bvec})
+&=E\left[\bvec+(\xmat^\top\xmat)^{-1}\xmat^\top\evec\right]\\
+&=\bvec+(\xmat^\top\xmat)^{-1}\xmat^\top E(\evec)\\
+&=\bvec+(\xmat^\top\xmat)^{-1}\xmat^\top\mathbf0\\
+&=\boxed{\bvec}.
+\end{align*}
+Thus OLS is unbiased: across repeated samples, the average estimator equals the true coefficient vector.
+
+\section*{Question 4 --- Residual orthogonality}
+Let
+\[
+\widehat{\yvec}=\xmat\widehat{\bvec},
+\qquad
+\widehat{\mathbf e}=\yvec-\xmat\widehat{\bvec}.
+\]
+Use the derivatives of the OLS loss to prove
+\[
+\boxed{\xmat^\top\widehat{\mathbf e}=\mathbf0}.
+\]
+Interpret this result for the intercept and for each predictor.
+
+\subsection*{Solution}
+The gradient is
+\[
+\nabla_{\bvec}L=-2\xmat^\top(\yvec-\xmat\bvec).
+\]
+At $\widehat{\bvec}$, the gradient is zero:
+\[
+-2\xmat^\top(\yvec-\xmat\widehat{\bvec})=\mathbf0.
+\]
+Since $\widehat{\mathbf e}=\yvec-\xmat\widehat{\bvec}$,
+\[
+\boxed{\xmat^\top\widehat{\mathbf e}=\mathbf0}.
+\]
+If the first column of $\xmat$ is a column of ones, then
+\[
+\sum_{i=1}^n\widehat e_i=0.
+\]
+For predictor $j$,
+\[
+\sum_{i=1}^n x_{ij}\widehat e_i=0.
+\]
+Thus the residuals are orthogonal to the intercept column and to every predictor column.
+
+\newpage
+\section*{Question 5 --- Quadratic polynomial regression}
+Consider
+\[
+y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i.
+\]
+The loss is
+\[
+L(\beta_0,\beta_1,\beta_2)
+=\sum_{i=1}^n
+\left(y_i-\beta_0-\beta_1x_i-\beta_2x_i^2\right)^2.
+\]
+\begin{enumerate}[label=(\alph*)]
+\item Derive all three normal equations using ordinary partial derivatives.
+\item Solve the first equation for $\beta_0$.
+\item After substitution, express the remaining two equations using centered transformed predictors.
+\end{enumerate}
+
+\subsection*{Solution}
+Let
+\[
+r_i=y_i-\beta_0-\beta_1x_i-\beta_2x_i^2.
+\]
+The three derivatives are
+\[
+\frac{\partial L}{\partial\beta_0}=-2\sum_i r_i,
+\qquad
+\frac{\partial L}{\partial\beta_1}=-2\sum_i x_ir_i,
+\qquad
+\frac{\partial L}{\partial\beta_2}=-2\sum_i x_i^2r_i.
+\]
+Setting them to zero gives
+\[
+\sum_i y_i-n\beta_0-\beta_1\sum_i x_i-\beta_2\sum_i x_i^2=0,
+\]
+\[
+\sum_i x_iy_i-\beta_0\sum_i x_i-\beta_1\sum_i x_i^2-\beta_2\sum_i x_i^3=0,
+\]
+\[
+\sum_i x_i^2y_i-\beta_0\sum_i x_i^2-\beta_1\sum_i x_i^3-\beta_2\sum_i x_i^4=0.
+\]
+Equivalently,
+\[
+\boxed{n\beta_0+\beta_1\sum_i x_i+\beta_2\sum_i x_i^2=\sum_i y_i},
+\]
+\[
+\boxed{\beta_0\sum_i x_i+\beta_1\sum_i x_i^2+\beta_2\sum_i x_i^3=\sum_i x_iy_i},
+\]
+\[
+\boxed{\beta_0\sum_i x_i^2+\beta_1\sum_i x_i^3+\beta_2\sum_i x_i^4=\sum_i x_i^2y_i}.
+\]
+
+From the first equation,
+\[
+\boxed{\beta_0=\bar y-\beta_1\bar x-\beta_2\overline{x^2}},
+\qquad
+\overline{x^2}=\frac1n\sum_i x_i^2.
+\]
+
+For the substitution step, define
+\[
+u_i=x_i-\bar x,
+\qquad
+v_i=x_i^2-\overline{x^2},
+\qquad
+w_i=y_i-\bar y.
+\]
+Because $\sum_i u_i=\sum_i v_i=\sum_i w_i=0$, substituting the intercept into the second and third normal equations gives
+\[
+\sum_i u_i^2\,\beta_1+\sum_i u_iv_i\,\beta_2=\sum_i u_iw_i,
+\]
+\[
+\sum_i u_iv_i\,\beta_1+\sum_i v_i^2\,\beta_2=\sum_i v_iw_i.
+\]
+Define
+\[
+A_{11}=\sum_i u_i^2,\quad
+A_{12}=\sum_i u_iv_i,\quad
+A_{22}=\sum_i v_i^2,
+\]
+\[
+B_1=\sum_i u_iw_i,\qquad B_2=\sum_i v_iw_i.
+\]
+Then
+\[
+A_{11}\beta_1+A_{12}\beta_2=B_1,
+\qquad
+A_{12}\beta_1+A_{22}\beta_2=B_2.
+\]
+If $D=A_{11}A_{22}-A_{12}^2\neq0$, then
+\[
+\boxed{\widehat\beta_1=\frac{B_1A_{22}-B_2A_{12}}{D}},
+\qquad
+\boxed{\widehat\beta_2=\frac{B_2A_{11}-B_1A_{12}}{D}},
+\]
+and
+\[
+\boxed{\widehat\beta_0=\bar y-\widehat\beta_1\bar x-\widehat\beta_2\overline{x^2}}.
+\]
+
+\newpage
+\section*{Question 6 --- Polynomial regression as MLR}
+For the degree-$d$ polynomial model
+\[
+y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\cdots+\beta_dx_i^d+\varepsilon_i,
+\]
+\begin{enumerate}[label=(\alph*)]
+\item Construct the design matrix $\xmat$.
+\item Show that the model can be written as $\yvec=\xmat\bvec+\evec$.
+\item Derive the OLS estimator from the matrix loss.
+\end{enumerate}
+
+\subsection*{Solution}
+The coefficient vector is
+\[
+\bvec=(\beta_0,\beta_1,\ldots,\beta_d)^\top.
+\]
+The design matrix is
+\[
+\xmat=
+\begin{pmatrix}
+1&x_1&x_1^2&\cdots&x_1^d\\
+1&x_2&x_2^2&\cdots&x_2^d\\
+\vdots&\vdots&\vdots&&\vdots\\
+1&x_n&x_n^2&\cdots&x_n^d
+\end{pmatrix}.
+\]
+Its $i$th row times $\bvec$ is
+\[
+\begin{pmatrix}1&x_i&x_i^2&\cdots&x_i^d\end{pmatrix}
+\begin{pmatrix}\beta_0\\\beta_1\\\beta_2\\\vdots\\\beta_d\end{pmatrix}
+=\beta_0+\beta_1x_i+\cdots+\beta_dx_i^d.
+\]
+Thus the polynomial model is an MLR model with transformed predictors
+\[
+x_i,\;x_i^2,\;\ldots,\;x_i^d.
+\]
+Using
+\[
+L(\bvec)=(\yvec-\xmat\bvec)^\top(\yvec-\xmat\bvec),
+\]
+the same expansion and gradient calculation as in Question 1 gives
+\[
+\nabla_{\bvec}L
+=-2\xmat^\top\yvec+2\xmat^\top\xmat\bvec.
+\]
+Set this equal to zero:
+\[
+\xmat^\top\xmat\widehat{\bvec}=\xmat^\top\yvec.
+\]
+Therefore,
+\[
+\boxed{
+\widehat{\bvec}=(\xmat^\top\xmat)^{-1}\xmat^\top\yvec
+}.
+\]
+Polynomial regression is nonlinear in $x$, but it is linear in the unknown parameters $\beta_0,\ldots,\beta_d$.
+
+\section*{Exam checklist}
+\begin{enumerate}[leftmargin=*]
+\item Define the residual clearly.
+\item Differentiate with respect to each unknown coefficient.
+\item Set each derivative equal to zero.
+\item For matrix proofs, remember $(AB)^\top=B^\top A^\top$.
+\item Combine scalar equations into $\xmat^\top\xmat\widehat{\bvec}=\xmat^\top\yvec$.
+\item Solve the intercept equation first when substitution is requested.
+\item Check dimensions before multiplying matrices.
+\item In polynomial regression, use the transformed columns $1,x,x^2,\ldots,x^d$.
+\end{enumerate}
+
+\end{document}
+

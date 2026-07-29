@@ -1,0 +1,43 @@
+\contentsline {section}{\numberline {1}How to use this reference}{2}{section.1}%
+\contentsline {section}{\numberline {2}Basic R syntax}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Values, assignment, and help}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Vectors, matrices, and data frames}{2}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Data input and preparation}{3}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Graphics and exploratory analysis}{3}{section.3}%
+\contentsline {section}{\numberline {4}Topic 1: Multiple linear regression}{4}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Model formulas}{4}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Fit, summarize, and inspect}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Coefficients and fitted values}{4}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Manual simple-regression calculations}{5}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}SSE, MSE, and $R^2$}{5}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Matrix least squares}{5}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Coefficient tests and confidence intervals}{6}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Prediction}{6}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Nested models and partial F-tests}{6}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}Diagnostics and influence}{6}{subsection.4.10}%
+\contentsline {section}{\numberline {5}Topic 2: Polynomial regression and transformations}{7}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Polynomial terms}{7}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Orthogonal polynomials}{7}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Centering and stationary points}{7}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Polynomial predictions}{7}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Transformations}{8}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Topic 3: Ridge, LASSO, and variable selection}{8}{section.6}%
+\contentsline {subsection}{\numberline {6.1}OLS baseline and correlation}{8}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Ridge regression with \texttt {MASS}}{8}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Ridge and LASSO with \texttt {glmnet}}{9}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Soft thresholding}{9}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}AIC, BIC, and stepwise selection}{9}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Cross-validation}{10}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Leave-one-out cross-validation}{10}{subsection.6.7}%
+\contentsline {section}{\numberline {7}Topic 4: Logistic regression and classification}{10}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Create a binary response}{10}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Fit a logistic model}{11}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Odds ratios}{11}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Predicted probabilities}{11}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Classification}{12}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Confusion-matrix metrics}{12}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}Compare thresholds}{12}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}Deviance, AIC, and nested logistic models}{13}{subsection.7.8}%
+\contentsline {subsection}{\numberline {7.9}Logistic diagnostics}{13}{subsection.7.9}%
+\contentsline {section}{\numberline {8}Training/test validation}{13}{section.8}%
+\contentsline {section}{\numberline {9}Common mistakes and final checklist}{14}{section.9}%

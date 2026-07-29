@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.9)  18 JUL 2026 18:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.9)  21 JUL 2026 21:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**./output/chapter1_r_exercises_notes_solutions.tex
-(output/chapter1_r_exercises_notes_solutions.tex
+**./mock_proof_questions_MLR_PR.tex
+(mock_proof_questions_MLR_PR.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
@@ -132,64 +132,59 @@ LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 ))
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.s
-ty
-Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen166
-\lightrulewidth=\dimen167
-\cmidrulewidth=\dimen168
-\belowrulesep=\dimen169
-\belowbottomsep=\dimen170
-\aboverulesep=\dimen171
-\abovetopsep=\dimen172
-\cmidrulesep=\dimen173
-\cmidrulekern=\dimen174
-\defaultaddspace=\dimen175
-\@cmidla=\count298
-\@cmidlb=\count299
-\@aboverulesep=\dimen176
-\@belowrulesep=\dimen177
-\@thisruleclass=\count300
-\@lastruleclass=\count301
-\@thisrulewidth=\dimen178
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty
+Package: amsthm 2020/05/29 v2.20.6
+\thm@style=\toks24
+\thm@bodyfont=\toks25
+\thm@headfont=\toks26
+\thm@notefont=\toks27
+\thm@headpunct=\toks28
+\thm@preskip=\skip54
+\thm@postskip=\skip55
+\thm@headsep=\skip56
+\dth@everypar=\toks29
 )
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty
-Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
-\LTleft=\skip54
-\LTright=\skip55
-\LTpre=\skip56
-\LTpost=\skip57
-\LTchunksize=\count302
-\LTcapwidth=\dimen179
-\LT@head=\box55
-\LT@firsthead=\box56
-\LT@foot=\box57
-\LT@lastfoot=\box58
-\LT@gbox=\box59
-\LT@cols=\count303
-\LT@rows=\count304
-\c@LT@tables=\count305
-\c@LT@chunks=\count306
-\LT@p@ftn=\toks24
-) (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
-Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
-\col@sep=\dimen180
-\ar@mcellbox=\box60
-\extrarowheight=\dimen181
-\NC@list=\toks25
-\extratabsurround=\skip58
-\backup@length=\skip59
-\ar@cellbox=\box61
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/mathtools\mathtools
+.sty
+Package: mathtools 2024/10/04 v1.31 mathematical typesetting tools
+ (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty
+Package: calc 2025/03/01 v4.3b Infix arithmetic (KKT,FJ)
+\calc@Acount=\count298
+\calc@Bcount=\count299
+\calc@Adimen=\dimen166
+\calc@Bdimen=\dimen167
+\calc@Askip=\skip57
+\calc@Bskip=\skip58
+LaTeX Info: Redefining \setlength on input line 86.
+LaTeX Info: Redefining \addtolength on input line 87.
+\calc@Ccount=\count300
+\calc@Cskip=\skip59
+)
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/mathtools\mhsetup.s
+ty
+Package: mhsetup 2021/03/18 v1.4 programming setup (MH)
+)
+\g_MT_multlinerow_int=\count301
+\l_MT_multwidth_dim=\dimen168
+\origjot=\skip60
+\l_MT_shortvdotswithinadjustabove_dim=\dimen169
+\l_MT_shortvdotswithinadjustbelow_dim=\dimen170
+\l_MT_above_intertext_sep=\dimen171
+\l_MT_below_intertext_sep=\dimen172
+\l_MT_above_shortintertext_sep=\dimen173
+\l_MT_below_shortintertext_sep=\dimen174
+\xmathstrut@box=\box55
+\xmathstrut@dim=\dimen175
 )
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.s
 ty
 Package: enumitem 2025/02/06 v3.11 Customized lists
-\labelindent=\skip60
-\enit@outerparindent=\dimen182
-\enit@toks=\toks26
-\enit@inbox=\box62
-\enit@count@id=\count307
-\enitdp@description=\count308
+\labelindent=\skip61
+\enit@outerparindent=\dimen176
+\enit@toks=\toks30
+\enit@inbox=\box56
+\enit@count@id=\count302
+\enitdp@description=\count303
 )
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
@@ -216,64 +211,60 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
 )
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.s
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.s
 ty
-\lst@mode=\count309
-\lst@gtempboxa=\box63
-\lst@token=\toks27
-\lst@length=\count310
-\lst@currlwidth=\dimen183
-\lst@column=\count311
-\lst@pos=\count312
-\lst@lostspace=\dimen184
-\lst@width=\dimen185
-\lst@newlines=\count313
-\lst@lineno=\count314
-\lst@maxwidth=\dimen186
-
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.s
-ty
-File: lstpatch.sty 2025/11/14 1.11b (Carsten Heinz)
-)
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.st
-y
-File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
-\c@lstnumber=\count315
-\lst@skipnumbers=\count316
-\lst@framebox=\box64
-)
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.c
-fg
-File: listings.cfg 2025/11/14 1.11b listings configuration
-))
-Package: listings 2025/11/14 1.11b (Carsten Heinz)
-
-==> First Aid for listings.sty no longer applied!
-    Expected:
-        2024/09/23 1.10c (Carsten Heinz)
-    but found:
-        2025/11/14 1.11b (Carsten Heinz)
-    so I'm assuming it got fixed.
-
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.s
-ty
-Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
-
-\f@nch@headwidth=\skip61
-\f@nch@offset@elh=\skip62
-\f@nch@offset@erh=\skip63
-\f@nch@offset@olh=\skip64
-\f@nch@offset@orh=\skip65
-\f@nch@offset@elf=\skip66
-\f@nch@offset@erf=\skip67
-\f@nch@offset@olf=\skip68
-\f@nch@offset@orf=\skip69
-\f@nch@height=\skip70
-\f@nch@footalignment=\skip71
-\f@nch@widthL=\skip72
-\f@nch@widthC=\skip73
-\f@nch@widthR=\skip74
-\@temptokenb=\toks28
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen177
+\lightrulewidth=\dimen178
+\cmidrulewidth=\dimen179
+\belowrulesep=\dimen180
+\belowbottomsep=\dimen181
+\aboverulesep=\dimen182
+\abovetopsep=\dimen183
+\cmidrulesep=\dimen184
+\cmidrulekern=\dimen185
+\defaultaddspace=\dimen186
+\@cmidla=\count304
+\@cmidlb=\count305
+\@aboverulesep=\dimen187
+\@belowrulesep=\dimen188
+\@thisruleclass=\count306
+\@lastruleclass=\count307
+\@thisrulewidth=\dimen189
+) (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty
+Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/lmm/m/it on input line 23.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/lmsy/m/n on input line 24.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 25.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 26.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/lmm/b/it on input line 27.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/lmsy/b/n on input line 28.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 29.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 31.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 32.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/lmr/m/it on input line 33.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> OT1/lmss/bx/n on input line 36.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
 )
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.s
 ty
@@ -327,21 +318,21 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 .sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count317
+\c@section@level=\count308
 )
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.s
 ty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count318
+\etb@tempcnta=\count309
 )
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringe
 nc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
-\@linkdim=\dimen187
-\Hy@linkcounter=\count319
-\Hy@pagecounter=\count320
+\@linkdim=\dimen190
+\Hy@linkcounter=\count310
+\Hy@pagecounter=\count311
 
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2026-01-29 v7.01p Hyperref: PDFDocEncoding definition (HO)
@@ -352,7 +343,7 @@ Now handling font encoding PD1 ...
 ty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count321
+\Hy@SavedSpaceFactor=\count312
 
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2026-01-29 v7.01p Hyperref: PDF Unicode definition (HO)
@@ -366,13 +357,13 @@ Package hyperref Info: Plain pages OFF on input line 4216.
 Package hyperref Info: Backreferencing OFF on input line 4221.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4468.
-\c@Hy@tempcnt=\count322
+\c@Hy@tempcnt=\count313
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4807.
-\XeTeXLinkMargin=\dimen188
+\XeTeXLinkMargin=\dimen191
 
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -382,9 +373,9 @@ calc.sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count323
-\Field@Width=\dimen189
-\Fld@charsize=\dimen190
+\Fld@menulength=\count314
+\Field@Width=\dimen192
+\Fld@charsize=\dimen193
 Package hyperref Info: Hyper figures OFF on input line 6084.
 Package hyperref Info: Link nesting OFF on input line 6089.
 Package hyperref Info: Hyper index ON on input line 6092.
@@ -392,17 +383,17 @@ Package hyperref Info: backreferencing OFF on input line 6099.
 Package hyperref Info: Link coloring OFF on input line 6104.
 Package hyperref Info: Link coloring with OCG OFF on input line 6109.
 Package hyperref Info: PDF/A mode OFF on input line 6114.
-\Hy@abspage=\count324
-\c@Item=\count325
-\c@Hfootnote=\count326
+\Hy@abspage=\count315
+\c@Item=\count316
+\c@Hfootnote=\count317
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.de
 f
 File: hpdftex.def 2026-01-29 v7.01p Hyperref driver for pdfTeX
-\Fld@listcount=\count327
-\c@bookmark@seq@number=\count328
+\Fld@listcount=\count318
+\c@bookmark@seq@number=\count319
 
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\reru
 nfilecheck.sty
@@ -415,68 +406,59 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 84.
 )
-\Hy@SectionHShift=\skip75
+\Hy@SectionHShift=\skip62
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 15.
+Package hyperref Info: Option `colorlinks' set `true' on input line 10.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 2
+5.
 
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.s
-ty
-File: lstlang1.sty 2025/11/14 1.11b listings language file
-)
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang2.s
-ty
-File: lstlang2.sty 2025/11/14 1.11b listings language file
-)
-(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang3.s
-ty
-File: lstlang3.sty 2025/11/14 1.11b listings language file
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
+File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend
 -pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count329
-)
-(D:\APCS\Year2_Term3\STAT452 - Applied Statistics for Engineers and Scientists 
-II\output\pdf\chapter1_r_exercises_notes_solutions.aux)
-\openout1 = `chapter1_r_exercises_notes_solutions.aux'.
+\l__color_backend_stack_int=\count320
+) (mock_proof_questions_MLR_PR.aux)
+\openout1 = `mock_proof_questions_MLR_PR.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 64.
-LaTeX Font Info:    ... okay on input line 64.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 64.
-LaTeX Font Info:    ... okay on input line 64.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 64.
-LaTeX Font Info:    ... okay on input line 64.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 64.
-LaTeX Font Info:    ... okay on input line 64.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 64.
-LaTeX Font Info:    ... okay on input line 64.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 64.
-LaTeX Font Info:    ... okay on input line 64.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 64.
-LaTeX Font Info:    ... okay on input line 64.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 64.
-LaTeX Font Info:    ... okay on input line 64.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 64.
-LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
 * driver: pdftex
-* paper: <default>
+* paper: a4paper
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(61.42993pt, 491.43513pt, 61.42993pt)
-* v-part:(T,H,B)=(61.42993pt, 672.11012pt, 61.42993pt)
-* \paperwidth=614.295pt
-* \paperheight=794.96999pt
-* \textwidth=491.43513pt
-* \textheight=672.11012pt
+* h-part:(L,W,R)=(61.42993pt, 474.64801pt, 61.42993pt)
+* v-part:(T,H,B)=(61.42993pt, 722.18698pt, 61.42993pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=474.64801pt
+* \textheight=722.18698pt
 * \oddsidemargin=-10.84006pt
 * \evensidemargin=-10.84006pt
 * \topmargin=-47.84006pt
-* \headheight=14.0pt
+* \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=11.0pt
 * \footskip=30.0pt
@@ -494,120 +476,137 @@ LaTeX Font Info:    ... okay on input line 64.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.s
+ty
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.s
+ty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphi
+cs.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+)
+\Gin@req@height=\dimen194
+\Gin@req@width=\dimen195
+)
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pd
 f.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count330
-\scratchdimen=\dimen191
-\scratchbox=\box65
-\nofMPsegments=\count331
-\nofMParguments=\count332
-\everyMPshowfont=\toks29
-\MPscratchCnt=\count333
-\MPscratchDim=\dimen192
-\MPnumerator=\count334
-\makeMPintoPDFobject=\count335
-\everyMPtoPDFconversion=\toks30
+\scratchcounter=\count321
+\scratchdimen=\dimen196
+\scratchbox=\box57
+\nofMPsegments=\count322
+\nofMParguments=\count323
+\everyMPshowfont=\toks31
+\MPscratchCnt=\count324
+\MPscratchDim=\dimen197
+\MPnumerator=\count325
+\makeMPintoPDFobject=\count326
+\everyMPtoPDFconversion=\toks32
 )
-\c@lstlisting=\count336
-Package hyperref Info: Link coloring ON on input line 64.
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstop
+df-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
 
-(D:\APCS\Year2_Term3\STAT452 - Applied Statistics for Engineers and Scientists 
-II\output\pdf\chapter1_r_exercises_notes_solutions.out)
-(D:\APCS\Year2_Term3\STAT452 - Applied Statistics for Engineers and Scientists 
-II\output\pdf\chapter1_r_exercises_notes_solutions.out)
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-s
+ys.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+Package hyperref Info: Link coloring ON on input line 25.
+ (mock_proof_questions_MLR_PR.out) (mock_proof_questions_MLR_PR.out)
 \@outlinefile=\write3
-\openout3 = `chapter1_r_exercises_notes_solutions.out'.
+\openout3 = `mock_proof_questions_MLR_PR.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 67.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 2
+7.
+
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
+File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
+27.
+
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
+File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
+27.
+
+(C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
+File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 27.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 27.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 27.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 27.
 
 
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 67.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 27.
 
 
 (C:\Users\Thien Loc\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-(D:\APCS\Year2_Term3\STAT452 - Applied Statistics for Engineers and Scientists 
-II\output\pdf\chapter1_r_exercises_notes_solutions.toc)
-\tf@toc=\write4
-\openout4 = `chapter1_r_exercises_notes_solutions.toc'.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10.95> on input line 34.
 
- [1
+[1
 
-{C:/Users/Thien Loc/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 108.
-
-Underfull \hbox (badness 10000) in paragraph at lines 178--179
-[]|\OT1/cmtt/m/n/10.95 fit <- lm(y ~ x1 + x2,
- []
-
-[2]
-LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <12> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 217.
- [3]
-
-LaTeX Font Warning: Font shape `TS1/cmtt/bx/n' undefined
-(Font)              using `TS1/cmtt/m/n' instead
-(Font)              for symbol `textdollar' on input line 315.
-
-[4] [5] [6] [7] [8] [9] [10]
-(D:\APCS\Year2_Term3\STAT452 - Applied Statistics for Engineers and Scientists 
-II\output\pdf\chapter1_r_exercises_notes_solutions.aux)
+{C:/Users/Thien Loc/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/
+Thien Loc/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/
+Thien Loc/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Us
+ers/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}] 
+[2{C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathe
+x.enc}] [3] [4] [5] [6] [7] [8] [9] (mock_proof_questions_MLR_PR.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Font Warning: Some font shapes were not available, defaults substituted.
-
-Package rerunfilecheck Info: File `chapter1_r_exercises_notes_solutions.out' ha
-s not changed.
-(rerunfilecheck)             Checksum: DF2F698E00035AD09D1BFF214B94B75D;1952.
+Package rerunfilecheck Info: File `mock_proof_questions_MLR_PR.out' has not cha
+nged.
+(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 13786 strings out of 467866
- 206659 string characters out of 5416341
- 1011825 words of memory out of 5000000
- 42335 multiletter control sequences out of 15000+600000
- 641091 words of font info for 90 fonts, out of 8000000 for 9000
+ 11859 strings out of 467866
+ 185368 string characters out of 5416341
+ 618222 words of memory out of 5000000
+ 40535 multiletter control sequences out of 15000+600000
+ 671117 words of font info for 76 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,14n,79p,320b,2047s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\Thien Loc\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
-tcrm1095.pk> <C:\Users\Thien Loc\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
-ec/dpi600\tctt1000.pk> <C:\Users\Thien Loc\AppData\Local\MiKTeX\fonts/pk/ljfour
-/jknappen/ec/dpi600\tctt1095.pk><C:/Users/Thien Loc/AppData/Local/Programs/MiKT
-eX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Thien Loc/AppData/Local/
-Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Thien Loc/A
-ppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/User
-s/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmitt1
-0.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsf
-onts/cm/cmmi10.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type
-1/public/amsfonts/cm/cmmi8.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTe
-X/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/Users/Thien Loc/AppData/Local/
-Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Thien Loc/Ap
-pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/
-Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pf
-b><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
-/cm/cmr8.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/publ
-ic/amsfonts/cm/cmss8.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/font
-s/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Thien Loc/AppData/Local/Program
-s/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Thien Loc/AppData/L
-ocal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Thien 
-Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:
-/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
-mtt12.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/
-amsfonts/symbols/msam10.pfb>
-Output written on "D:\APCS\Year2_Term3\STAT452 - Applied Statistics for Enginee
-rs and Scientists II\output\pdf\chapter1_r_exercises_notes_solutions.pdf" (10 p
-ages, 292258 bytes).
+ 75i,14n,79p,566b,598s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx1
+0.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/l
+mbx12.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/public/
+lm/lmex10.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/lm/lmmi10.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/type1
+/public/lm/lmmi8.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/lm/lmmib10.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/fon
+ts/type1/public/lm/lmr10.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/lm/lmr12.pfb><C:/Users/Thien Loc/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/lm/lmr17.pfb><C:/Users/Thien Loc/AppData/Local/Programs/M
+iKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/Thien Loc/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/Thien Loc/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/Thien Loc/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/Thien Loc/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on mock_proof_questions_MLR_PR.pdf (9 pages, 247019 bytes).
 PDF statistics:
- 402 PDF objects out of 1000 (max. 8388607)
- 179 named destinations out of 1000 (max. 500000)
- 89 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 160 PDF objects out of 1000 (max. 8388607)
+ 42 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
