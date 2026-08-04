@@ -1,0 +1,1256 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=0.82in,headheight=22pt]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Courier New}[Scale=0.86]
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs,longtable,array,colortbl}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{bookmark}
+
+\definecolor{navy}{RGB}{24,55,95}
+\definecolor{teal}{RGB}{20,112,104}
+\definecolor{softblue}{RGB}{239,245,251}
+\definecolor{softgreen}{RGB}{239,248,245}
+\definecolor{rulegray}{RGB}{205,214,222}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=navy,
+  urlcolor=teal,
+  pdftitle={STAT452 Take-home Mid-term Retake: Comprehensive Solutions},
+  pdfauthor={STAT452}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\sffamily\small STAT452 Take-home Mid-term Retake}
+\rhead{\sffamily\small Comprehensive Solutions}
+\cfoot{\sffamily\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{%
+  \hbox to\headwidth{\color{navy!45}\leaders\hrule height \headrulewidth\hfill}}
+
+\titleformat{\section}
+  {\sffamily\LARGE\bfseries\color{navy}}{\thesection}{0.65em}{}
+\titleformat{\subsection}
+  {\sffamily\Large\bfseries\color{teal}}{\thesubsection}{0.65em}{}
+\titleformat{\subsubsection}
+  {\sffamily\large\bfseries\color{navy!85}}{\thesubsubsection}{0.65em}{}
+\titlespacing*{\section}{0pt}{1.9em}{0.7em}
+\titlespacing*{\subsection}{0pt}{1.35em}{0.45em}
+\titlespacing*{\subsubsection}{0pt}{1.05em}{0.35em}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.48em}
+\setlist{leftmargin=1.55em,itemsep=0.25em,topsep=0.32em}
+\renewcommand{\arraystretch}{1.22}
+\allowdisplaybreaks
+
+\newcommand{\trans}{\mathsf T}
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\RSS}{\operatorname{RSS}}
+\newcommand{\SSE}{\operatorname{SSE}}
+\newcommand{\SSR}{\operatorname{SSR}}
+\newcommand{\logit}{\operatorname{logit}}
+\newcommand{\se}{\operatorname{se}}
+\newcommand{\SE}{\operatorname{SE}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\answer}[1]{\boxed{\displaystyle #1}}
+
+\newenvironment{resultbox}
+  {\par\medskip\noindent\begin{minipage}{\linewidth}
+   \color{navy!90!black}\hrule\medskip\textbf{Result.}\ }
+  {\medskip\hrule\end{minipage}\par\medskip}
+
+\newenvironment{checkbox}
+  {\par\medskip\noindent\begin{minipage}{\linewidth}
+   \color{navy!90!black}\hrule\medskip
+   \textbf{\sffamily Calculator verification (Casio fx-580VN X).}\ }
+  {\medskip\hrule\end{minipage}\par\medskip}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+
+\begin{titlepage}
+  \centering
+  \vspace*{0.85in}
+  {\sffamily\color{navy}\Huge\bfseries STAT452\par}
+  \vspace{0.20in}
+  {\sffamily\color{teal}\LARGE Take-home Mid-term Retake\par}
+  \vspace{0.15in}
+  {\sffamily\color{navy!85}\LARGE Comprehensive Solutions\par}
+  \vspace{0.48in}
+  {\color{navy!40}\rule{0.78\textwidth}{1.1pt}\par}
+  \vspace{0.48in}
+  {\Large Applied Statistics for Engineers and Scientists II\par}
+  \vspace{0.16in}
+  {\large Term 3, Academic year 2025--2026 \(\cdot\) Class 24A02\par}
+  \vfill
+  \begin{minipage}{0.78\textwidth}
+    \colorbox{softblue}{\parbox{0.94\linewidth}{
+      \textbf{Conventions.} Natural logarithms are used throughout.
+      All tests and intervals use \(\alpha_{\mathrm{sig}}=0.05\). Notation follows the
+      Chapter 1--4 course notes, with exam-specific symbols identified
+      explicitly. Intermediate calculations retain full precision; displayed
+      decimal answers are rounded.
+    }}
+  \end{minipage}
+  \vfill
+  \begin{tabular}{@{}p{0.47\textwidth}p{0.35\textwidth}@{}}
+    \textbf{Student name:} \hrulefill &
+    \textbf{Student ID:} \hrulefill
+  \end{tabular}
+  \vspace{0.55in}
+\end{titlepage}
+
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\setcounter{tocdepth}{1}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\section*{Notation crosswalk}
+\addcontentsline{toc}{section}{Notation crosswalk}
+
+The following conventions match the Chapter 1--4 notes and the exam.
+\begin{itemize}
+\item In Problems 1--2, \(p\) is the number of predictors \emph{excluding}
+  the intercept. Thus \(X\) has \(p+1\) columns and
+  \(df_E=n-p-1\). In Problem 1, \(p=2\) and \(df_E=7\).
+  Problem 4 follows its own statement: there, \(X\in\mathbb R^{n\times p}\)
+  and \(p\) is the number of columns of \(X\), equivalently the dimension of
+  \(\bm\beta\).
+\item Uppercase symbols such as \(Y_i\), \(Y\), and \(X\) denote random
+  variables or model quantities; lowercase \(y_i\), \(x_i\), and \(v_i\)
+  denote observed data. Bold symbols denote vectors.
+\item The notes use
+  \(\mathrm{SST}=\sum_i(y_i-\bar y)^2\),
+  \(\mathrm{SSE}=\sum_i(y_i-\hat y_i)^2\), and
+  \(\mathrm{SSR}=\sum_i(\hat y_i-\bar y)^2\).
+  The exam's \(\mathrm{RSS}\) is the same quantity as the notes'
+  \(\mathrm{SSE}\).
+\item The significance level is written \(\alpha_{\mathrm{sig}}=0.05\) in
+  this solution. The exam separately uses \(\alpha\) for the centered
+  intercept in Problem 1 and for the positive scale parameter in Problem 2.
+\item In Problem 2, \(a=\log\alpha\) is the log-scale intercept and
+  corresponds to \(\beta_0\) in the Chapter 2 semi-log model.
+\item Chapter 4 writes \(\pi(\bm X)=P(Y=1\mid\bm X)\) and uses threshold
+  \(\tau\). Problem 3 uses \(\hat p(\bm x)\) and \(c\), so
+  \(\hat p(\bm x)=\hat\pi(\bm x)\) and \(c=\tau\).
+\item \(L(\alpha,\beta_1,\beta_2)\) is the least-squares criterion in Problem 1,
+  matching Chapter 1. The exam independently defines \(L(c)\) as the
+  threshold cost in Problem 3; the arguments distinguish the two functions.
+\end{itemize}
+
+\clearpage
+\section*{Quick answer sheet}
+\addcontentsline{toc}{section}{Quick answer sheet}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.15\textwidth}
+                  >{\raggedright\arraybackslash}p{0.77\textwidth}}
+\toprule
+\rowcolor{navy!10}\textbf{Item} & \textbf{Main result}\\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10}\textbf{Item} & \textbf{Main result}\\
+\midrule
+\endhead
+1(a) & \(\hat\beta_0=7,\ \hat\beta_1=1.5,\ \hat\beta_2=-1\).\\
+1(b) & \(\SSR=35,\ \SSE=5,\ R^2=0.875,\ R_{\rm adj}^2=47/56=0.8393,\ 
+          \hat\sigma^2=5/7\).\\
+1(c) & \(\widehat{\Var}(\hat{\bm\beta})
+ =\begin{psmallmatrix}
+ 29/42&-5/42&-1/21\\[-1mm]
+ -5/42&1/21&-1/42\\[-1mm]
+ -1/21&-1/42&1/21
+ \end{psmallmatrix}\).\\
+1(d) & \(t=-\sqrt{21}=-4.5826,\ F=21=t^2,\ p=0.002536\); reject \(H_0\).\\
+1(e) & \(\hat y_0=12.5\); mean CI \((11.405,13.595)\);
+        prediction interval \((10.221,14.779)\).\\
+2(a) & \(\hat a=1,\ \hat\beta=0.5,\ \hat\alpha=e=2.7183\);
+        \(e^{\hat\beta}=1.6487\).\\
+2(b) & \(\hat\sigma^2=0.025,\ \se(\hat\beta)=0.03780\);
+        CI for \(\beta\): \((0.3951,0.6049)\);
+        CI for \(e^\beta\): \((1.4845,1.8311)\).\\
+2(c) & Estimated median \(=e^4=54.5982\);
+        mean-corrected estimate \(=e^{4.0125}=55.2849\).\\
+2(d) & Log-scale PI \((3.4003,4.5997)\);
+        response-scale PI \((29.9736,99.4529)\).\\
+3(a)--(b) & Conditional odds ratios:
+        \(1.0725,\ 3.0042,\ 0.2725\).
+        \(A:\hat p=0.1545\Rightarrow 0\);
+        \(B:\hat p=0.8520\Rightarrow 1\).\\
+3(c)--(d) & At \(c=0.50\): all five metrics equal \(0.50\) and
+        \(L(0.50)=10\). At \(c=0.30\): accuracy \(0.50\), precision \(0.50\),
+        recall \(0.75\), specificity \(0.25\), \(F_1=0.60\), and
+        \(L(0.30)=7\). Select \(c=0.30\).\\
+4 & For \(D=C-(X^\trans X)^{-1}X^\trans\),
+    \(\Var(\tilde{\bm\beta})-\Var(\hat{\bm\beta})
+      =\sigma^2DD^\trans\succeq0\).\\
+\bottomrule
+\end{longtable}
+
+\clearpage
+\section{Problem 1: Multiple linear regression}
+
+The model is
+\[
+  Y_i=\beta_0+\beta_1x_{i1}+\beta_2x_{i2}+\varepsilon_i,
+  \qquad \varepsilon_i\stackrel{\mathrm{iid}}{\sim}N(0,\sigma^2),
+\]
+with \(n=10\). Define
+\[
+  \bm z_i=
+  \begin{pmatrix}x_{i1}-4\\x_{i2}-3\end{pmatrix},
+  \qquad w_i=y_i-10,
+\]
+so that \(\sum_i\bm z_i=\bm0\) and \(\sum_iw_i=0\). The given cross-products are
+\[
+  G=\sum_{i=1}^{10}\bm z_i\bm z_i^\trans
+   =\begin{pmatrix}20&10\\10&20\end{pmatrix},
+  \qquad
+  \bm g=\sum_{i=1}^{10}\bm z_iw_i
+   =\begin{pmatrix}20\\-5\end{pmatrix}.
+\]
+
+\subsection{Part (a): Centered normal equations and estimates}
+
+Write \(z_{i1}=x_{i1}-4\) and \(z_{i2}=x_{i2}-3\), so that
+\(\bm z_i=(z_{i1},z_{i2})^\trans\). The centered intercept specified by the
+exam is
+\[
+  \alpha=\beta_0+4\beta_1+3\beta_2.
+\]
+Hence
+\[
+\beta_0+\beta_1x_{i1}+\beta_2x_{i2}
+=\alpha+\beta_1z_{i1}+\beta_2z_{i2}.
+\]
+Because \(y_i=\bar y+w_i\), the least-squares criterion becomes
+\begin{align*}
+L(\alpha,\beta_1,\beta_2)
+ &=\sum_{i=1}^{10}
+ \left[y_i-\{\alpha+\beta_1z_{i1}+\beta_2z_{i2}\}\right]^2\\
+ &=\sum_{i=1}^{10}
+ \left[w_i-\beta_1z_{i1}-\beta_2z_{i2}-(\alpha-\bar y)\right]^2.
+\end{align*}
+Differentiating with respect to \(\alpha\), and using
+\(\sum_iw_i=\sum_i z_{i1}=\sum_i z_{i2}=0\),
+\[
+ \frac{\partial L}{\partial\alpha}
+ =-2\sum_{i=1}^{10}
+ \left[w_i-\beta_1z_{i1}-\beta_2z_{i2}-(\alpha-\bar y)\right]
+ =20(\alpha-\bar y).
+\]
+Thus \(\hat\alpha=\bar y=10\). At this value,
+\[
+ L(10,\beta_1,\beta_2)
+ =\sum_{i=1}^{10}(w_i-\beta_1z_{i1}-\beta_2z_{i2})^2.
+\]
+For \(j=1,2\), the slope normal equations are
+\[
+\frac{\partial L}{\partial\beta_j}
+=-2\sum_{i=1}^{10}z_{ij}
+ (w_i-\beta_1z_{i1}-\beta_2z_{i2})=0.
+\]
+Stacking these two equations gives
+\[
+\begin{pmatrix}
+\sum_i z_{i1}^2&\sum_i z_{i1}z_{i2}\\
+\sum_i z_{i1}z_{i2}&\sum_i z_{i2}^2
+\end{pmatrix}
+\begin{pmatrix}\hat\beta_1\\\hat\beta_2\end{pmatrix}
+=
+\begin{pmatrix}\sum_i z_{i1}w_i\\\sum_i z_{i2}w_i\end{pmatrix},
+\]
+which, using the notation supplied by the exam, is
+\[
+  \answer{G
+  \begin{pmatrix}\hat\beta_1\\\hat\beta_2\end{pmatrix}=\bm g}.
+\]
+Now
+\[
+G^{-1}
+=\frac{1}{20(20)-10(10)}
+  \begin{pmatrix}20&-10\\-10&20\end{pmatrix}
+=\begin{pmatrix}
+1/15&-1/30\\
+-1/30&1/15
+\end{pmatrix}.
+\]
+Therefore,
+\[
+\begin{pmatrix}\hat\beta_1\\\hat\beta_2\end{pmatrix}
+=G^{-1}\bm g
+=\begin{pmatrix}
+1/15&-1/30\\
+-1/30&1/15
+\end{pmatrix}
+\begin{pmatrix}20\\-5\end{pmatrix}
+=\begin{pmatrix}3/2\\-1\end{pmatrix}.
+\]
+Finally,
+\[
+\hat\beta_0
+=\hat\alpha-4\hat\beta_1-3\hat\beta_2
+=10-4(3/2)-3(-1)=7.
+\]
+
+\begin{resultbox}
+\[
+  \answer{\hat y=7+1.5x_1-x_2}.
+\]
+\end{resultbox}
+
+\subsection{Part (b): Regression sums of squares and variance estimate}
+
+In centered regression, the explained sum of squares is
+\[
+ \SSR=\begin{pmatrix}\hat\beta_1&\hat\beta_2\end{pmatrix}\bm g
+ =\begin{pmatrix}3/2&-1\end{pmatrix}
+  \begin{pmatrix}20\\-5\end{pmatrix}
+ =30+5=35.
+\]
+Since \(\mathrm{SST}=40\),
+\[
+ \SSE=\mathrm{SST}-\SSR=40-35=5.
+\]
+Thus
+\[
+ R^2=\frac{\SSR}{\mathrm{SST}}=\frac{35}{40}
+ =\answer{0.875}.
+\]
+There are \(p=2\) predictors and \(p+1=3\) fitted coefficients, so the residual
+degrees of freedom are \(df_E=n-p-1=10-2-1=7\). Hence
+\begin{align*}
+R_{\mathrm{adj}}^2
+ &=1-\frac{\SSE/(n-p-1)}{\mathrm{SST}/(n-1)}
+ =1-\frac{5/7}{40/9}
+ =\frac{47}{56}
+ =\answer{0.839286},\\
+\hat\sigma^2=\mathrm{MSE}
+&=\frac{\SSE}{n-p-1}=\answer{\frac57=0.714286},
+\qquad
+\hat\sigma=\sqrt{\frac57}=\answer{0.845154}.
+\end{align*}
+
+\subsection{Part (c): Covariance under centering and transformation}
+
+Let \(Z\) be the \(10\times2\) matrix whose \(i\)-th row is
+\(\bm z_i^\trans\), and let the centered design matrix be
+\[
+ W=\begin{pmatrix}\bm1&Z\end{pmatrix}.
+\]
+Because every column of \(Z\) is centered,
+\(\bm1^\trans Z=\bm0^\trans\), while \(Z^\trans Z=G\). Therefore
+\[
+ W^\trans W
+ =\begin{pmatrix}
+ \bm1^\trans\bm1&\bm1^\trans Z\\
+ Z^\trans\bm1&Z^\trans Z
+ \end{pmatrix}
+ =\begin{pmatrix}10&\bm0^\trans\\\bm0&G\end{pmatrix}.
+\]
+For \(\bm\theta=(\alpha,\beta_1,\beta_2)^\trans\), the OLS covariance is
+\[
+\Var(\hat{\bm\theta})
+=\sigma^2(W^\trans W)^{-1}
+=\sigma^2
+\begin{pmatrix}
+1/10&\bm0^\trans\\
+\bm0&G^{-1}
+\end{pmatrix}.
+\]
+Replacing \(\sigma^2\) by \(5/7\) gives the estimated version requested in
+the question.
+
+To return to the original parameterization, use
+\[
+\begin{pmatrix}\beta_0\\\beta_1\\\beta_2\end{pmatrix}
+=A\begin{pmatrix}\alpha\\\beta_1\\\beta_2\end{pmatrix},
+\qquad
+A=
+\begin{pmatrix}
+1&-4&-3\\
+0&1&0\\
+0&0&1
+\end{pmatrix}.
+\]
+Thus
+\begin{align*}
+\widehat{\Var}(\hat{\bm\beta})
+&=\hat\sigma^2 A
+\begin{pmatrix}
+1/10&0&0\\
+0&1/15&-1/30\\
+0&-1/30&1/15
+\end{pmatrix}A^\trans\\
+&=\frac57
+\begin{pmatrix}
+29/30&-1/6&-1/15\\
+-1/6&1/15&-1/30\\
+-1/15&-1/30&1/15
+\end{pmatrix}\\
+&=\answer{
+\begin{pmatrix}
+29/42&-5/42&-1/21\\
+-5/42&1/21&-1/42\\
+-1/21&-1/42&1/21
+\end{pmatrix}}.
+\end{align*}
+In decimal form, this is
+\[
+\begin{pmatrix}
+0.690476&-0.119048&-0.047619\\
+-0.119048&0.047619&-0.023810\\
+-0.047619&-0.023810&0.047619
+\end{pmatrix}.
+\]
+Notice why centering is useful: \(\hat\alpha\) is uncorrelated with both
+slope estimators, even though \(\hat\beta_0\) generally is not.
+
+\subsection{Part (d): Testing \(H_0:\beta_2=0\)}
+
+\subsubsection{Coefficient \(t\) test}
+
+From the \((3,3)\) entry of the covariance matrix,
+\[
+\SE(\hat\beta_2)
+=\sqrt{\hat\sigma^2(G^{-1})_{22}}
+=\sqrt{\frac57\cdot\frac1{15}}
+=\sqrt{\frac1{21}}.
+\]
+Therefore,
+\[
+t=\frac{\hat\beta_2-0}{\SE(\hat\beta_2)}
+=\frac{-1}{\sqrt{1/21}}
+=-\sqrt{21}
+=\answer{-4.582576},
+\qquad df=7.
+\]
+The two-sided \(p\)-value is
+\[
+ 2P(T_7\geq |t|)=\answer{0.002536}.
+\]
+
+\subsubsection{Nested-model \(F\) test}
+
+The reduced model has \(\RSS_{\mathrm{red}}=20\), while the full model has
+\(\RSS_{\mathrm{full}}=\SSE=5\). There is \(q=1\) restriction, so
+\[
+F
+=\frac{(\RSS_{\mathrm{red}}-\RSS_{\mathrm{full}})/q}
+       {\RSS_{\mathrm{full}}/(n-p-1)}
+=\frac{(20-5)/1}{5/7}
+=\answer{21},
+\qquad (df_1,df_2)=(1,7).
+\]
+Also,
+\[
+ t^2=(-\sqrt{21})^2=21=F.
+\]
+Both methods therefore give the same \(p\)-value and the same decision:
+\[
+\answer{\text{Reject \(H_0\) at the 5\% level.}}
+\]
+After controlling for \(x_1\), the data provide strong evidence that the
+coefficient of \(x_2\) is nonzero (and its fitted sign is negative).
+
+\subsection{Part (e): Mean-response and prediction intervals at \(x_0=(1,5,2)^\trans\)}
+
+The centered predictor vector is
+\[
+\bm z_0=
+\begin{pmatrix}5-4\\2-3\end{pmatrix}
+=\begin{pmatrix}1\\-1\end{pmatrix}.
+\]
+The fitted response is
+\[
+\hat y_0=7+1.5(5)-1(2)=\answer{12.5}.
+\]
+The leverage is
+\begin{align*}
+h_0
+&=\frac1{10}+\bm z_0^\trans G^{-1}\bm z_0\\
+&=\frac1{10}
++\begin{pmatrix}1&-1\end{pmatrix}
+\begin{pmatrix}1/15&-1/30\\-1/30&1/15\end{pmatrix}
+\begin{pmatrix}1\\-1\end{pmatrix}\\
+&=\frac1{10}+\frac15=\answer{\frac3{10}}.
+\end{align*}
+
+For the conditional mean, the standard error is
+\[
+\hat\sigma\sqrt{h_0}
+=\sqrt{\frac57\cdot\frac3{10}}
+=\sqrt{\frac3{14}}
+=0.462910.
+\]
+Using \(t_{0.975,7}=2.365\),
+\[
+12.5\pm2.365(0.462910)
+=12.5\pm1.094608,
+\]
+so the 95\% confidence interval for \(\E(Y\mid x_0)\) is
+\[
+\answer{(11.4054,\ 13.5946)}.
+\]
+
+For a new response, the standard error includes the new error term:
+\[
+\hat\sigma\sqrt{1+h_0}
+=\sqrt{\frac57\left(1+\frac3{10}\right)}
+=\sqrt{\frac{13}{14}}
+=0.963624.
+\]
+Thus the 95\% prediction interval is
+\[
+12.5\pm2.365(0.963624)
+=12.5\pm2.278609
+=\answer{(10.2214,\ 14.7786)}.
+\]
+The prediction interval is wider because it accounts for both uncertainty
+in the estimated mean and irreducible variation in a future response.
+
+\begin{checkbox}
+\begin{enumerate}
+\item In \texttt{MENU \(\to\) Matrix}, define
+\[
+\mathrm{MatA}=\begin{pmatrix}20&10\\10&20\end{pmatrix},
+\qquad
+\mathrm{MatB}=\begin{pmatrix}20\\-5\end{pmatrix}.
+\]
+Evaluate \(\mathrm{MatA}^{-1}\mathrm{MatB}\). The display should be
+\((1.5,-1)^\trans\).
+\item In ordinary Calculate mode, enter
+\(\sqrt{(5\div7)(1\div15)}\). The display should be \(0.2182179\);
+then \(-1\div\text{Ans}\) gives \(-4.582576\).
+\item Enter \((20-5)\div(5\div7)\). The display should be \(21\), confirming
+\(F=t^2\).
+\item For part (e), enter
+\(12.5\pm2.365\sqrt{(5\div7)(3\div10)}\), then replace \(3\div10\)
+inside the square root by \(1+3\div10\). This reproduces the CI and PI
+endpoints above.
+\end{enumerate}
+\end{checkbox}
+
+\clearpage
+\section{Problem 2: Transformation and back-transformation}
+
+The response model is
+\[
+Y=\alpha\exp(\beta X)\exp(\varepsilon),
+\qquad \varepsilon\sim N(0,\sigma^2),\quad \alpha>0.
+\]
+
+\subsection{Part (a): Linearization, estimation, and interpretation}
+
+Taking natural logarithms and writing \(V=\log Y\) gives
+\[
+V=\log\alpha+\beta X+\varepsilon=a+\beta X+\varepsilon,
+\qquad a=\log\alpha.
+\]
+Thus \(a\) is exactly the log-scale intercept denoted by \(\beta_0\) in the
+Chapter 2 semi-log model; the symbol \(a\) is retained here because it is the
+notation specified by the exam. This is an ordinary simple linear regression
+on the log-response scale.
+The least-squares slope is
+\[
+\hat\beta=\frac{S_{xv}}{S_{xx}}
+=\frac{35/4}{35/2}=\answer{\frac12}.
+\]
+The intercept is
+\[
+\hat a=\bar v-\hat\beta\bar x
+=\frac94-\frac12\left(\frac52\right)
+=\frac94-\frac54=\answer{1}.
+\]
+Therefore,
+\[
+\hat\alpha=\exp(\hat a)=\answer{e=2.718282}.
+\]
+
+Holding all else fixed, increasing \(X\) by one changes the fitted median from
+\(\exp(\hat a+\hat\beta x)\) to
+\(\exp(\hat a+\hat\beta(x+1))\). Their ratio is
+\[
+\exp(\hat\beta)=e^{1/2}=\answer{1.648721}.
+\]
+Thus each one-unit increase in \(X\) multiplies the conditional median of
+\(Y\) by about \(1.6487\), corresponding to an estimated \(64.87\%\) increase.
+
+\subsection{Part (b): Error variance and confidence interval for the effect}
+
+There are \(n-2=4\) residual degrees of freedom. Hence
+\[
+\hat\sigma^2=\mathrm{MSE}_{\log}=\frac{\SSE_{\log}}{n-2}
+=\frac{0.10}{4}=\answer{0.025},
+\qquad
+\hat\sigma=\sqrt{0.025}=0.158114.
+\]
+The slope standard error is
+\[
+\se(\hat\beta)
+=\sqrt{\frac{\hat\sigma^2}{S_{xx}}}
+=\sqrt{\frac{0.025}{35/2}}
+=\sqrt{\frac1{700}}
+=\answer{0.037796}.
+\]
+Using \(t_{0.975,4}=2.776\),
+\begin{align*}
+\hat\beta\pm t_{0.975,4}\se(\hat\beta)
+&=0.5\pm2.776(0.037796)\\
+&=0.5\pm0.104923.
+\end{align*}
+Thus the 95\% confidence interval for \(\beta\) is
+\[
+\answer{(0.395077,\ 0.604923)}.
+\]
+Since the exponential function is strictly increasing, exponentiating the
+two endpoints gives the 95\% interval for the one-unit multiplicative effect:
+\[
+\answer{(e^{0.395077},e^{0.604923})
+=(1.484499,\ 1.831111)}.
+\]
+In words, a one-unit increase in \(X\) is associated with a multiplication
+of the conditional median by between about \(1.48\) and \(1.83\).
+
+\subsection{Part (c): Conditional median and lognormal mean correction}
+
+At \(x_0=6\),
+\[
+\hat v_0=\hat a+\hat\beta x_0=1+\frac12(6)=4.
+\]
+Because a normal error has median zero, the fitted conditional median is
+\[
+\widehat{\operatorname{Med}}(Y\mid X=6)
+=\exp(\hat v_0)=\answer{e^4=54.598150}.
+\]
+The stated lognormal mean correction gives
+\[
+\widehat{\E}(Y\mid X=6)
+=\exp\left(\hat v_0+\frac{\hat\sigma^2}{2}\right)
+=\exp\left(4+\frac{0.025}{2}\right)
+=\answer{e^{4.0125}=55.284913}.
+\]
+They differ because, although \(\operatorname{Med}(e^\varepsilon)=1\),
+\[
+\E(e^\varepsilon)=e^{\sigma^2/2}>1.
+\]
+Exponentiation makes the response distribution right-skewed; large positive
+errors increase the mean more than equally sized negative errors decrease it.
+The mean is therefore larger than the median.
+
+\subsection{Part (d): Prediction interval at \(x_0=6\)}
+
+The leverage for predicting on the log scale is
+\begin{align*}
+h_0
+&=\frac16+\frac{(x_0-\bar x)^2}{S_{xx}}\\
+&=\frac16+\frac{(6-5/2)^2}{35/2}
+=\frac16+\frac{(7/2)^2}{35/2}\\
+&=\frac16+\frac7{10}
+=\answer{\frac{13}{15}=0.866667}.
+\end{align*}
+The prediction standard error on the log scale is
+\[
+\hat\sigma\sqrt{1+h_0}
+=\sqrt{0.025\left(1+\frac{13}{15}\right)}
+=\sqrt{\frac7{150}}
+=0.216025.
+\]
+Thus
+\[
+\hat v_0\pm t_{0.975,4}\hat\sigma\sqrt{1+h_0}
+=4\pm2.776(0.216025)
+=4\pm0.599685.
+\]
+The 95\% prediction interval for \(V_0=\log Y_0\) is
+\[
+\answer{(3.400315,\ 4.599685)}.
+\]
+Exponentiating both endpoints,
+\[
+\answer{(e^{3.400315},e^{4.599685})
+=(29.973550,\ 99.452943)}
+\]
+is the 95\% prediction interval for a future response \(Y_0\). It is
+asymmetric about \(54.598\) on the original scale, as expected after
+exponentiation.
+
+\begin{checkbox}
+\begin{enumerate}
+\item In Calculate mode, enter
+\((35\div4)\div(35\div2)\); the display should be \(0.5\).
+Then enter \(9\div4-0.5(5\div2)\); the display should be \(1\).
+\item Enter
+\(\sqrt{0.025\div(35\div2)}\); the display should be \(0.03779645\).
+The two expressions
+\(0.5-2.776\,\text{Ans}\) and \(0.5+2.776\,\text{Ans}\)
+give the slope interval endpoints.
+\item Use the \(e^x\) function on those endpoints to obtain
+\(1.484499\) and \(1.831111\).
+\item Enter \(e^4\) and \(e^{4+0.025/2}\) to obtain \(54.59815\) and
+\(55.28491\). For the prediction interval, evaluate
+\(e^{\,4\pm2.776\sqrt{0.025(1+13/15)}}\).
+\end{enumerate}
+\end{checkbox}
+
+\clearpage
+\section{Problem 3: Logistic regression evaluation}
+
+The fitted logit is
+\[
+\log\left(\frac{\hat p(\bm x)}{1-\hat p(\bm x)}\right)
+=-5+0.07x_1+1.10x_2-1.30x_3.
+\]
+In the notation of Chapter 4,
+\(\pi(\bm X)=P(Y=1\mid\bm X)\), so
+\(\hat p(\bm x)=\hat\pi(\bm x)\). The exam's cutoff \(c\) is the same
+classification threshold denoted by \(\tau\) in the notes.
+
+Following Chapter 4 directly, the fitted probability is obtained by applying
+its logistic function to the fitted log-odds:
+\[
+\hat p(\bm x)
+=\frac{1}{1+\exp\!\left[-\{-5+0.07x_1+1.10x_2-1.30x_3\}\right]}.
+\]
+
+\subsection{Part (a): Conditional odds-ratio interpretations}
+
+Each interpretation holds with the other predictors fixed.
+\begin{itemize}
+\item A one-unit increase in temperature \(x_1\) multiplies the alarm odds by
+\[
+e^{0.07}=\answer{1.072508},
+\]
+an increase of approximately \(7.25\%\).
+\item A one-unit increase in vibration \(x_2\) multiplies the alarm odds by
+\[
+e^{1.10}=\answer{3.004166},
+\]
+so the odds are approximately tripled.
+\item Changing from no preventive maintenance (\(x_3=0\)) to preventive
+maintenance (\(x_3=1\)) multiplies the alarm odds by
+\[
+e^{-1.30}=\answer{0.272532}.
+\]
+Thus preventive maintenance is associated with a \(1-0.272532=72.75\%\)
+reduction in the conditional odds of an alarm. Equivalently, the odds without
+maintenance are \(e^{1.30}=3.6693\) times those with maintenance.
+\end{itemize}
+
+\subsection{Part (b): Probabilities and classification at threshold \(0.5\)}
+
+For \(A=(50,1,1)\),
+\[
+\log\left(\frac{\hat p_A}{1-\hat p_A}\right)
+=-5+0.07(50)+1.10(1)-1.30(1)=-1.70,
+\]
+and therefore
+\[
+\hat p_A=\frac1{1+e^{1.70}}=\answer{0.154465}.
+\]
+Since \(\hat p_A<0.5\), the fitted class is \(\answer{0}\).
+
+For \(B=(65,2,0)\),
+\[
+\log\left(\frac{\hat p_B}{1-\hat p_B}\right)
+=-5+0.07(65)+1.10(2)-1.30(0)=1.75,
+\]
+so
+\[
+\hat p_B=\frac1{1+e^{-1.75}}=\answer{0.851953}.
+\]
+Since \(\hat p_B\geq0.5\), the fitted class is \(\answer{1}\).
+
+\subsection{Part (c): Confusion matrices and metrics}
+
+The metric definitions are
+\[
+\begin{aligned}
+\text{accuracy}&=\frac{TP+TN}{TP+FP+TN+FN},&
+\text{precision}&=\frac{TP}{TP+FP},\\
+\text{recall}&=\frac{TP}{TP+FN},&
+\text{specificity}&=\frac{TN}{TN+FP},\\
+F_1&=\frac{2(\text{precision})(\text{recall})}
+{\text{precision}+\text{recall}}
+=\frac{2TP}{2TP+FP+FN}.
+\end{aligned}
+\]
+
+\subsubsection{Threshold \(c=0.50\)}
+
+The predicted labels are
+\[
+(\hat Y_1,\ldots,\hat Y_8)=(1,1,1,1,0,0,0,0).
+\]
+Comparing these to \((1,0,1,0,1,0,1,0)\) gives
+\[
+TP=2,\qquad FP=2,\qquad TN=2,\qquad FN=2.
+\]
+Hence
+\[
+\begin{aligned}
+\text{accuracy}&=\frac{2+2}{8}=0.50,&
+\text{precision}&=\frac{2}{2+2}=0.50,\\
+\text{recall}&=\frac{2}{2+2}=0.50,&
+\text{specificity}&=\frac{2}{2+2}=0.50,\\
+F_1&=\frac{2(2)}{2(2)+2+2}=\answer{0.50}.
+\end{aligned}
+\]
+
+\subsubsection{Threshold \(c=0.30\)}
+
+The predicted labels are
+\[
+(\hat Y_1,\ldots,\hat Y_8)=(1,1,1,1,1,1,0,0).
+\]
+Therefore,
+\[
+TP=3,\qquad FP=3,\qquad TN=1,\qquad FN=1.
+\]
+The metrics are
+\[
+\begin{aligned}
+\text{accuracy}&=\frac{3+1}{8}=\answer{0.50},&
+\text{precision}&=\frac{3}{3+3}=\answer{0.50},\\
+\text{recall}&=\frac{3}{3+1}=\answer{0.75},&
+\text{specificity}&=\frac{1}{1+3}=\answer{0.25},\\
+F_1&=\frac{2(3)}{2(3)+3+1}=\answer{0.60}.
+\end{aligned}
+\]
+
+\begin{center}
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+\rowcolor{navy!10}
+\(c\)&\(TP\)&\(FP\)&\(TN\)&\(FN\)&Accuracy&Precision&Recall\\
+\midrule
+0.50&2&2&2&2&0.50&0.50&0.50\\
+0.30&3&3&1&1&0.50&0.50&0.75\\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\rowcolor{navy!10}
+\(c\)&Specificity&\(F_1\)\\
+\midrule
+0.50&0.50&0.50\\
+0.30&0.25&0.60\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Lowering the threshold finds one additional true alarm (recall rises), but it
+also creates one additional false alarm (specificity falls). Accuracy and
+precision happen to remain unchanged in this test set.
+
+\subsection{Part (d): Cost-sensitive threshold choice}
+
+Using \(L(c)=4FN(c)+FP(c)\),
+\[
+L(0.50)=4(2)+2=\answer{10},
+\qquad
+L(0.30)=4(1)+3=\answer{7}.
+\]
+Therefore,
+\[
+\answer{\text{Select \(c=0.30\).}}
+\]
+Although both thresholds have the same accuracy, the lower threshold avoids
+one costly false negative. Its one extra false positive costs only \(1\), so
+the total empirical cost decreases by \(3\).
+
+\begin{checkbox}
+In Calculate mode:
+\begin{enumerate}
+\item For case \(A\), enter
+\(-5+0.07(50)+1.10(1)-1.30(1)\); the display is \(-1.7\).
+Then enter \(1\div(1+e^{-\text{Ans}})\); the display is \(0.1544653\).
+\item Repeat with \(B\); the linear predictor is \(1.75\) and the probability
+is \(0.8519528\).
+\item For each threshold, write \(1\) beside every probability at least as
+large as \(c\), then tally the four cells. The two tallies should be
+\((TP,FP,TN,FN)=(2,2,2,2)\) and \((3,3,1,1)\).
+\item Enter \(4(2)+2\) and \(4(1)+3\); the displays \(10\) and \(7\) verify
+the cost comparison.
+\end{enumerate}
+\end{checkbox}
+
+\clearpage
+\section{Problem 4: Gauss--Markov theorem}
+
+Assume
+\[
+\bm Y=X\bm\beta+\bm\varepsilon,
+\qquad
+\E(\bm\varepsilon)=\bm0,
+\qquad
+\Var(\bm\varepsilon)=\sigma^2I_n,
+\]
+where \(X\in\R^{n\times p}\) is deterministic and
+\(\operatorname{rank}(X)=p\). Here \(p\) follows the notation of Problem 4:
+it is the number of columns of \(X\) and the dimension of \(\bm\beta\), not
+the predictor count convention used in Problem 1. No distributional assumption
+beyond these first two moments is needed.
+
+\subsection{Step 1: Error and covariance of OLS}
+
+Let
+\[
+A=(X^\trans X)^{-1}X^\trans,
+\qquad
+\hat{\bm\beta}=A\bm Y.
+\]
+Full column rank guarantees that \(X^\trans X\) is invertible, and
+\[
+AX=(X^\trans X)^{-1}X^\trans X=I_p.
+\]
+Substituting \(\bm Y=X\bm\beta+\bm\varepsilon\),
+\begin{align*}
+\hat{\bm\beta}
+&=(X^\trans X)^{-1}X^\trans(X\bm\beta+\bm\varepsilon)\\
+&=\bm\beta+(X^\trans X)^{-1}X^\trans\bm\varepsilon.
+\end{align*}
+Therefore,
+\[
+\answer{\hat{\bm\beta}-\bm\beta
+=(X^\trans X)^{-1}X^\trans\bm\varepsilon}.
+\]
+Its covariance is
+\begin{align*}
+\Var(\hat{\bm\beta})
+&=A\Var(\bm\varepsilon)A^\trans\\
+&=\sigma^2
+(X^\trans X)^{-1}X^\trans X(X^\trans X)^{-1}\\
+&=\answer{\sigma^2(X^\trans X)^{-1}}.
+\end{align*}
+
+\subsection{Step 2: What unbiasedness of a general linear estimator implies}
+
+Let \(\tilde{\bm\beta}=C\bm Y\), where \(C\in\R^{p\times n}\) is deterministic.
+Then
+\[
+\E(\tilde{\bm\beta})
+=C\E(\bm Y)
+=CX\bm\beta.
+\]
+Unbiasedness for every \(\bm\beta\in\R^p\) requires
+\[
+CX\bm\beta=\bm\beta
+\quad\text{for every }\bm\beta.
+\]
+Equivalently, \((CX-I_p)\bm\beta=\bm0\) for every \(\bm\beta\), which can
+hold only when
+\[
+\answer{CX=I_p}.
+\]
+
+\subsection{Step 3: Decomposition and vanishing cross terms}
+
+Define
+\[
+D=C-A=C-(X^\trans X)^{-1}X^\trans.
+\]
+Using \(CX=I_p\) and \(AX=I_p\),
+\[
+DX=CX-AX=I_p-I_p=\answer{0}.
+\]
+Since \(C=A+D\),
+\begin{align*}
+\Var(\tilde{\bm\beta})
+&=C\Var(\bm Y)C^\trans\\
+&=\sigma^2(A+D)(A+D)^\trans\\
+&=\sigma^2\left(AA^\trans+AD^\trans+DA^\trans+DD^\trans\right).
+\end{align*}
+The cross terms are zero. Indeed,
+\[
+AD^\trans=(X^\trans X)^{-1}X^\trans D^\trans
+=(X^\trans X)^{-1}(DX)^\trans=0,
+\]
+and, equivalently by transposition,
+\[
+DA^\trans=DX(X^\trans X)^{-1}=0.
+\]
+Moreover, \(\Var(\hat{\bm\beta})=\sigma^2AA^\trans\). Consequently,
+\[
+\answer{
+\Var(\tilde{\bm\beta})-\Var(\hat{\bm\beta})
+=\sigma^2DD^\trans}.
+\]
+For every \(\bm u\in\R^p\),
+\[
+\bm u^\trans(\sigma^2DD^\trans)\bm u
+=\sigma^2(D^\trans\bm u)^\trans(D^\trans\bm u)
+=\sigma^2\lVert D^\trans\bm u\rVert^2\geq0.
+\]
+Hence \(\sigma^2DD^\trans\) is positive semidefinite, proving
+\[
+\boxed{
+\Var(\tilde{\bm\beta})-\Var(\hat{\bm\beta})\succeq0}.
+\]
+
+\begin{resultbox}
+Among all linear estimators that are unbiased for every \(\bm\beta\), OLS has
+the smallest covariance matrix in the positive-semidefinite (Loewner) order.
+The proof used only linearity, unbiasedness, and
+\(\Var(\bm\varepsilon)=\sigma^2I_n\); it did not use Gaussian errors.
+\end{resultbox}
+
+\begin{checkbox}
+No numerical calculator step is needed for this proof. A useful dimension
+check is
+\[
+C,D,A\in\R^{p\times n},\quad X\in\R^{n\times p},\quad
+DX\in\R^{p\times p},\quad DD^\trans\in\R^{p\times p}.
+\]
+These dimensions confirm that every matrix product in the covariance
+decomposition is conformable.
+\end{checkbox}
+
+\clearpage
+\appendix
+\section{Formula reference aligned with Chapters 1--4}
+
+This appendix collects the formulas used in the solutions with the notation of
+the course notes. In the Chapter 1--3 regression formulas, \(n\) is the sample
+size and \(p\) is the number of predictors excluding the intercept. Problem 4
+retains the exam's separate convention \(X\in\mathbb R^{n\times p}\), where
+\(p=\dim(\bm\beta)\). Formulas explicitly supplied by the exam are labelled as
+such rather than attributed to the notes. To avoid the exam's reuse of
+\(\alpha\), the significance level is denoted by \(\alpha_{\mathrm{sig}}\).
+
+\subsection{Chapter 1: Multiple linear regression}
+
+\subsubsection*{Model, least squares, and estimation}
+\[
+\bm Y=X\bm\beta+\bm\varepsilon,
+\qquad
+\bm\varepsilon\sim N(\bm0,\sigma^2I_n),
+\qquad
+L(\bm\beta)=(\bm Y-X\bm\beta)^\trans(\bm Y-X\bm\beta).
+\]
+The normal equations and least-squares estimator are
+\[
+X^\trans X\hat{\bm\beta}=X^\trans\bm Y,
+\qquad
+\hat{\bm\beta}=(X^\trans X)^{-1}X^\trans\bm Y.
+\]
+With \(p\) predictors, the error degrees of freedom and variance estimate are
+\[
+df_E=n-p-1,
+\qquad
+\hat\sigma^2=\mathrm{MSE}
+=\frac{\mathrm{SSE}}{n-p-1},
+\qquad
+\mathrm{SSE}=\sum_{i=1}^n(y_i-\hat y_i)^2.
+\]
+
+\subsubsection*{Covariance and coefficient inference}
+\[
+\Var(\hat{\bm\beta})=\sigma^2(X^\trans X)^{-1},
+\qquad
+\SE(\hat\beta_j)
+=\sqrt{\mathrm{MSE}\,[(X^\trans X)^{-1}]_{jj}}.
+\]
+For \(H_0:\beta_j=\beta_{j,0}\),
+\[
+t=\frac{\hat\beta_j-\beta_{j,0}}{\SE(\hat\beta_j)},
+\qquad t\sim t_{n-p-1}\quad\text{under }H_0,
+\]
+and the \(100(1-\alpha_{\mathrm{sig}})\%\) confidence interval is
+\[
+\hat\beta_j\pm t_{1-\alpha_{\mathrm{sig}}/2,n-p-1}\SE(\hat\beta_j).
+\]
+
+\subsubsection*{Sums of squares and goodness of fit}
+\[
+\mathrm{SST}=\sum_i(y_i-\bar y)^2,
+\quad
+\mathrm{SSR}=\sum_i(\hat y_i-\bar y)^2,
+\quad
+\mathrm{SSE}=\sum_i(y_i-\hat y_i)^2,
+\quad
+\mathrm{SST}=\mathrm{SSR}+\mathrm{SSE}.
+\]
+\[
+R^2=\frac{\mathrm{SSR}}{\mathrm{SST}}
+=1-\frac{\mathrm{SSE}}{\mathrm{SST}},
+\qquad
+R_{\mathrm{adj}}^2
+=1-\frac{\mathrm{SSE}/(n-p-1)}{\mathrm{SST}/(n-1)}.
+\]
+
+\subsubsection*{Nested-model partial \(F\) test}
+If \(q=df_{E,\mathrm{red}}-df_{E,\mathrm{full}}\) restrictions separate the
+reduced and full models, then
+\[
+F=\frac{(\mathrm{SSE}_{\mathrm{red}}-
+                 \mathrm{SSE}_{\mathrm{full}})/q}
+        {\mathrm{MSE}_{\mathrm{full}}}
+\sim F_{q,df_{E,\mathrm{full}}}\quad\text{under }H_0.
+\]
+The exam writes these residual sums of squares as \(\mathrm{RSS}\). For one
+restriction, the coefficient test and nested-model test satisfy \(F=t^2\).
+
+\subsubsection*{Prediction formulas supplied by the exam}
+For a centered predictor vector \(\bm z_0\),
+\[
+h_0=\frac1n+\bm z_0^\trans G^{-1}\bm z_0.
+\]
+The mean-response confidence interval and new-response prediction interval are
+\[
+\hat y_0\pm t_{1-\alpha_{\mathrm{sig}}/2,n-p-1}\hat\sigma\sqrt{h_0},
+\qquad
+\hat y_0\pm t_{1-\alpha_{\mathrm{sig}}/2,n-p-1}\hat\sigma\sqrt{1+h_0}.
+\]
+
+\subsection{Chapter 2: Transformation of variables}
+
+For the semi-log model in Problem 2,
+\[
+Y=\alpha e^{\beta X}e^\varepsilon
+\quad\Longrightarrow\quad
+V=\log Y=a+\beta X+\varepsilon,
+\qquad a=\log\alpha.
+\]
+This is the Chapter 2 formula
+\(\log Y=\beta_0+\beta_1X\), with \(a\equiv\beta_0\) and
+\(\beta\equiv\beta_1\). The simple-regression estimators are
+\[
+\hat\beta=\frac{S_{xv}}{S_{xx}},
+\qquad
+\hat a=\bar v-\hat\beta\bar x,
+\qquad
+\hat\alpha=e^{\hat a}.
+\]
+A one-unit increase in \(X\) multiplies the conditional median of \(Y\) by
+\[
+e^{\hat\beta}.
+\]
+The slope standard error and interval are
+\[
+\se(\hat\beta)=\sqrt{\frac{\mathrm{MSE}_{\log}}{S_{xx}}},
+\qquad
+\hat\beta\pm t_{1-\alpha_{\mathrm{sig}}/2,n-2}\se(\hat\beta).
+\]
+Exponentiating the endpoints gives an interval for the multiplicative effect
+\(e^\beta\).
+
+For the lognormal model, the following back-transformations are supplied by
+the exam:
+\[
+\widehat{\operatorname{Med}}(Y\mid X=x_0)
+=e^{\hat a+\hat\beta x_0},
+\qquad
+\widehat{\E}(Y\mid X=x_0)
+=e^{\hat a+\hat\beta x_0+\hat\sigma^2/2}.
+\]
+For a future log-response,
+\[
+h_0=\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}},
+\qquad
+\hat v_0\pm t_{1-\alpha_{\mathrm{sig}}/2,n-2}\hat\sigma\sqrt{1+h_0}.
+\]
+Exponentiating both endpoints gives the prediction interval for \(Y_0\).
+
+\subsection{Chapter 3: Relevance to this retake}
+
+The retake does not ask for variable selection, cross-validation, ridge, or
+LASSO calculations. The Chapter 3 Wald statistic
+\[
+t=\frac{\hat\beta_j}{\SE(\hat\beta_j)}
+\]
+is the same coefficient statistic used in Problem 1(d). Because Problem 1 is
+an ordinary least-squares model with normally distributed errors, the exact
+finite-sample reference distribution is \(t_{n-p-1}\), as stated in Chapter 1.
+
+\subsection{Chapter 4: Logistic regression and classification}
+
+The notes define
+\[
+\pi(\bm X)=P(Y=1\mid\bm X),
+\qquad
+\logit\{\pi(\bm X)\}
+=\log\left(\frac{\pi(\bm X)}{1-\pi(\bm X)}\right)
+=\bm X^\trans\bm\beta,
+\]
+and therefore
+\[
+\pi(\bm X)=\frac{e^{\bm X^\trans\bm\beta}}
+{1+e^{\bm X^\trans\bm\beta}}
+=\frac1{1+e^{-\bm X^\trans\bm\beta}}.
+\]
+The conditional odds and one-unit odds ratio are
+\[
+\operatorname{Odds}(Y=1\mid\bm X)=\frac{\pi}{1-\pi},
+\qquad
+\mathrm{OR}_j=e^{\beta_j}.
+\]
+Using the notes' threshold \(\tau\) (called \(c\) in the exam),
+\[
+\hat Y=\bm1\{\hat\pi(\bm X)\geq\tau\}
+=\bm1\{\hat p(\bm x)\geq c\}.
+\]
+The classification metrics are
+\[
+\begin{aligned}
+\mathrm{Accuracy}&=\frac{TP+TN}{TP+TN+FP+FN},&
+\mathrm{Precision}&=\frac{TP}{TP+FP},\\
+\mathrm{Recall}=\mathrm{TPR}&=\frac{TP}{TP+FN},&
+\mathrm{Specificity}&=\frac{TN}{TN+FP}=1-\mathrm{FPR},\\
+F_1&=\frac{2(\mathrm{Precision})(\mathrm{Recall})}
+{\mathrm{Precision}+\mathrm{Recall}}
+=\frac{2TP}{2TP+FP+FN}.&&
+\end{aligned}
+\]
+The cost \(L(c)=4FN(c)+FP(c)\) is problem-specific and is supplied directly
+by the exam.
+
+\clearpage
+\subsection{Formula-source checklist}
+
+\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.12\textwidth}
+                  >{\raggedright\arraybackslash}p{0.46\textwidth}
+                  >{\raggedright\arraybackslash}p{0.31\textwidth}}
+\toprule
+\rowcolor{navy!10}\textbf{Exam part}&\textbf{Formula used}&\textbf{Course source}\\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{navy!10}\textbf{Exam part}&\textbf{Formula used}&\textbf{Course source}\\
+\midrule
+\endhead
+1(a)&Least-squares criterion, normal equations, and OLS estimator&Chapter 1 notes, p.~2; centered form derived in the solution\\
+1(b)&SST--SSR--SSE decomposition, \(R^2\), adjusted \(R^2\), and MSE&Chapter 1 notes, pp.~3--4\\
+1(c)&\(\Var(\hat{\bm\beta})=\sigma^2(X^\trans X)^{-1}\)&Chapter 1 notes, p.~4; reparameterization derived in the solution\\
+1(d)&Coefficient \(t\) test and partial \(F\) test&Chapter 1 notes, pp.~4--5\\
+1(e)&Mean-response CI and prediction interval&Formulas supplied by the exam\\
+2(a)&Semi-log linearization and \(e^{\beta}\) interpretation&Chapter 2 notes, p.~5\\
+2(b)&Regression MSE, slope SE, and \(t\) interval&Chapter 1 notes, pp.~3--4; quantities supplied by the exam\\
+2(c)--(d)&Lognormal mean correction and log-scale prediction interval&Formulas supplied by the exam; back-transformation principle in Chapter 2 notes, pp.~6--7\\
+3(a)--(b)&Logit, logistic probability, and odds ratios&Chapter 4 notes, pp.~1--3\\
+3(c)&Threshold rule, confusion matrix, and classification metrics&Chapter 4 notes, p.~6\\
+3(d)&Weighted empirical cost&Formula supplied by the exam\\
+4&OLS covariance and unbiasedness; Gauss--Markov covariance difference&Chapter 1 notes, pp.~2 and 4; proof derived in the solution\\
+\bottomrule
+\end{longtable}
+\normalsize
+\end{document}
