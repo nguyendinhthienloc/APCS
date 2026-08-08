@@ -1,0 +1,22 @@
+Practice Questions for Final Exam
+CS486 - Introduction to Databases
+
+1. Find the names of all courses that have at least one prerequisite, but none of their prerequisite courses have any prerequisites themselves.
+2. Identify all instructors who are teaching a course in the same semester and year as the department head of their own department.
+3. Find all students who have taken and passed at least one course from every department in the university.
+4. Find the department(s) with the highest average salary for their instructors.
+5. Identify the students who are currently enrolled in a course but have not yet passed any of its prerequisite courses.
+6. (CTE allowed) For each department, find the lecturer with the highest number of unique courses taught.
+7. Identify the table of influence and write at least one trigger to ensure the BR1: There are no two courses within the same department having the same name.
+8. Write a trigger to perform a cascading delete for a department.
+9. Create a stored procedure to do the following steps with the given <student_id> and <section_id>:
+   a) Read the current grade of the student <student_id> in the section <section_id>.
+   b) Delay for 10 seconds
+   c) Reread the grade of that student
+10. Create a stored procedure to delete a student grade given student_ID and section_ID.
+    Input: student_ID, section_ID
+    Output: Rollback if either student_ID or section_ID is non-exists. Otherwise, commit.
+11. Create a stored procedure to multiply a student grade by 1.1 given student_ID, section_ID (new_score = old_score * 1.1)
+    Input: student_ID, section_ID
+    Output: Commit if student_ID and section_ID exists. Otherwise, commit.
+12. Use transactions to ensure that the stored procedures work as required. What would happen if two of the three SPs or all the three SPs are executed at the same time? What type of concurrency could happen at each isolation level? How would you handle it?
