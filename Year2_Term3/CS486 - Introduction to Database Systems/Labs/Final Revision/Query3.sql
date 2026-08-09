@@ -1,4 +1,6 @@
 --3. Find all students who have taken and passed at least one course from every department in the university.
+USE University_DB
+GO
 SELECT s.student_id, s.student_name
 FROM Student AS s
 JOIN GradeReport AS g

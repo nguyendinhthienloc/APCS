@@ -8,6 +8,7 @@ CS486 - Introduction to Databases
 5. Identify the students who are currently enrolled in a course but have not yet passed any of its prerequisite courses.
 6. (CTE allowed) For each department, find the lecturer with the highest number of unique courses taught.
 7. Identify the table of influence and write at least one trigger to ensure the BR1: There are no two courses within the same department having the same name.
+
 8. Write a trigger to perform a cascading delete for a department.
 9. Create a stored procedure to do the following steps with the given <student_id> and <section_id>:
    a) Read the current grade of the student <student_id> in the section <section_id>.

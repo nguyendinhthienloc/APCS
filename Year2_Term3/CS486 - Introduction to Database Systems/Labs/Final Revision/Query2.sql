@@ -1,4 +1,6 @@
 -- 2. Identify all instructors who are teaching a course in the same semester and year as the department head of their own department.
+USE University_DB
+GO
 SELECT DISTINCT i.instructor_name
 FROM Instructor AS i
 JOIN Department AS d
