@@ -1,7 +1,7 @@
 USE University_DB
 GO
 -- 1. Find the names of all courses that have at least one prerequisite, but none of their prerequisite courses have any prerequisites themselves.
-SELECT c.course_name
+SELECT c.course_id, c.course_name
 FROM Course c  
 WHERE EXISTS (
     SELECT p1.prerequisite_id
@@ -14,4 +14,4 @@ AND NOT EXISTS (
     JOIN Prerequisite p2
         ON p1.prerequisite_id = p2.course_id
     WHERE c.course_id = p1.course_id
-);  
+)

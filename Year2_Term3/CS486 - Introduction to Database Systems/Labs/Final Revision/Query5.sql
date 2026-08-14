@@ -1,3 +1,4 @@
+-- 5. Identify the students who are currently enrolled in a course but have not yet passed any of its prerequisite courses.
 USE University_DB;
 GO
 
@@ -6,6 +7,7 @@ SELECT DISTINCT
     s.student_name,
     c.course_id,
     c.course_name
+
 FROM Student AS s
 JOIN GradeReport AS g
     ON g.student_id = s.student_id
@@ -13,6 +15,7 @@ JOIN Section AS sec
     ON sec.section_id = g.section_id
 JOIN Course AS c
     ON c.course_id = sec.course_id
+
 WHERE g.grade_100 IS NULL
   AND EXISTS (
       SELECT 1
