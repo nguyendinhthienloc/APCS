@@ -15,3 +15,6 @@ AND NOT EXISTS (
         ON p1.prerequisite_id = p2.course_id
     WHERE c.course_id = p1.course_id
 )
+
+
+

@@ -277,8 +277,7 @@ CONCURRENCY PHENOMENA AT EACH ISOLATION LEVEL
 6. READ_COMMITTED_SNAPSHOT (RCSI)
    - Is not the same as transaction-level SNAPSHOT.
    - Each statement normally receives its own committed snapshot, so two
-     SELECT statements may still differ if another transaction commits between
-     them.
+     SELECT statements may still differ if another transaction commits between them.
 */
 
 /*

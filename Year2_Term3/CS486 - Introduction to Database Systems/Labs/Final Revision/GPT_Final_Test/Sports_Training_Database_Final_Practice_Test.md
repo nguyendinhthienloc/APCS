@@ -143,11 +143,23 @@ erDiagram
 
     Your discussion should consider dirty reads, non-repeatable reads, phantom reads, blocking, deadlocks, and competing `DELETE`/`UPDATE` operations where relevant.
 
+### Additional query practice
+
+13. For each club, find the training program or programs with the greatest number of distinct athletes who have passed the program. Include ties and display the club, program, and number of athletes who passed.
+
+14. Find all athletes who have passed every prerequisite of at least one training program but have never enrolled in any session of that program. Return the athlete and the qualifying program.
+
+15. Find all coaches who have coached at least one session of every training program offered by their own club.
+
+16. Find all training sessions whose number of enrolled athletes exceeds the session capacity. Display the session, program name, capacity, enrollment count, and the amount by which the capacity is exceeded.
+
+17. Find pairs of different athletes from the same club who have enrolled in exactly the same set of distinct training programs. Display each pair only once.
+
 ---
 
 ## Suggested examination conditions
 
-- Questions 1–6: Write `SELECT` queries only, except where a CTE is explicitly allowed.
+- Questions 1–6 and 13–17: Write `SELECT` queries only, except where a CTE is explicitly allowed.
 - Questions 7–8: Clearly state which tables are directly or indirectly affected before writing each trigger.
 - Questions 9–11: Use SQL Server stored-procedure syntax and explicit transactions where required.
 - Question 12: Explain both the possible execution sequence and the resulting database state.

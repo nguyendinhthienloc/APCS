@@ -9,6 +9,7 @@ WITH LecturerCourseCounts AS (
         i.instructor_id,
         i.instructor_name,
         COUNT(DISTINCT sec.course_id) AS course_count
+    
     FROM Department AS d
     JOIN Instructor AS i
         ON i.department_id = d.department_id
@@ -16,6 +17,7 @@ WITH LecturerCourseCounts AS (
         ON t.instructor_id = i.instructor_id
     JOIN Section AS sec
         ON sec.section_id = t.section_id
+
     WHERE t.teaching_role = 'Lecturer'
     GROUP BY
         d.department_id,
