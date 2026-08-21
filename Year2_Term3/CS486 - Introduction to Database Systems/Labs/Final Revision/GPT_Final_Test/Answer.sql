@@ -147,24 +147,24 @@ WITH ProgramCounts AS
         coach.coach_id,
         coach.coach_name
 ),
-RankedCoaches AS
+MaximumCounts AS
 (
-    SELECT *,
-        RANK() OVER
-        (
-            PARTITION BY club_id
-            ORDER BY program_count DESC
-        ) AS coach_rank
+    SELECT
+        club_id,
+        MAX(program_count) AS maximum_program_count
     FROM ProgramCounts
+    GROUP BY club_id
 )
 SELECT
-    club_id,
-    club_name,
-    coach_id,
-    coach_name,
-    program_count
-FROM RankedCoaches
-WHERE coach_rank = 1;
+    counts.club_id,
+    counts.club_name,
+    counts.coach_id,
+    counts.coach_name,
+    counts.program_count
+FROM ProgramCounts AS counts
+JOIN MaximumCounts AS maximums
+    ON maximums.club_id = counts.club_id
+   AND maximums.maximum_program_count = counts.program_count;
 GO
 
 /* ================================================================
@@ -303,33 +303,26 @@ GO
    9. Read a score twice with a ten-second delay
    ================================================================ */
 
-CREATE OR ALTER PROCEDURE dbo.Read_Score_Twice
+CREATE OR ALTER PROCEDURE Read_Score_Twice
     @athlete_id VARCHAR(10),
     @session_id INT
 AS
 BEGIN
-    BEGIN TRY
-        BEGIN TRANSACTION;
+    BEGIN TRANSACTION;
 
-        SELECT score_100
-        FROM dbo.PERFORMANCE
-        WHERE athlete_id = @athlete_id
-          AND session_id = @session_id;
+    SELECT score_100
+    FROM PERFORMANCE
+    WHERE athlete_id = @athlete_id
+      AND session_id = @session_id;
 
-        WAITFOR DELAY '00:00:10';
+    WAITFOR DELAY '00:00:10';
 
-        SELECT score_100
-        FROM dbo.PERFORMANCE
-        WHERE athlete_id = @athlete_id
-          AND session_id = @session_id;
+    SELECT score_100
+    FROM PERFORMANCE
+    WHERE athlete_id = @athlete_id
+      AND session_id = @session_id;
 
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        IF @@TRANCOUNT > 0
-            ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH;
+    COMMIT TRANSACTION;
 END;
 GO
 
@@ -337,42 +330,35 @@ GO
    10. Delete an athlete's performance record
    ================================================================ */
 
-CREATE OR ALTER PROCEDURE dbo.delete_performance
+CREATE OR ALTER PROCEDURE delete_performance
     @athlete_id VARCHAR(10),
     @session_id INT
 AS
 BEGIN
-    BEGIN TRY
-        BEGIN TRANSACTION;
+    BEGIN TRANSACTION;
 
-        IF NOT EXISTS
-        (
-            SELECT 1
-            FROM dbo.ATHLETE
-            WHERE athlete_id = @athlete_id
-        )
-        OR NOT EXISTS
-        (
-            SELECT 1
-            FROM dbo.TRAINING_SESSION
-            WHERE session_id = @session_id
-        )
-        BEGIN
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END;
-
-        DELETE FROM dbo.PERFORMANCE
+    IF NOT EXISTS
+    (
+        SELECT 1
+        FROM ATHLETE
         WHERE athlete_id = @athlete_id
-          AND session_id = @session_id;
+    )
+    OR NOT EXISTS
+    (
+        SELECT 1
+        FROM TRAINING_SESSION
+        WHERE session_id = @session_id
+    )
+    BEGIN
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END;
 
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        IF @@TRANCOUNT > 0
-            ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH;
+    DELETE FROM PERFORMANCE
+    WHERE athlete_id = @athlete_id
+      AND session_id = @session_id;
+
+    COMMIT TRANSACTION;
 END;
 GO
 
@@ -380,76 +366,115 @@ GO
    11. Multiply an athlete's score by 1.1
    ================================================================ */
 
-CREATE OR ALTER PROCEDURE dbo.multiply_athlete_score
+CREATE OR ALTER PROCEDURE multiply_athlete_score
     @athlete_id VARCHAR(10),
     @session_id INT
 AS
 BEGIN
-    BEGIN TRY
-        BEGIN TRANSACTION;
+    BEGIN TRANSACTION;
 
-        IF EXISTS
-        (
-            SELECT 1
-            FROM dbo.ATHLETE
-            WHERE athlete_id = @athlete_id
-        )
-        AND EXISTS
-        (
-            SELECT 1
-            FROM dbo.TRAINING_SESSION
-            WHERE session_id = @session_id
-        )
-        BEGIN
-            UPDATE dbo.PERFORMANCE
-            SET score_100 = score_100 * 1.1
-            WHERE athlete_id = @athlete_id
-              AND session_id = @session_id;
-        END;
+    IF EXISTS
+    (
+        SELECT 1
+        FROM ATHLETE
+        WHERE athlete_id = @athlete_id
+    )
+    AND EXISTS
+    (
+        SELECT 1
+        FROM TRAINING_SESSION
+        WHERE session_id = @session_id
+    )
+    BEGIN
+        UPDATE PERFORMANCE
+        SET score_100 = score_100 * 1.1
+        WHERE athlete_id = @athlete_id
+          AND session_id = @session_id;
+    END;
 
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        IF @@TRANCOUNT > 0
-            ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH;
+    COMMIT TRANSACTION;
 END;
 GO
 
 /* ================================================================
-   12. Concurrency analysis
+   12. Concurrency analysis: problems without additional controls
+
+   Starting point
+     The procedures use transactions, so each individual procedure is atomic.
+     However, they do not choose an explicit isolation level, lock the target
+     row in advance, define whether DELETE or UPDATE should win, or retry
+     deadlocks/snapshot conflicts. SQL Server therefore uses the session's
+     isolation level; normally this is READ COMMITTED. This is intentional so
+     the caller can test the same procedures under each isolation level.
+
+   Problems at the default READ COMMITTED level
+
+   Procedure 9 with Procedure 11:
+     P9 reads the old score, P11 updates and commits during the delay, and P9
+     reads the new score. This is a non-repeatable read.
+
+   Procedure 9 with Procedure 10:
+     P9 reads the row, P10 deletes and commits during the delay, and P9's
+     second SELECT returns no row. This is another non-repeatable read.
+
+   Procedure 10 with Procedure 11:
+     DELETE and UPDATE both require an exclusive lock, so they cannot modify
+     the row simultaneously. One blocks and the order is unpredictable. If
+     UPDATE commits first, DELETE later removes the updated row. If DELETE
+     commits first, UPDATE later affects zero rows. The final row is deleted,
+     but the update may be wasted.
+
+   Two executions of Procedure 11:
+     The UPDATE statements serialize and normally multiply the score twice.
+     There is no lost update because score_100 = score_100 * 1.1 is one atomic
+     UPDATE expression, although applying the adjustment twice may violate the
+     intended business rule.
+
+   All three procedures:
+     P9 may see the old score, the updated score, or no row depending on the
+     order. If P10 commits, the final state is no PERFORMANCE row.
+
+   Isolation-level comparison
 
    READ UNCOMMITTED
-     Dirty reads, non-repeatable reads, and phantoms are possible.
-     Procedure 9 may read an uncommitted score or two different values.
-     Writers still take exclusive locks, so DELETE and UPDATE can block.
+     P9 can read P11's uncommitted score or observe an uncommitted delete that
+     later rolls back: dirty reads. Its two reads can also differ. Writers
+     still use exclusive locks, so DELETE and UPDATE still block each other.
+     Control: do not use this level when the score must be trustworthy.
 
    READ COMMITTED
-     Dirty reads are prevented. Shared locks are released after each SELECT,
-     so Procedure 10 or 11 may delete or change the row during the delay.
-     Procedure 9 can therefore return different results.
+     Prevents dirty reads, but releases P9's shared lock after each SELECT.
+     P10 or P11 can commit during the delay, causing a changed or missing
+     second result. Control: use SNAPSHOT or hold the read lock longer when
+     both results must describe one stable state.
 
    REPEATABLE READ
-     A row read by Procedure 9 stays locked until commit. Procedures 10 and
-     11 wait, and both reads return the same value. Phantoms remain possible
-     in general because missing key ranges are not protected.
+     P9 holds the shared lock on an existing row until commit, so P10 and P11
+     wait through the ten-second delay and both reads match. It does not lock a
+     missing key range, so a phantom insert is possible in general. These three
+     procedures do not INSERT, so they cannot create a phantom by themselves.
+     Cost: longer blocking.
 
    SNAPSHOT
-     Procedure 9 reads one consistent version without blocking writers.
-     Concurrent writers modifying the same row can cause an update conflict;
-     the losing transaction must roll back and retry.
+     P9 reads the same row version twice without blocking P10 or P11. If P10
+     and P11 both try to write the same row from overlapping snapshots, one
+     writer can fail with an update-conflict error and must roll back and retry.
 
    SERIALIZABLE
-     Rows and relevant key ranges stay locked until commit. Dirty reads,
-     non-repeatable reads, and phantoms are prevented, but blocking and
-     deadlock risk are greatest during the ten-second delay.
+     Holds row/key-range locks until commit. It prevents dirty reads,
+     non-repeatable reads, and phantoms, but P9 can block writers for at least
+     ten seconds. Blocking is highest and deadlocks are possible when other
+     transactions acquire tables or rows in a different order.
 
-   Competing DELETE and UPDATE
-     Under locking isolation, the operation receiving the exclusive lock first
-     proceeds. UPDATE followed by DELETE leaves no row. DELETE followed by
-     UPDATE makes the UPDATE affect zero rows. Use a consistent table-access
-     order, short transactions, and retry deadlock or snapshot-conflict victims.
+   Required controls
+     1. Keep both P9 reads inside one transaction.
+     2. Choose SNAPSHOT for stable nonblocking reads, or REPEATABLE READ /
+        SERIALIZABLE when blocking writers is acceptable.
+     3. Keep P10 and P11 short and access tables in the same order.
+     4. Check @@ROWCOUNT so callers know whether DELETE/UPDATE changed a row.
+     5. Retry deadlock victims and SNAPSHOT update-conflict victims.
+     6. If the business requires a fixed DELETE-versus-UPDATE winner, enforce
+        that policy with stronger locking or an application-level rule.
    ================================================================ */
 
 /* ================================================================
@@ -457,40 +482,37 @@ GO
    ================================================================ */
 
 SELECT
-    ranked.club_id,
-    ranked.club_name,
-    ranked.program_id,
-    ranked.program_name,
-    ranked.passed_athlete_count
-FROM
+    club.club_id,
+    club.club_name,
+    program.program_id,
+    program.program_name,
+    COUNT(DISTINCT performance.athlete_id) AS passed_athlete_count
+FROM dbo.CLUB AS club
+JOIN dbo.TRAINING_PROGRAM AS program
+    ON program.club_id = club.club_id
+LEFT JOIN dbo.TRAINING_SESSION AS session
+    ON session.program_id = program.program_id
+LEFT JOIN dbo.PERFORMANCE AS performance
+    ON performance.session_id = session.session_id
+   AND performance.score_100 >= 50
+GROUP BY
+    club.club_id,
+    club.club_name,
+    program.program_id,
+    program.program_name
+HAVING COUNT(DISTINCT performance.athlete_id) >= ALL
 (
-    SELECT
-        club.club_id,
-        club.club_name,
-        program.program_id,
-        program.program_name,
-        COUNT(DISTINCT performance.athlete_id) AS passed_athlete_count,
-        RANK() OVER
-        (
-            PARTITION BY club.club_id
-            ORDER BY COUNT(DISTINCT performance.athlete_id) DESC
-        ) AS program_rank
-    FROM dbo.CLUB AS club
-    JOIN dbo.TRAINING_PROGRAM AS program
-        ON program.club_id = club.club_id
-    LEFT JOIN dbo.TRAINING_SESSION AS session
-        ON session.program_id = program.program_id
-    LEFT JOIN dbo.PERFORMANCE AS performance
-        ON performance.session_id = session.session_id
-       AND performance.score_100 >= 50
-    GROUP BY
-        club.club_id,
-        club.club_name,
-        program.program_id,
-        program.program_name
-) AS ranked
-WHERE ranked.program_rank = 1
-ORDER BY ranked.club_id, ranked.program_id;
+    SELECT COUNT(DISTINCT other_performance.athlete_id)
+    FROM dbo.TRAINING_PROGRAM AS other_program
+    LEFT JOIN dbo.TRAINING_SESSION AS other_session
+        ON other_session.program_id = other_program.program_id
+    LEFT JOIN dbo.PERFORMANCE AS other_performance
+        ON other_performance.session_id = other_session.session_id
+       AND other_performance.score_100 >= 50
+    WHERE other_program.club_id = club.club_id
+    GROUP BY other_program.program_id
+)
+ORDER BY club.club_id, program.program_id;
 GO
 
 /* ================================================================

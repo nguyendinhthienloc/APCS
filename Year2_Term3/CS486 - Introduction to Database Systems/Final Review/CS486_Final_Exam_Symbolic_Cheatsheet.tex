@@ -1,0 +1,1003 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=1.45cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs,array,longtable,tabularx,multirow}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{lastpage}
+\usepackage{multicol}
+
+\definecolor{navy}{HTML}{17365D}
+\definecolor{blue}{HTML}{2F75B5}
+\definecolor{lightblue}{HTML}{EAF2F8}
+\definecolor{lightgray}{HTML}{F3F4F6}
+\definecolor{warn}{HTML}{FDECEC}
+\definecolor{greenbox}{HTML}{EDF7ED}
+
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=blue}
+\setlist[itemize]{leftmargin=1.4em,itemsep=1.5pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=1.5pt,topsep=2pt}
+\renewcommand{\arraystretch}{1.18}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+
+\titleformat{\section}{\Large\bfseries\color{navy}}{}{0pt}{}
+\titleformat{\subsection}{\large\bfseries\color{blue}}{}{0pt}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{}{0pt}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small CS486 Final Exam --- Symbolic Problem-Solving Cheatsheet}
+\rhead{\small Page \thepage/\pageref{LastPage}}
+\cfoot{}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newtcolorbox{rulebox}{colback=lightblue,colframe=blue,boxrule=.5pt,arc=1mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm}
+\newtcolorbox{warningbox}{colback=warn,colframe=red!60!black,boxrule=.5pt,arc=1mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm}
+\newtcolorbox{examanswer}{colback=greenbox,colframe=green!50!black,boxrule=.5pt,arc=1mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm}
+
+\lstset{basicstyle=\ttfamily\footnotesize,frame=single,breaklines=true,columns=fullflexible,showstringspaces=false}
+
+\newcommand{\sel}[2]{\sigma_{#1}(#2)}
+\newcommand{\proj}[2]{\pi_{#1}(#2)}
+\newcommand{\ren}[2]{\rho_{#1}(#2)}
+\newcommand{\join}{\bowtie}
+\newcommand{\ljoin}{\mathbin{\leftouterjoin}}
+\newcommand{\ra}[1]{\ensuremath{#1}}
+\newcommand{\io}{\text{I/O}}
+
+\begin{document}
+
+\begin{center}
+{\Huge\bfseries\color{navy} CS486 FINAL EXAM}\\[2mm]
+{\LARGE\bfseries Symbolic Problem-Solving Cheatsheet}\\[2mm]
+{\small Built around the official 10-point FINAL REVIEW structure and the five mock finals.}\\[1mm]
+{\small Notation and terminology aligned with \emph{Fundamentals of Database Systems}, 7th ed. (Elmasri \& Navathe), especially Chapters 3, 5--9, 14--22.}
+\end{center}
+
+\begin{rulebox}
+\textbf{Purpose.} This is not a prose summary. It is a symbol-heavy exam manual: operator notation, formulas, decision rules, reusable derivations, and answer templates for ER modeling, RA/TRC/SQL, constraints, serializability, 2PL/deadlocks, recovery, FDs/normalization, concurrency anomalies, and query-cost estimation.
+\end{rulebox}
+
+\tableofcontents
+\newpage
+
+% =========================================================
+\section{0. Master Symbol Sheet}
+
+\subsection{0.1 Logic and Set Symbols}
+\begin{center}
+\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}p{1.8cm} X >{\centering\arraybackslash}p{1.8cm} X}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} & \textbf{Symbol} & \textbf{Meaning}\\
+\midrule
+$\in$ & belongs to & $\notin$ & does not belong to\\
+$\subseteq$ & subset & $\cup$ & union\\
+$\cap$ & intersection & $-$ or $\setminus$ & set difference\\
+$\times$ & Cartesian product & $|R|$ & cardinality (number of tuples)\\
+$\exists$ & there exists & $\forall$ & for every\\
+$\neg$ & NOT & $\land$ & AND\\
+$\lor$ & OR & $\Rightarrow$ & implies\\
+$\Leftrightarrow$ & iff & $\emptyset$ & empty set\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{0.2 Core Relational Algebra Symbols}
+\begin{center}
+\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}p{2.1cm} p{3cm} X}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{General form / meaning}\\
+\midrule
+$\sigma$ & SELECT & $\sigma_{\theta}(R)$: keep tuples of $R$ satisfying condition $\theta$\\
+$\pi$ & PROJECT & $\pi_{A_1,\ldots,A_k}(R)$: keep named attributes; formal RA removes duplicates\\
+$\rho$ & RENAME & $\rho_{S(B_1,\ldots,B_n)}(R)$ or $\rho_S(R)$\\
+$\cup$ & UNION & $R\cup S$, requires union compatibility\\
+$\cap$ & INTERSECTION & $R\cap S$, requires union compatibility\\
+$-$ & DIFFERENCE & $R-S$, requires union compatibility\\
+$\times$ & CARTESIAN PRODUCT & $R\times S$\\
+$\bowtie$ & NATURAL JOIN & $R\bowtie S$\\
+$\bowtie_{\theta}$ & THETA JOIN & $R\bowtie_{\theta}S = \sigma_{\theta}(R\times S)$\\
+$\div$ & DIVISION & $R(Z)\div S(X)$, where $X\subseteq Z$; answers ``for all'' queries\\
+$\mathcal{F}$ & GROUP & Extended RA: e.g. $Dno\;\mathcal{F}_{\mathrm{COUNT}(*)}(EMPLOYEE)$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+\footnotesize *Aggregate/grouping notation varies by textbook/lecturer. Use the notation taught in class if it differs.\normalsize
+
+\subsection{0.3 Transaction / Concurrency Symbols}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{2.3cm} X p{2.5cm} X}
+\toprule
+$r_i(X)$ & $T_i$ reads item $X$ & $w_i(X)$ & $T_i$ writes item $X$\\
+$c_i$ & $T_i$ commits & $a_i$ & $T_i$ aborts\\
+$S_i(X)$ & shared/read lock on $X$ & $X_i(X)$ & exclusive/write lock on $X$\\
+$U_i(X)$ & unlock $X$ & $T_i\to T_j$ & precedence/wait-for edge\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{0.4 Functional Dependency Symbols}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{2.5cm} X}
+\toprule
+$X\to Y$ & functional dependency: equal $X$ values force equal $Y$ values\\
+$X^+$ & closure of attribute set $X$ under FD set $F$\\
+$F^+$ & all FDs logically implied by $F$\\
+$X\twoheadrightarrow Y$ & multivalued dependency (usually beyond this final unless explicitly asked)\\
+$K$ & candidate key / superkey depending context\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% =========================================================
+\section{1. ER Modeling and ER-to-Relational Mapping (1 point)}
+
+\subsection{1.1 What to draw}
+For every entity set, show: entity name, attributes, key attributes, weak/partial keys if any, relationship diamonds/lines, cardinality ratios ($1{:}1$, $1{:}N$, $M{:}N$), and total/partial participation when specified.
+
+\begin{rulebox}
+\textbf{Language decoder.}
+\begin{itemize}
+\item ``identified by'' / ``unique'' $\Rightarrow$ candidate key.
+\item ``unique only within X'' $\Rightarrow$ scoped key, normally owner key $+$ partial key.
+\item ``each A belongs to exactly one B'' $\Rightarrow$ $A:N \to B:1$ with total participation of $A$.
+\item ``A may have many B and B may have many A'' $\Rightarrow$ $M{:}N$.
+\item ``at most one'' $\Rightarrow$ maximum cardinality $1$; ``one or more'' $\Rightarrow$ minimum cardinality $1$.
+\end{itemize}
+\end{rulebox}
+
+\subsection{1.2 Weak / scoped identification}
+If TeamName is unique only inside League:
+\[
+\mathrm{Team}(\underline{LeagueName},\underline{TeamName},\ldots)
+\]
+If JerseyNo is unique only inside Team:
+\[
+\mathrm{Player}(\underline{LeagueName},\underline{TeamName},\underline{JerseyNo},\ldots)
+\]
+The full owner key propagates into the weak/scoped entity key.
+
+\subsection{1.3 Mapping formulas}
+\begin{align*}
+\text{Strong entity }E &: E(\underline{K},A_1,\ldots,A_n)\\
+1{:}N &: \text{put key of 1-side as FK in N-side}\\
+M{:}N &: R(\underline{K_A,K_B},\text{relationship attributes})\\
+1{:}1 &: \text{FK on one side, preferably total-participation side; often UNIQUE}\\
+\text{Weak entity }W &: W(\underline{K_{owner},PartialKey},\ldots)
+\end{align*}
+
+\begin{warningbox}
+\textbf{Trap:} If the problem intentionally states local uniqueness, do not invent a global surrogate key and ignore the composite identification logic.
+\end{warningbox}
+
+\subsection{1.4 Relational Schemas \& Cardinality Specifications for Mock Finals 1--5}
+
+\subsubsection*{Mock Final 1: Sports League}
+\begin{itemize}
+  \item \textbf{Cardinality Breakdown:}
+  \begin{itemize}
+    \item $\mathrm{CLUB} \xrightarrow{1:N} \mathrm{TEAM}$ (Total on TEAM side 1..1; Total on CLUB side 1..N).
+    \item $\mathrm{TEAM} \xrightarrow{1:N} \mathrm{ATHLETE}$ (Total on ATHLETE side 1..1; Total on TEAM side 1..N).
+    \item $\mathrm{COACH} \xrightarrow{1:N} \mathrm{TEAM}$ [head coach] (Total on TEAM side 1..1; Partial on COACH side 0..N).
+    \item $\mathrm{COACH} \xleftrightarrow{M:N} \mathrm{TEAM}$ [coaches] (Partial on both sides 0..N).
+  \end{itemize}
+  \item \textbf{Relational Schema:}
+  \begin{align*}
+    &\mathrm{CLUB}(\underline{\mathrm{ClubName}})\\
+    &\mathrm{COACH}(\underline{\mathrm{CoachID}}, \mathrm{CoachName})\\
+    &\mathrm{TEAM}(\underline{\mathrm{ClubName}}, \underline{\mathrm{TeamName}}, \mathrm{HeadCoachID}^*)\\
+    &\quad \text{FK: } \mathrm{ClubName} \to \mathrm{CLUB},\ \mathrm{HeadCoachID} \to \mathrm{COACH}\ (\text{NOT NULL})\\
+    &\mathrm{ATHLETE}(\underline{\mathrm{ClubName}}, \underline{\mathrm{TeamName}}, \underline{\mathrm{JerseyNo}})\\
+    &\quad \text{FK: } (\mathrm{ClubName}, \mathrm{TeamName}) \to \mathrm{TEAM}\\
+    &\mathrm{COACHES\_TEAM}(\underline{\mathrm{CoachID}}, \underline{\mathrm{ClubName}}, \underline{\mathrm{TeamName}})\\
+    &\quad \text{FK: } \mathrm{CoachID} \to \mathrm{COACH},\ (\mathrm{ClubName}, \mathrm{TeamName}) \to \mathrm{TEAM}
+  \end{align*}
+\end{itemize}
+
+\subsubsection*{Mock Final 2: Hospital System}
+\begin{itemize}
+  \item \textbf{Cardinality Breakdown:}
+  \begin{itemize}
+    \item $\mathrm{DEPARTMENT} \xrightarrow{1:N} \mathrm{DOCTOR}$ (Total on DOCTOR side 1..1; Total on DEPARTMENT side 1..N).
+    \item $\mathrm{DOCTOR} \xrightarrow{1:N} \mathrm{APPOINTMENT}$ (Total on APPOINTMENT side 1..1; Partial on DOCTOR side 0..N).
+    \item $\mathrm{PATIENT} \xrightarrow{1:N} \mathrm{APPOINTMENT}$ (Total on APPOINTMENT side 1..1; Partial on PATIENT side 0..N).
+    \item $\mathrm{APPOINTMENT} \xrightarrow{1:0..1} \mathrm{PRESCRIPTION}$ (Total on PRESCRIPTION side 1..1; Partial on APPOINTMENT side 0..1).
+  \end{itemize}
+  \item \textbf{Relational Schema:}
+  \begin{align*}
+    &\mathrm{DEPARTMENT}(\underline{\mathrm{DeptCode}}, \mathrm{DeptName})\\
+    &\mathrm{DOCTOR}(\underline{\mathrm{DeptCode}}, \underline{\mathrm{EmpNo}}, \mathrm{DoctorName})\\
+    &\quad \text{FK: } \mathrm{DeptCode} \to \mathrm{DEPARTMENT}\\
+    &\mathrm{PATIENT}(\underline{\mathrm{PID}}, \mathrm{PatientName})\\
+    &\mathrm{APPOINTMENT}(\underline{\mathrm{AID}}, \mathrm{DeptCode}^*, \mathrm{EmpNo}^*, \mathrm{PID}^*, \mathrm{ApptDateTime})\\
+    &\quad \text{FK: } (\mathrm{DeptCode}, \mathrm{EmpNo}) \to \mathrm{DOCTOR},\ \mathrm{PID} \to \mathrm{PATIENT}\\
+    &\quad \text{UNIQUE: } (\mathrm{DeptCode}, \mathrm{EmpNo}, \mathrm{ApptDateTime}) \quad\text{(Natural key constraint)}\\
+    &\mathrm{PRESCRIPTION}(\underline{\mathrm{AID}}, \mathrm{Drug}, \mathrm{Dose})\\
+    &\quad \text{FK: } \mathrm{AID} \to \mathrm{APPOINTMENT}
+  \end{align*}
+\end{itemize}
+
+\subsubsection*{Mock Final 3: Airline Scheduling}
+\begin{itemize}
+  \item \textbf{Cardinality Breakdown:}
+  \begin{itemize}
+    \item $\mathrm{FLIGHT} \xrightarrow{1:N} \mathrm{FLIGHT\_LEG}$ (Total on FLIGHT\_LEG side 1..1; Total on FLIGHT side 1..N).
+    \item $\mathrm{AIRPORT} \xrightarrow{1:N} \mathrm{FLIGHT\_LEG}$ [origin/dest] (Total on FLIGHT\_LEG side 1..1; Partial on AIRPORT side 0..N).
+    \item $\mathrm{FLIGHT\_LEG} \xrightarrow{1:N} \mathrm{LEG\_INSTANCE}$ (Total on LEG\_INSTANCE side 1..1; Partial on FLIGHT\_LEG side 0..N).
+    \item $\mathrm{AIRCRAFT} \xrightarrow{1:N} \mathrm{LEG\_INSTANCE}$ (Total on LEG\_INSTANCE side 1..1; Partial on AIRCRAFT side 0..N).
+  \end{itemize}
+  \item \textbf{Relational Schema:}
+  \begin{align*}
+    &\mathrm{FLIGHT}(\underline{\mathrm{FNo}}, \mathrm{Airline})\\
+    &\mathrm{AIRPORT}(\underline{\mathrm{Code}}, \mathrm{City})\\
+    &\mathrm{AIRCRAFT}(\underline{\mathrm{AircraftID}}, \mathrm{Capacity})\\
+    &\mathrm{FLIGHT\_LEG}(\underline{\mathrm{FNo}}, \underline{\mathrm{LegNo}}, \mathrm{Orig}^*, \mathrm{Dest}^*)\\
+    &\quad \text{FK: } \mathrm{FNo} \to \mathrm{FLIGHT},\ \mathrm{Orig} \to \mathrm{AIRPORT},\ \mathrm{Dest} \to \mathrm{AIRPORT}\\
+    &\mathrm{LEG\_INSTANCE}(\underline{\mathrm{FNo}}, \underline{\mathrm{LegNo}}, \underline{\mathrm{FDate}}, \mathrm{AircraftID}^*, \mathrm{SeatsBooked})\\
+    &\quad \text{FK: } (\mathrm{FNo}, \mathrm{LegNo}) \to \mathrm{FLIGHT\_LEG},\ \mathrm{AircraftID} \to \mathrm{AIRCRAFT}
+  \end{align*}
+\end{itemize}
+
+\subsubsection*{Mock Final 4: E-Commerce Marketplace}
+\begin{itemize}
+  \item \textbf{Cardinality Breakdown:}
+  \begin{itemize}
+    \item $\mathrm{SELLER} \xrightarrow{1:N} \mathrm{PRODUCT}$ (Total on PRODUCT side 1..1; Total on SELLER side 1..N).
+    \item $\mathrm{CUSTOMER} \xrightarrow{1:N} \mathrm{ORDERS}$ (Total on ORDERS side 1..1; Partial on CUSTOMER side 0..N).
+    \item $\mathrm{ORDERS} \xrightarrow{1:N} \mathrm{ORDER\_ITEM}$ (Total on ORDER\_ITEM side 1..1; Total on ORDERS side 1..N).
+    \item $\mathrm{PRODUCT} \xrightarrow{1:N} \mathrm{ORDER\_ITEM}$ (Total on ORDER\_ITEM side 1..1; Partial on PRODUCT side 0..N).
+  \end{itemize}
+  \item \textbf{Relational Schema:}
+  \begin{align*}
+    &\mathrm{SELLER}(\underline{\mathrm{SID}}, \mathrm{SName})\\
+    &\mathrm{PRODUCT}(\underline{\mathrm{SID}}, \underline{\mathrm{PCode}}, \mathrm{PName}, \mathrm{ListPrice})\\
+    &\quad \text{FK: } \mathrm{SID} \to \mathrm{SELLER}\\
+    &\mathrm{CUSTOMER}(\underline{\mathrm{CID}}, \mathrm{CName})\\
+    &\mathrm{ORDERS}(\underline{\mathrm{OID}}, \mathrm{CID}^*, \mathrm{ODate})\\
+    &\quad \text{FK: } \mathrm{CID} \to \mathrm{CUSTOMER}\\
+    &\mathrm{ORDER\_ITEM}(\underline{\mathrm{OID}}, \underline{\mathrm{SID}}, \underline{\mathrm{PCode}}, \mathrm{Qty}, \mathrm{SalePrice})\\
+    &\quad \text{FK: } \mathrm{OID} \to \mathrm{ORDERS},\ (\mathrm{SID}, \mathrm{PCode}) \to \mathrm{PRODUCT}
+  \end{align*}
+\end{itemize}
+
+\subsubsection*{Mock Final 5: Academic Conference}
+\begin{itemize}
+  \item \textbf{Cardinality Breakdown:}
+  \begin{itemize}
+    \item $\mathrm{CONFERENCE} \xrightarrow{1:N} \mathrm{TRACK}$ (Total on TRACK side 1..1; Total on CONFERENCE side 1..N).
+    \item $\mathrm{TRACK} \xrightarrow{1:N} \mathrm{PAPER}$ (Total on PAPER side 1..1; Partial on TRACK side 0..N).
+    \item $\mathrm{AUTHOR} \xleftrightarrow{M:N} \mathrm{PAPER}$ [WRITES] (Total on both sides 1..N).
+    \item $\mathrm{REVIEWER} \xleftrightarrow{M:N} \mathrm{PAPER}$ [REVIEW] (Total on PAPER side 1..N; Partial on REVIEWER side 0..N).
+  \end{itemize}
+  \item \textbf{Relational Schema:}
+  \begin{align*}
+    &\mathrm{CONFERENCE}(\underline{\mathrm{ConfAcronym}}, \mathrm{ConfName})\\
+    &\mathrm{TRACK}(\underline{\mathrm{ConfAcronym}}, \underline{\mathrm{TrackName}})\\
+    &\quad \text{FK: } \mathrm{ConfAcronym} \to \mathrm{CONFERENCE}\\
+    &\mathrm{PAPER}(\underline{\mathrm{PID}}, \mathrm{Title}, \mathrm{ConfAcronym}^*, \mathrm{TrackName}^*)\\
+    &\quad \text{FK: } (\mathrm{ConfAcronym}, \mathrm{TrackName}) \to \mathrm{TRACK}\\
+    &\mathrm{AUTHOR}(\underline{\mathrm{AID}}, \mathrm{Name})\\
+    &\mathrm{WRITES}(\underline{\mathrm{AID}}, \underline{\mathrm{PID}}, \mathrm{AuthorOrder})\\
+    &\quad \text{FK: } \mathrm{AID} \to \mathrm{AUTHOR},\ \mathrm{PID} \to \mathrm{PAPER}\\
+    &\quad \text{UNIQUE: } (\mathrm{PID}, \mathrm{AuthorOrder})\\
+    &\mathrm{REVIEWER}(\underline{\mathrm{ReviewerID}}, \mathrm{Name})\\
+    &\mathrm{REVIEW}(\underline{\mathrm{ReviewerID}}, \underline{\mathrm{PID}}, \mathrm{Score}, \mathrm{Confidence})\\
+    &\quad \text{FK: } \mathrm{ReviewerID} \to \mathrm{REVIEWER},\ \mathrm{PID} \to \mathrm{PAPER}
+  \end{align*}
+\end{itemize}
+
+
+% =========================================================
+\section{2. Relational Algebra, TRC, and SQL (2 points)}
+
+\subsection{2.1 SELECT $\sigma$ and PROJECT $\pi$}
+Textbook-style general forms:
+\[
+\boxed{\sigma_{\langle condition\rangle}(R)}\qquad
+\boxed{\pi_{A_1,\ldots,A_k}(R)}
+\]
+Example:
+\[
+\pi_{Name}\left(\sigma_{Faculty='CS'}(Student)\right)
+\]
+
+Boolean conditions:
+\[
+\theta ::= A\;op\;c \mid A\;op\;B \mid \theta_1\land\theta_2 \mid \theta_1\lor\theta_2 \mid \neg\theta
+\]
+where $op\in\{=,\neq,<,\le,>,\ge\}$.
+
+\subsection{2.2 Rename $\rho$}
+Needed for self-joins and attribute-name alignment:
+\[
+\rho_{P_1(m_1,mo_1,t_1)}(Product),\qquad \rho_{P_2(m_2,mo_2,t_2)}(Product)
+\]
+
+\subsection{2.3 Join notation}
+\[
+R\bowtie_{R.A=S.B}S \equiv \sigma_{R.A=S.B}(R\times S)
+\]
+Natural join:
+\[
+R\bowtie S
+\]
+when common attribute names are intended as equality conditions.
+
+\subsection{2.4 ``At least two distinct'' using self-join}
+Given $L(maker,model)$ for laptops:
+\[
+L=\pi_{maker,model}\left(\sigma_{type='laptop'}(Product)\right)
+\]
+Rename twice:
+\[
+L_1=\rho_{L_1(m_1,mo_1)}(L),\quad L_2=\rho_{L_2(m_2,mo_2)}(L)
+\]
+Then:
+\[
+AtLeast2=\pi_{m_1}\left(\sigma_{m_1=m_2\land mo_1\neq mo_2}(L_1\times L_2)\right)
+\]
+
+\subsection{2.5 ``Exactly two'' without COUNT in classical RA}
+Build $AtLeast2$ and $AtLeast3$:
+\[
+\boxed{Exactly2 = AtLeast2 - AtLeast3}
+\]
+For $AtLeast3$, use three renamed copies with pairwise distinct models:
+\[
+mo_1\neq mo_2\land mo_1\neq mo_3\land mo_2\neq mo_3
+\]
+
+\subsection{2.6 DIVISION $\div$ for ``all/every''}
+The book uses division for universal-quantification style queries. If:
+\[
+R(Z)\div S(X),\qquad X\subseteq Z,\quad Y=Z-X
+\]
+then the result is $T(Y)$ containing those $Y$-values that appear in $R$ paired with \emph{every} tuple in $S$.
+
+Equivalent construction using only $\pi,\times,-$:
+\begin{align*}
+T_1 &\leftarrow \pi_Y(R)\\
+T_2 &\leftarrow \pi_Y\big((S\times T_1)-R\big)\\
+T &\leftarrow T_1-T_2
+\end{align*}
+
+\begin{examanswer}
+\textbf{Mental translation:} ``find $y$ related to all required $x$'' $\Rightarrow$ either division $R(y,x)\div S(x)$ or double negation: there is no required $x$ for which the relationship is missing.
+\end{examanswer}
+
+\subsection{2.7 Tuple Relational Calculus (TRC)}
+General form:
+\[
+\boxed{\{\,t\mid P(t)\,\}}
+\]
+Tuple variables range over tuples. Typical atoms:
+\[
+R(t),\quad t[A]=u[B],\quad t[A]>500
+\]
+Quantifiers/connectives:
+\[
+\exists t\;P(t),\qquad \forall t\;P(t),\qquad \neg P,\quad P\land Q,\quad P\lor Q,\quad P\Rightarrow Q
+\]
+
+\subsubsection*{At least one}
+\[
+\{s\mid Student(s)\land \exists e\exists c(Enroll(e)\land Course(c)\land e.SID=s.SID\land e.CID=c.CID)\}
+\]
+
+\subsubsection*{Never / none}
+\[
+\{p\mid Patient(p)\land \neg\exists a(Appointment(a)\land a.PID=p.PID\land a.Fee>500)\}
+\]
+
+\subsubsection*{Every / all: direct implication form}
+\[
+\forall r\,(Required(r)\Rightarrow Done(s,r))
+\]
+Safer exam form (counterexample form):
+\[
+\boxed{\neg\exists r\,(Required(r)\land \neg Done(s,r))}
+\]
+
+\subsection{2.8 SQL quantifier patterns}
+\subsubsection*{NOT EXISTS for ``never''}
+\begin{lstlisting}[language=SQL]
+SELECT ...
+FROM Candidate c
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM BadThing b
+  WHERE b.cid = c.id
+);
+\end{lstlisting}
+
+\subsubsection*{Double NOT EXISTS for ``every''}
+\begin{lstlisting}[language=SQL]
+SELECT ...
+FROM Candidate c
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM Required r
+  WHERE NOT EXISTS (
+    SELECT 1
+    FROM Done d
+    WHERE d.cid = c.id
+      AND d.item = r.item
+  )
+);
+\end{lstlisting}
+
+\subsubsection*{Top per group, preserve ties}
+\begin{lstlisting}[language=SQL]
+WITH g AS (
+  SELECT group_col, item_col, COUNT(*) AS cnt
+  FROM T
+  GROUP BY group_col, item_col
+), r AS (
+  SELECT g.*,
+         DENSE_RANK() OVER
+         (PARTITION BY group_col ORDER BY cnt DESC) AS rk
+  FROM g
+)
+SELECT * FROM r WHERE rk = 1;
+\end{lstlisting}
+
+\begin{warningbox}
+\textbf{NULL trap:} Prefer \texttt{NOT EXISTS} to \texttt{NOT IN (subquery)} when the subquery can produce NULL. Three-valued logic can make \texttt{NOT IN} unexpectedly UNKNOWN.
+\end{warningbox}
+
+% =========================================================
+\section{3. Database Constraints (1 point)}
+
+\subsection{3.1 Formal constraint pattern}
+Most business rules can be written as ``no violating tuple combination exists'':
+\[
+\boxed{\neg\exists t_1\cdots\exists t_k\;Violation(t_1,\ldots,t_k)}
+\]
+Example: employee and assigned project must belong to same department:
+\[
+\neg\exists e\exists p\exists w\big(
+Employee(e)\land Project(p)\land WorksOn(w)\land
+w.EID=e.EID\land w.PID=p.PID\land e.Dept\neq p.Dept
+\big)
+\]
+
+\subsection{3.2 SQL mechanism decision table}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{3.3cm} p{4.2cm} X}
+\toprule
+\textbf{Rule type} & \textbf{Mechanism} & \textbf{Example}\\
+\midrule
+Domain / row-local & \texttt{CHECK} & $0<Hours\le40$\\
+Entity identity & \texttt{PRIMARY KEY}, \texttt{UNIQUE} & no duplicate key\\
+Referential & \texttt{FOREIGN KEY} & child must reference parent\\
+Cross-table & ASSERTION (conceptually) / trigger & Employee.Dept = Project.Dept\\
+Temporal/cross-row & trigger/procedure & no overlapping booking; status valid at order date\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{3.3 Assertion-style expression}
+Conceptual SQL standard form:
+\begin{lstlisting}[language=SQL]
+CREATE ASSERTION rule_name CHECK (
+  NOT EXISTS (
+    SELECT 1
+    FROM ...
+    WHERE violation_condition
+  )
+);
+\end{lstlisting}
+Many production DBMSs do not implement general \texttt{CREATE ASSERTION}; use a trigger if required.
+
+% =========================================================
+\section{4. Serialization, Recoverability, 2PL, and Deadlocks (2 points)}
+
+\subsection{4.1 Conflict relation}
+Two operations from different transactions conflict iff:
+\[
+\boxed{\text{same item}\ \land\ \text{different transactions}\ \land\ \text{at least one write}}
+\]
+
+\begin{center}
+\begin{tabular}{c|ccc}
+ & $r_j(X)$ & $w_j(X)$ & different item $Y$\\\hline
+$r_i(X)$ & no & yes & no\\
+$w_i(X)$ & yes & yes & no
+\end{tabular}
+\end{center}
+
+If operation of $T_i$ precedes a conflicting operation of $T_j$, add:
+\[
+\boxed{T_i\to T_j}
+\]
+
+\subsection{4.2 Precedence graph theorem}
+\[
+\boxed{S\text{ is conflict-serializable }\Longleftrightarrow P(S)\text{ is acyclic}}
+\]
+If acyclic, every topological ordering of $P(S)$ is a conflict-equivalent serial schedule.
+
+\subsection{4.3 Example edge extraction}
+For:
+\[
+w_1(X)\quad r_2(X)\quad w_2(Y)\quad r_3(Y)\quad w_3(X)
+\]
+conflicts give:
+\[
+T_1\to T_2\quad (X),\qquad T_2\to T_3\quad (Y),\qquad T_1\to T_3\quad (X)
+\]
+No cycle $\Rightarrow$ serial order $T_1,T_2,T_3$.
+
+\subsection{4.4 Recoverable, cascadeless, strict}
+Suppose $T_j$ reads $X$ from $T_i$ (notation: $w_i(X)\prec r_j(X)$ and no intervening write to $X$).
+
+\begin{align*}
+\text{Recoverable: }& r_j(X)\text{ reads from }w_i(X) \Rightarrow c_i\prec c_j\\
+\text{Cascadeless: }& r_j(X)\text{ reads from }w_i(X) \Rightarrow c_i\prec r_j(X)\\
+\text{Strict: }& w_i(X)\prec o_j(X)\ (o_j\in\{r_j,w_j\}) \Rightarrow c_i/a_i\prec o_j(X)
+\end{align*}
+Hierarchy:
+\[
+\boxed{Strict\Rightarrow Cascadeless\Rightarrow Recoverable}
+\]
+
+\subsection{4.5 Two-Phase Locking (2PL)}
+Basic 2PL has two phases:
+\[
+\underbrace{\text{acquire locks}}_{\text{growing}}\quad\Big|\quad\underbrace{\text{release locks}}_{\text{shrinking}}
+\]
+After the first unlock, a transaction may not acquire another lock.
+
+Strict 2PL: hold all exclusive/write locks until commit/abort. A common strict sequence:
+\[
+X_i(X)\;w_i(X)\;\cdots\;c_i\;U_i(X)
+\]
+
+\subsection{4.6 Lock compatibility}
+\begin{center}
+\begin{tabular}{c|cc}
+requested $\backslash$ held & $S$ & $X$\\\hline
+$S$ & compatible & incompatible\\
+$X$ & incompatible & incompatible
+\end{tabular}
+\end{center}
+
+\subsection{4.7 Wait-for graph and deadlock}
+Edge:
+\[
+T_i\to T_j \quad\text{iff }T_i\text{ waits for a lock held by }T_j
+\]
+Deadlock criterion:
+\[
+\boxed{\text{wait-for graph contains a directed cycle}}
+\]
+Classic:
+\[
+T_1:\ X_1(A),\ request\ X_1(B)\qquad
+T_2:\ X_2(B),\ request\ X_2(A)
+\]
+Hence $T_1\to T_2$ and $T_2\to T_1$.
+
+\subsection{4.8 Wait-die vs wound-wait}
+Let $TS(T_{old})<TS(T_{young})$.
+\begin{center}
+\begin{tabularx}{\textwidth}{p{3cm} X X}
+\toprule
+ & older requests younger's lock & younger requests older's lock\\
+\midrule
+Wait-die & older waits & younger aborts (dies)\\
+Wound-wait & younger is aborted (wounded) & younger waits\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% =========================================================
+\section{5. Recovery (1 point)}
+
+\subsection{5.1 Log record notation}
+Common forms:
+\[
+\langle START\ T_i\rangle,\quad
+\langle T_i,X,old,new\rangle,\quad
+\langle COMMIT\ T_i\rangle,\quad
+\langle ABORT\ T_i\rangle
+\]
+Checkpoint:
+\[
+\langle START\ CKPT(T_1,T_2,\ldots)\rangle,\qquad
+\langle END\ CKPT\rangle
+\]
+
+\subsection{5.2 WAL idea}
+Write-ahead logging requires the relevant log information to reach stable storage before the modified database page is written:
+\[
+\boxed{LOG\;first\;\Rightarrow\;DATA\;page\;later}
+\]
+
+\subsection{5.3 Deferred update / NO-UNDO-REDO}
+Uncommitted changes are not written to the database. Therefore:
+\[
+\boxed{REDO\ winners;\quad no\ UNDO\ losers}
+\]
+If log record stores new value:
+\[
+REDO(\langle T_i,X,new\rangle):\quad X\leftarrow new
+\]
+
+\subsection{5.4 Immediate update / UNDO-REDO}
+Database pages may contain both committed and uncommitted changes at crash time:
+\[
+\boxed{REDO\ committed\ winners;\quad UNDO\ uncommitted\ losers}
+\]
+For:
+\[
+\langle T_i,X,old,new\rangle
+\]
+use:
+\[
+REDO:\ X\leftarrow new,\qquad UNDO:\ X\leftarrow old
+\]
+Typically redo is conceptually forward and undo is performed backward through the log for losers.
+
+\subsection{5.5 Winner/loser classification}
+At crash:
+\[
+Winners=\{T_i\mid \langle COMMIT\ T_i\rangle\text{ exists before crash}\}
+\]
+\[
+Losers=\{T_i\mid T_i\text{ started but did not commit before crash}\}
+\]
+
+\begin{examanswer}
+\textbf{Answer template:} ``The protocol is \underline{\hspace{1.5cm}} because \underline{\hspace{2cm}}. Winners $=\{\cdots\}$; losers $=\{\cdots\}$. REDO: ... . UNDO: ... . Final recovered values: ... .''
+\end{examanswer}
+
+% =========================================================
+\section{6. Functional Dependencies and Normalization (1 point)}
+
+\subsection{6.1 FD definition}
+For relation schema $R$, an FD $X\to Y$ holds iff for any legal tuples $t_1,t_2$:
+\[
+t_1[X]=t_2[X]\Rightarrow t_1[Y]=t_2[Y]
+\]
+
+\subsection{6.2 Armstrong axioms}
+\begin{align*}
+\text{Reflexivity: }& Y\subseteq X \Rightarrow X\to Y\\
+\text{Augmentation: }& X\to Y \Rightarrow XZ\to YZ\\
+\text{Transitivity: }& X\to Y\land Y\to Z \Rightarrow X\to Z
+\end{align*}
+Useful derived rules:
+\begin{align*}
+\text{Union: }& X\to Y\land X\to Z \Rightarrow X\to YZ\\
+\text{Decomposition: }& X\to YZ \Rightarrow X\to Y\land X\to Z\\
+\text{Pseudotransitivity: }& X\to Y\land WY\to Z \Rightarrow WX\to Z
+\end{align*}
+
+\subsection{6.3 Closure algorithm}
+Initialize:
+\[
+X^+\leftarrow X
+\]
+Repeat for every $Y\to Z\in F$:
+\[
+Y\subseteq X^+\Rightarrow X^+\leftarrow X^+\cup Z
+\]
+until no change.
+
+Key criterion:
+\[
+X\text{ superkey}\Longleftrightarrow X^+=R
+\]
+Candidate key criterion:
+\[
+X\text{ candidate key}\Longleftrightarrow X^+=R\ \land\ \forall A\in X,(X-\{A\})^+\neq R
+\]
+
+\subsection{6.4 Normal forms}
+Let $X\to A$ be nontrivial.
+
+\textbf{2NF:} no non-prime attribute is partially dependent on a proper subset of a candidate key.
+
+\textbf{3NF:}
+\[
+\boxed{X\text{ is a superkey }\lor A\text{ is prime}}
+\]
+for every nontrivial FD $X\to A$.
+
+\textbf{BCNF:}
+\[
+\boxed{X\text{ must be a superkey}}
+\]
+for every nontrivial FD $X\to A$.
+
+Thus:
+\[
+BCNF\Rightarrow 3NF\Rightarrow 2NF
+\]
+
+\subsection{6.5 Binary lossless-join test}
+For decomposition $R\to R_1,R_2$:
+\[
+\boxed{(R_1\cap R_2)\to R_1\quad\text{or}\quad(R_1\cap R_2)\to R_2}
+\]
+under $F^+$ is sufficient and necessary for lossless binary decomposition.
+
+Example:
+\[
+R(A,B,C,D),\ R_1(A,C,D),\ R_2(A,B)
+\]
+If $A\to CD$, then $A\to R_1$, hence lossless.
+
+\subsection{6.6 BCNF decomposition step}
+If $X\to Y$ violates BCNF in $R$:
+\[
+R_1=X\cup Y
+\]
+\[
+R_2=R-(Y-X)
+\]
+Repeat until all components satisfy BCNF.
+
+\begin{warningbox}
+\textbf{Exam order matters:} compute closures and candidate keys first. You cannot reliably decide 3NF/BCNF before knowing which determinants are superkeys and which attributes are prime.
+\end{warningbox}
+
+% =========================================================
+\section{7. Concurrency Execution and Anomalies (1 point)}
+
+\subsection{7.1 Interleaving principle}
+A legal interleaving preserves the internal order of each transaction.
+If:
+\[
+T_1:o_{11}\prec o_{12}\prec o_{13},\qquad T_2:o_{21}\prec o_{22}
+\]
+then any schedule must preserve those two local orders even though operations may interleave globally.
+
+\subsection{7.2 Lost update}
+Initial $X=100$:
+\[
+r_1(X=100)\quad r_2(X=100)\quad w_1(X=90)\quad w_2(X=120)
+\]
+$T_1$'s update is overwritten. The final $120$ reflects only $T_2$'s local computation.
+
+\subsection{7.3 Dirty read}
+\[
+w_1(X)\quad r_2(X)\quad a_1
+\]
+$T_2$ consumed an uncommitted value that is later rolled back.
+
+\subsection{7.4 Nonrecoverable pattern}
+\[
+w_1(X)\quad r_2(X)\quad c_2\quad a_1
+\]
+$T_2$ commits before the transaction whose uncommitted value it read. This is not recoverable.
+
+\subsection{7.5 Write skew intuition}
+Two transactions read a shared invariant over different rows, each sees it satisfied, then each writes a different row. No direct write-write conflict may occur on the same item, but the final state violates the cross-row invariant. Serializable isolation prevents the anomalous joint outcome.
+
+% =========================================================
+\section{8. Query Optimization and I/O Cost (1 point)}
+
+\subsection{8.1 Basic file parameters}
+Use common textbook notation:
+\begin{align*}
+r &= \text{number of records (tuples)}\\
+b &= \text{number of file blocks/pages}\\
+bfr &= \text{blocking factor (records per block)}\\
+s &= \text{selection cardinality (qualifying records)}\\
+x &= \text{number of index levels / index search block accesses}
+\end{align*}
+Approximate pages:
+\[
+\boxed{b=\left\lceil\frac{r}{bfr}\right\rceil}
+\]
+
+\subsection{8.2 SELECT cost formulas from the textbook model}
+\subsubsection*{Linear scan}
+\[
+\boxed{CS_1=b}
+\]
+(For an equality on a key, average early-stop scan may be about $b/2$, depending on assumptions.)
+
+\subsubsection*{Binary search on ordered file}
+\[
+\boxed{CS_2\approx \log_2 b+\left\lceil\frac{s}{bfr}\right\rceil-1}
+\]
+For unique equality ($s=1$), this reduces approximately to $\log_2 b$ under the textbook convention.
+
+\subsubsection*{Primary index, single record}
+\[
+\boxed{CS_{3a}=x+1}
+\]
+(one block per index level plus one data block).
+
+\subsubsection*{Hash key, single record}
+Typical textbook estimates:
+\[
+\boxed{CS_{3b}\approx 1\text{ for static/linear hashing},\qquad \approx2\text{ for extendible hashing}}
+\]
+
+\subsubsection*{Ordering index for range}
+Very rough half-file estimate:
+\[
+\boxed{CS_4\approx x+\frac{b}{2}}
+\]
+Use histogram/selectivity information when available instead of blindly assuming half.
+
+\subsubsection*{Clustering index, nonkey equality}
+\[
+\boxed{CS_5=x+\left\lceil\frac{s}{bfr}\right\rceil}
+\]
+Because qualifying records are clustered into contiguous file blocks.
+
+\subsubsection*{Secondary B$^+$-tree, unique equality}
+\[
+\boxed{CS_6=x+1}
+\]
+
+\subsubsection*{Secondary B$^+$-tree, nonkey equality --- worst case}
+If qualifying records are unclustered:
+\[
+\boxed{CS_{6a}=x+1+s}
+\]
+The $s$ term reflects potentially one data-block access per qualifying record.
+
+\subsection{8.3 Selectivity}
+Selection selectivity:
+\[
+sel=\frac{s}{r},\qquad 0\le sel\le1
+\]
+If uniformly distributed over $d$ distinct values for equality:
+\[
+sel\approx\frac{1}{d},\qquad s\approx\frac{r}{d}
+\]
+
+\subsection{8.4 Join selectivity and cardinality}
+For join condition $c$:
+\[
+\boxed{js=\frac{|R\bowtie_c S|}{|R|\,|S|}}
+\]
+Approximate equality-join selectivity:
+\[
+\boxed{js\approx\frac{1}{\max(NDV(A,R),NDV(B,S))}}
+\]
+Then join cardinality:
+\[
+\boxed{jc=|R\bowtie_c S|=js\,|R|\,|S|}
+\]
+
+\subsection{8.5 B$^+$-tree vs hashing decision}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{5cm} X X}
+\toprule
+\textbf{Predicate} & \textbf{Hash} & \textbf{B$^+$-tree}\\
+\midrule
+$A=c$ equality & excellent & excellent\\
+$A<c$, $A>c$, BETWEEN & poor for ordered traversal & excellent\\
+ORDER BY / MIN / MAX & no ordering benefit & ordered access helps\\
+Many matches, unclustered index & can still be expensive & can be very expensive; scan may win\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{8.6 Core heuristic rules}
+Push selections and projections down:
+\[
+\sigma\text{ early},\qquad \pi\text{ early}
+\]
+to reduce intermediate relation sizes before joins.
+
+For conjunctive selections:
+\[
+\sigma_{c_1\land c_2\land\cdots\land c_n}(R)
+\equiv
+\sigma_{c_1}(\sigma_{c_2}(\cdots\sigma_{c_n}(R)\cdots))
+\]
+Selections commute:
+\[
+\sigma_{c_1}(\sigma_{c_2}(R))\equiv \sigma_{c_2}(\sigma_{c_1}(R))
+\]
+Join is commutative and associative for ordinary inner joins:
+\[
+R\bowtie S\equiv S\bowtie R
+\]
+\[
+(R\bowtie S)\bowtie T\equiv R\bowtie(S\bowtie T)
+\]
+which is why join order can be optimized.
+
+% =========================================================
+\section{9. Fast Decision Trees}
+
+\subsection{9.1 English query $\to$ formal method}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm} X}
+\toprule
+\textbf{Phrase} & \textbf{Think immediately}\\
+\midrule
+``at least one'' & $\exists$, join, EXISTS\\
+``none / never'' & $\neg\exists$, anti-join idea, NOT EXISTS, Universe$-$Bad\\
+``all / every'' & $\forall$, $\neg\exists$ counterexample, division $\div$\\
+``at least two distinct'' & self-join + renamed copies + $\neq$\\
+``exactly two'' & AtLeast2 $-$ AtLeast3 (classical RA), or GROUP BY/HAVING COUNT(DISTINCT...) = 2 in SQL\\
+``highest / maximum'' & aggregate/MAX, ranking, or self-join difference trick in classical RA\\
+``same department/faculty'' & equality predicate across joined tuples\\
+``no duplicate'' & key/UNIQUE or composite key\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{9.2 Schedule $\to$ answer}
+\begin{enumerate}
+\item List nodes $T_1,\ldots,T_n$.
+\item For each item $X$, inspect conflicting pairs only.
+\item Add all edges $T_i\to T_j$.
+\item Cycle? If yes: not conflict-serializable. If no: enumerate topological orders.
+\item If recoverability asked: build reads-from dependencies and compare commit positions.
+\item If 2PL asked: verify no new lock after first unlock; for strict 2PL, verify write locks held to commit/abort.
+\item If deadlock asked: draw wait-for edges and find cycles.
+\end{enumerate}
+
+\subsection{9.3 FD $\to$ answer}
+\begin{enumerate}
+\item Compute requested closure $X^+$.
+\item Find all minimal superkeys (candidate keys).
+\item Mark prime attributes.
+\item Test BCNF: every determinant superkey?
+\item If no, test 3NF: determinant superkey OR RHS prime?
+\item If decomposition given: test lossless join using intersection closure.
+\end{enumerate}
+
+% =========================================================
+\section{10. One-Page Ultra-Condensed Sheet}
+\small
+\begin{multicols}{2}
+\textbf{RA:}
+$\sigma_\theta(R)$ select; $\pi_A(R)$ project; $\rho$ rename; $\times$ product; $\bowtie$ join; $\div$ all/every; $R-S$ difference.\\
+At least 2 = self-join with distinct values. Exactly 2 = $\ge2-\ge3$.\\
+Division: $T_1=\pi_Y(R)$, $T_2=\pi_Y((S\times T_1)-R)$, $T=T_1-T_2$.
+
+\textbf{TRC:}
+$\{t\mid P(t)\}$; $\exists$ at least one; $\neg\exists$ none; $\forall x P(x)\equiv\neg\exists x\neg P(x)$.
+
+\textbf{Constraints:}
+Row-local $\to$ CHECK; existence $\to$ FK; uniqueness $\to$ PK/UNIQUE; cross-table $\to$ assertion/trigger. Formal: $\neg\exists$(violating tuples).
+
+\textbf{Conflicts:}
+Same item + different Tx + at least one write. Edge from earlier op's Tx to later op's Tx. Acyclic precedence graph $\Leftrightarrow$ CSR. Serial orders = topological sorts.
+
+\textbf{Recovery properties:}
+Recoverable: writer commit before reader commit. Cascadeless: writer commit before reader read. Strict: no read/write of uncommitted written item. Strict $\Rightarrow$ cascadeless $\Rightarrow$ recoverable.
+
+\textbf{2PL:}
+Grow=lock, shrink=unlock; no new lock after first unlock. Strict 2PL holds X-locks until commit/abort. Wait-for cycle = deadlock.
+
+\textbf{Recovery:}
+Deferred/NO-UNDO-REDO: REDO winners, ignore losers. Immediate/UNDO-REDO: REDO winners, UNDO losers. $\langle T,X,old,new\rangle$: redo new, undo old.
+
+\textbf{FD:}
+$X\to Y$; closure $X^+$. Superkey iff $X^+=R$. Candidate key=minimal superkey. 3NF: determinant superkey OR RHS prime. BCNF: determinant superkey. Binary lossless: $(R_1\cap R_2)\to R_1$ or $R_2$.
+
+\textbf{Costs:}
+$b=\lceil r/bfr\rceil$; scan $CS_1=b$; primary/B$^+$ key $x+1$; hash equality $\approx1$ static/linear or $2$ extendible; clustering $x+\lceil s/bfr\rceil$; secondary nonkey worst-case $x+1+s$.\\
+$js=|R\bowtie S|/(|R||S|)$; $jc=js|R||S|$.
+\end{multicols}
+\normalsize
+
+\section*{Reference scope}
+This cheatsheet paraphrases and reorganizes notation and concepts from \emph{Fundamentals of Database Systems}, 7th ed., for exam revision. Particularly relevant book sections are: ER modeling (Ch. 3), relational constraints and SQL (Ch. 5--7), relational algebra/calculus and ER mapping (Ch. 8--9), FDs/normalization (Ch. 14--15), indexing and query optimization (Ch. 17--19), transactions/concurrency/recovery (Ch. 20--22). It is not a replacement for the textbook and intentionally does not reproduce long passages verbatim.
+
+\end{document}
