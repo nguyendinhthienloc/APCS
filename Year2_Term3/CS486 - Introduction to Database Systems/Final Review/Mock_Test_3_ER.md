@@ -1,4 +1,96 @@
-# Mock Test 3 — ER Diagram & Relational Schema
+# ER Diagram & Relational Schema — Mock Test 3 (Airline Flight System)
+
+This file shows **both representations of the same database**:
+
+1. **ER Diagram (conceptual model)** — entities, attributes, relationships, cardinalities.
+2. **Relational Schema (logical/table model)** — tables, primary keys, foreign keys, and constraints.
+
+> Note: Mermaid's built-in `erDiagram` uses Crow's Foot notation rather than classic Chen ovals/diamonds.  
+> The first diagram below therefore uses a Mermaid `flowchart` to imitate **Chen notation**.
+
+---
+
+# 1. ER Diagram — Chen-Style
+
+```mermaid
+flowchart TB
+    %% ENTITIES
+    FLIGHT[FLIGHT]
+    FLEG[FLIGHT_LEG]
+    AIRPORT[AIRPORT]
+    AIRCRAFT[AIRCRAFT]
+    LINST[LEG_INSTANCE]
+
+    %% RELATIONSHIPS
+    CONS{consists of}
+    ORIG{origin of}
+    DEST{destination of}
+    INST{instantiated as}
+    USED{uses}
+
+    %% ATTRIBUTES
+    FNO([FNo — KEY])
+    AL([Airline])
+
+    LFNO([FNo — partial/key component])
+    LNO([LegNo — partial/key component])
+
+    ACODE([Code — KEY])
+    CITY([City])
+
+    ACID([AircraftID — KEY])
+    CAP([Capacity])
+
+    IFNO([FNo — partial/key component])
+    ILNO([LegNo — partial/key component])
+    IFD([FDate — partial/key component])
+    SEATS([SeatsBooked])
+
+    %% ENTITY ATTRIBUTES
+    FLIGHT --- FNO
+    FLIGHT --- AL
+
+    FLEG --- LFNO
+    FLEG --- LNO
+
+    AIRPORT --- ACODE
+    AIRPORT --- CITY
+
+    AIRCRAFT --- ACID
+    AIRCRAFT --- CAP
+
+    LINST --- IFNO
+    LINST --- ILNO
+    LINST --- IFD
+    LINST --- SEATS
+
+    %% RELATIONSHIPS + CARDINALITIES
+    FLIGHT ---|1| CONS
+    CONS ---|1..N| FLEG
+
+    AIRPORT ---|0..N| ORIG
+    ORIG ---|1..1| FLEG
+
+    AIRPORT ---|0..N| DEST
+    DEST ---|1..1| FLEG
+
+    FLEG ---|1| INST
+    INST ---|0..N| LINST
+
+    AIRCRAFT ---|0..N| USED
+    USED ---|1..1| LINST
+```
+
+### Meaning
+
+- **Flight & FlightLeg (`consists of`):** One **FLIGHT** consists of one or more **FLIGHT_LEG**s ($1:N$, total participation on `FLIGHT_LEG`). `FLIGHT_LEG` is existence-dependent on `FLIGHT`; leg numbers `1, 2, 3, ...` are scoped per flight.
+- **Airport & FlightLeg (`origin of` & `destination of`):** Each **FLIGHT_LEG** has **exactly one** origin airport and **exactly one** destination airport ($1:N$ each). An **AIRPORT** can serve as the origin or destination for zero or more legs.
+- **FlightLeg & LegInstance (`instantiated as`):** A **FLIGHT_LEG** is flown on specific dates as zero or more **LEG_INSTANCE**s ($1:N$). `LEG_INSTANCE` is existence-dependent on `FLIGHT_LEG`; identified by `(FNo, LegNo, FDate)`.
+- **Aircraft & LegInstance (`uses`):** Each **LEG_INSTANCE** uses **exactly one** assigned **AIRCRAFT** ($1:N$). An aircraft can be used by zero or more leg instances across time.
+
+---
+
+# 2. Relational Schema — Tables, PKs and FKs
 
 ```mermaid
 erDiagram
@@ -39,46 +131,64 @@ erDiagram
     }
 ```
 
+## Relational notation
+
+### FLIGHT
+
+**FLIGHT**(`FNo`, Airline)
+
+- **PK:** `FNo`
+
+### AIRPORT
+
+**AIRPORT**(`Code`, City)
+
+- **PK:** `Code`
+
+### AIRCRAFT
+
+**AIRCRAFT**(`AircraftID`, Capacity)
+
+- **PK:** `AircraftID`
+
+### FLIGHT_LEG
+
+**FLIGHT_LEG**(`FNo`, `LegNo`, Orig, Dest)
+
+- **PK:** (`FNo`, `LegNo`)
+- **FK:** `FNo` → `FLIGHT(FNo)`
+- `ON DELETE CASCADE`
+- **FK:** `Orig` → `AIRPORT(Code)`
+- `NOT NULL`
+- **FK:** `Dest` → `AIRPORT(Code)`
+- `NOT NULL`
+- **CHECK:** `Orig <> Dest`
+  - Origin and destination airports must differ.
+
+### LEG_INSTANCE
+
+**LEG_INSTANCE**(`FNo`, `LegNo`, `FDate`, AircraftID, SeatsBooked)
+
+- **PK:** (`FNo`, `LegNo`, `FDate`)
+- **FK:** (`FNo`, `LegNo`) → `FLIGHT_LEG(FNo, LegNo)`
+- `ON DELETE CASCADE`
+- **FK:** `AircraftID` → `AIRCRAFT(AircraftID)`
+- `NOT NULL`
+
 ---
 
-## 1. Relationship Cardinality Breakdown
+# Quick Exam Distinction
 
-| Relationship | Entity 1 (Card / Part) | Entity 2 (Card / Part) | Ratio | Design / Mapping Semantics |
-| :--- | :--- | :--- | :--- | :--- |
-| **consists_of** | `FLIGHT` (1, total: 1..N) | `FLIGHT_LEG` (N, total: 1..1) | **1 : N** | A flight consists of **1 or more** legs. Each flight leg belongs to **exactly 1** flight (`FNo` in PK). |
-| **origin_of** | `AIRPORT` (1, partial: 0..N) | `FLIGHT_LEG` (N, total: 1..1) | **1 : N** | An airport is origin for **0..N** legs. Each leg departs from **exactly 1** origin airport (`Orig` FK). |
-| **destination_of** | `AIRPORT` (1, partial: 0..N) | `FLIGHT_LEG` (N, total: 1..1) | **1 : N** | An airport is destination for **0..N** legs. Each leg arrives at **exactly 1** destination airport (`Dest` FK). |
-| **instantiated_as**| `FLIGHT_LEG` (1, partial: 0..N) | `LEG_INSTANCE` (N, total: 1..1) | **1 : N** | A leg is flown on **0..N** dates. Each leg instance corresponds to **exactly 1** flight leg (`FNo, LegNo` in PK). |
-| **used_by** | `AIRCRAFT` (1, partial: 0..N) | `LEG_INSTANCE` (N, total: 1..1) | **1 : N** | An aircraft is assigned to **0..N** leg instances. Each instance uses **exactly 1** assigned aircraft (`AircraftID` FK). |
+| ER Diagram | Relational Schema |
+|---|---|
+| Conceptual design | Logical/table design |
+| Entity → rectangle | Relation → table |
+| Attribute → oval | Attribute → column |
+| Relationship → diamond | Relationship → foreign key |
+| Shows 1:1, 1:N, M:N | Shows PK/FK references |
+| Used before conversion | Result after ER-to-relational mapping |
 
----
+**Memory rule:**
 
-## 2. Relational Schema
-
-- **`FLIGHT`** (**`FNo`**, `Airline`)
-  - **PK:** `FNo`
-
-- **`AIRPORT`** (**`Code`**, `City`)
-  - **PK:** `Code`
-
-- **`AIRCRAFT`** (**`AircraftID`**, `Capacity`)
-  - **PK:** `AircraftID`
-
-- **`FLIGHT_LEG`** (**`FNo`**, **`LegNo`**, `Orig`, `Dest`)
-  - **PK:** `(FNo, LegNo)`
-  - **FK:** `FNo` $\to$ `FLIGHT(FNo)` (ON DELETE CASCADE)
-  - **FK:** `Orig` $\to$ `AIRPORT(Code)` (`NOT NULL`)
-  - **FK:** `Dest` $\to$ `AIRPORT(Code)` (`NOT NULL`)
-  - **CHECK:** `Orig <> Dest` *(Origin and destination airports must differ)*
-
-- **`LEG_INSTANCE`** (**`FNo`**, **`LegNo`**, **`FDate`**, `AircraftID`, `SeatsBooked`)
-  - **PK:** `(FNo, LegNo, FDate)`
-  - **FK:** `(FNo, LegNo)` $\to$ `FLIGHT_LEG(FNo, LegNo)` (ON DELETE CASCADE)
-  - **FK:** `AircraftID` $\to$ `AIRCRAFT(AircraftID)` (`NOT NULL`)
-
----
-
-## 3. Key Notes & Constraints
-- **Multilevel Weak Entities:** `FLIGHT_LEG` is weak under `FLIGHT` (identified by `(FNo, LegNo)`). `LEG_INSTANCE` is weak under `FLIGHT_LEG` (identified by `(FNo, LegNo, FDate)`).
-- **Multiple References to Same Relation:** `FLIGHT_LEG` has two distinct foreign keys (`Orig` and `Dest`) referencing `AIRPORT(Code)`.
-
+> **ER diagram:** What entities exist and how are they related?  
+> **Relational schema:** What tables do I create, and what are their PKs/FKs?

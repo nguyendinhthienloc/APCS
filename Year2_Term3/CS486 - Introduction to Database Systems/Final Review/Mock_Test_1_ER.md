@@ -1,11 +1,90 @@
-# Mock Test 1 — ER Diagram & Relational Schema
+# ER Diagram & Relational Schema — Mock Test 1 (Sports Center)
+
+This file shows **both representations of the same database**:
+
+1. **ER Diagram (conceptual model)** — entities, attributes, relationships, cardinalities.
+2. **Relational Schema (logical/table model)** — tables, primary keys, foreign keys, and constraints.
+
+> Note: Mermaid's built-in `erDiagram` uses Crow's Foot notation rather than classic Chen ovals/diamonds.  
+> The first diagram below therefore uses a Mermaid `flowchart` to imitate **Chen notation**.
+
+---
+
+# 1. ER Diagram — Chen-Style
+
+```mermaid
+flowchart TB
+    %% ENTITIES
+    CLUB[CLUB]
+    TEAM[TEAM]
+    ATH[ATHLETE]
+    COACH[COACH]
+
+    %% RELATIONSHIPS
+    HAS{has}
+    CONT{contains}
+    HEAD{head coach of}
+    COACHES{coaches}
+
+    %% ATTRIBUTES
+    CN([ClubName — KEY])
+
+    TCN([ClubName — partial/key component])
+    TN([TeamName — partial/key component])
+
+    ACN([ClubName — partial/key component])
+    ATN([TeamName — partial/key component])
+    JN([JerseyNo — partial/key component])
+
+    CID([CoachID — KEY])
+    CNAME([CoachName])
+
+    %% ENTITY ATTRIBUTES
+    CLUB --- CN
+
+    TEAM --- TCN
+    TEAM --- TN
+
+    ATH --- ACN
+    ATH --- ATN
+    ATH --- JN
+
+    COACH --- CID
+    COACH --- CNAME
+
+    %% RELATIONSHIPS + CARDINALITIES
+    CLUB ---|1| HAS
+    HAS ---|1..N| TEAM
+
+    TEAM ---|1| CONT
+    CONT ---|1..N| ATH
+
+    COACH ---|0..N| HEAD
+    HEAD ---|1..1| TEAM
+
+    COACH ---|0..N| COACHES
+    COACHES ---|0..N| TEAM
+```
+
+### Meaning
+
+- **Club & Team (`has`):** One **CLUB** has one or more **TEAMs** ($1:N$, total participation on `TEAM`). `TEAM` is existence-dependent on `CLUB`; team names are unique only within a club.
+- **Team & Athlete (`contains`):** One **TEAM** contains one or more **ATHLETEs** ($1:N$, total participation on `ATHLETE`). `ATHLETE` is existence-dependent on `TEAM`; jersey numbers are unique only within that team.
+- **Head Coach (`head coach of`):** Each **TEAM** has **exactly one** head coach ($1:N$, total participation on `TEAM`). A **COACH** may be the head coach of zero or more teams.
+- **General Coaching (`coaches`):** A **COACH** may coach zero or more **TEAMs**, and a **TEAM** may have zero or more **COACHes** ($M:N$ relationship).
+- **Head Coach Consistency:** The head coach of a team must also participate in the general `coaches` relationship for that team.
+
+---
+
+# 2. Relational Schema — Tables, PKs and FKs
 
 ```mermaid
 erDiagram
     CLUB ||--|{ TEAM : "has (1:N)"
     TEAM ||--|{ ATHLETE : "contains (1:N)"
     COACH ||--o{ TEAM : "head coach of (1:N)"
-    COACH }o--o{ TEAM : "coaches (M:N)"
+    COACH ||--o{ COACHES_TEAM : "participates in (M:N)"
+    TEAM ||--o{ COACHES_TEAM : "coached by (M:N)"
 
     CLUB {
         string ClubName PK
@@ -35,44 +114,62 @@ erDiagram
     }
 ```
 
+## Relational notation
+
+### CLUB
+
+**CLUB**(`ClubName`)
+
+- **PK:** `ClubName`
+
+### COACH
+
+**COACH**(`CoachID`, CoachName)
+
+- **PK:** `CoachID`
+
+### TEAM
+
+**TEAM**(`ClubName`, `TeamName`, HeadCoachID)
+
+- **PK:** (`ClubName`, `TeamName`)
+- **FK:** `ClubName` → `CLUB(ClubName)`
+- `ON DELETE CASCADE`
+- **FK:** `HeadCoachID` → `COACH(CoachID)`
+- `NOT NULL` *(ensures every team has a head coach)*
+
+### ATHLETE
+
+**ATHLETE**(`ClubName`, `TeamName`, `JerseyNo`)
+
+- **PK:** (`ClubName`, `TeamName`, `JerseyNo`)
+- **FK:** (`ClubName`, `TeamName`) → `TEAM(ClubName, TeamName)`
+- `ON DELETE CASCADE`
+
+### COACHES_TEAM
+
+**COACHES_TEAM**(`CoachID`, `ClubName`, `TeamName`)
+
+- **PK:** (`CoachID`, `ClubName`, `TeamName`)
+- **FK:** `CoachID` → `COACH(CoachID)`
+- `ON DELETE CASCADE`
+- **FK:** (`ClubName`, `TeamName`) → `TEAM(ClubName, TeamName)`
+- `ON DELETE CASCADE`
+
 ---
 
-## 1. Relationship Cardinality Breakdown
+# Quick Exam Distinction
 
-| Relationship | Entity 1 (Card / Part) | Entity 2 (Card / Part) | Ratio | Design / Mapping Semantics |
-| :--- | :--- | :--- | :--- | :--- |
-| **has** | `CLUB` (1, total: 1..N) | `TEAM` (N, total: 1..1) | **1 : N** | Each team belongs to **exactly 1** club (weak identification). A club must have **at least 1** team. |
-| **contains** | `TEAM` (1, total: 1..N) | `ATHLETE` (N, total: 1..1) | **1 : N** | Each athlete belongs to **exactly 1** team. A team contains **1 or more** athletes. |
-| **head coach of** | `COACH` (1, partial: 0..N) | `TEAM` (N, total: 1..1) | **1 : N** | Each team has **exactly 1** head coach (FK in `TEAM`, `NOT NULL`). A coach can head **0..N** teams. |
-| **coaches** | `COACH` (M, partial: 0..N) | `TEAM` (N, partial: 0..N) | **M : N** | General/assistant coaching. A coach can coach **0..N** teams, and a team can have **0..N** coaches. |
+| ER Diagram | Relational Schema |
+|---|---|
+| Conceptual design | Logical/table design |
+| Entity → rectangle | Relation → table |
+| Attribute → oval | Attribute → column |
+| Relationship → diamond | Relationship → foreign key |
+| Shows 1:1, 1:N, M:N | Shows PK/FK references |
+| Used before conversion | Result after ER-to-relational mapping |
 
----
+**Memory rule:**
 
-## 2. Relational Schema
-
-- **`CLUB`** (**`ClubName`**)
-  - **PK:** `ClubName`
-
-- **`COACH`** (**`CoachID`**, `CoachName`)
-  - **PK:** `CoachID`
-
-- **`TEAM`** (**`ClubName`**, **`TeamName`**, `HeadCoachID`)
-  - **PK:** `(ClubName, TeamName)`
-  - **FK:** `ClubName` $\to$ `CLUB(ClubName)` (ON DELETE CASCADE)
-  - **FK:** `HeadCoachID` $\to$ `COACH(CoachID)` (`NOT NULL`)
-
-- **`ATHLETE`** (**`ClubName`**, **`TeamName`**, **`JerseyNo`**)
-  - **PK:** `(ClubName, TeamName, JerseyNo)`
-  - **FK:** `(ClubName, TeamName)` $\to$ `TEAM(ClubName, TeamName)` (ON DELETE CASCADE)
-
-- **`COACHES_TEAM`** (**`CoachID`**, **`ClubName`**, **`TeamName`**) *(Associative relation for M:N `coaches`)*
-  - **PK:** `(CoachID, ClubName, TeamName)`
-  - **FK:** `CoachID` $\to$ `COACH(CoachID)` (ON DELETE CASCADE)
-  - **FK:** `(ClubName, TeamName)` $\to$ `TEAM(ClubName, TeamName)` (ON DELETE CASCADE)
-
----
-
-## 3. Key Notes & Constraints
-- **Weak Entity Propagation:** `TEAM` is weak/scoped relative to `CLUB`, so its primary key includes `ClubName`. `ATHLETE` is weak/scoped relative to `TEAM`, so its primary key includes `(ClubName, TeamName, JerseyNo)`.
-- **Head Coach vs General Coach:** Total participation of `TEAM` in `head coach of` forces `HeadCoachID` in `TEAM` to be non-null. The $M:N$ `coaches` relationship requires the separate junction table `COACHES_TEAM`.
-
+> **ER diagram:** What entities exist and how are they related?  
+> **Relational schema:** What tables do I create, and what are their PKs/FKs?
