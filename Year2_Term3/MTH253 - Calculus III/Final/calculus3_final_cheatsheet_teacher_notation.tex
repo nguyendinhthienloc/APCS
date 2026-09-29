@@ -1,0 +1,266 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=1.25cm]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{multicol}
+\usepackage{array,booktabs}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{lmodern}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\setlist[itemize]{leftmargin=1.2em,itemsep=1pt,topsep=1pt}
+\setlist[enumerate]{leftmargin=1.4em,itemsep=1pt,topsep=1pt}
+\titleformat{\section}{\large\bfseries}{}{0pt}{}
+\titleformat{\subsection}{\normalsize\bfseries}{}{0pt}{}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Calculus III Final Exam Cheatsheet}
+\rhead{MTH253}
+\cfoot{\thepage}
+\newtcolorbox{rulebox}{colback=gray!6,colframe=black!35,boxrule=0.5pt,arc=1mm,left=2mm,right=2mm,top=1mm,bottom=1mm}
+\newcommand{\boxeq}[1]{\[\boxed{#1}\]}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries Calculus III Final Exam Cheatsheet}\\[2mm]
+{\small Directional derivative - Absolute extrema/Lagrange - Multiple integrals - Polar/Spherical - Scalar line integral - Green's theorem - Flux}
+\end{center}
+
+\begin{rulebox}
+\textbf{Fast recognition.}
+Direction/change $\to$ directional derivative. \quad
+Absolute max/min on closed $D$ $\to$ interior + boundary + corners. \quad
+Constraint $g=c$ $\to$ Lagrange. \quad
+Circles/disks $\to$ polar. \quad
+Spheres/cones $\to$ spherical. \quad
+$\int_C f\,ds$ $\to$ scalar line integral. \quad
+$\oint_C P\,dx+Q\,dy$ with closed $C$ $\to$ Green. \quad
+$\iint_S \mathbf F\cdot\mathbf n\,dS$ $\to$ flux.
+\end{rulebox}
+
+\begin{multicols}{2}
+
+\section*{1. Directional Derivative}
+For $f(x,y,z)$,
+\boxeq{\nabla f=\langle f_x,f_y,f_z\rangle}
+For a given direction vector $\mathbf v$,
+\boxeq{\mathbf u=\frac{\mathbf v}{|\mathbf v|}}
+Then
+\boxeq{D_{\mathbf u}f(P)=\nabla f(P)\cdot\mathbf u}
+If direction is from $A$ to $B$:
+\boxeq{\mathbf v=B-A,\qquad \mathbf u=\frac{B-A}{|B-A|}}
+If a direction angle $\theta$ is given in the plane:
+\boxeq{\mathbf u=\langle\cos\theta,\sin\theta\rangle}
+Fastest increase:
+\boxeq{\text{direction}=\frac{\nabla f}{|\nabla f|},\qquad \text{rate}=|\nabla f|}
+Fastest decrease:
+\boxeq{\text{direction}=-\frac{\nabla f}{|\nabla f|},\qquad \text{rate}=-|\nabla f|}
+\textbf{Rule of thumb:} if the problem gives a raw direction vector, \emph{normalize first}. If $\mathbf u\perp \nabla f$, then $D_{\mathbf u}f=0$.
+
+\section*{2. Absolute Max/Min + Lagrange}
+For a continuous $f$ on a closed, bounded region $D$, absolute extrema exist.
+
+\textbf{Interior candidates:}
+\boxeq{f_x=0,\qquad f_y=0}
+Keep only solutions inside $D$.
+
+\textbf{Boundary constraint:} if $g(x,y)=c$,
+\boxeq{\nabla f=\lambda\nabla g}
+that is,
+\boxeq{f_x=\lambda g_x,\qquad f_y=\lambda g_y,\qquad g=c}
+In 3D add $f_z=\lambda g_z$.
+
+\textbf{Final comparison checklist:}
+\begin{enumerate}
+\item Interior critical points.
+\item Every smooth boundary piece (Lagrange or parametrization).
+\item Corners/endpoints.
+\item Evaluate $f$ at all candidates.
+\item Largest value = absolute max; smallest = absolute min.
+\end{enumerate}
+\textbf{Trap:} Lagrange handles the constrained boundary; it does \emph{not} replace checking the interior.
+
+\section*{3. Double and Triple Integrals}
+General double integral:
+\boxeq{\iint_D f(x,y)\,dA}
+Type I region:
+\boxeq{\iint_D f\,dA=\int_a^b\int_{g_1(x)}^{g_2(x)} f(x,y)\,dy\,dx}
+Area:
+\boxeq{\iint_D 1\,dA=\operatorname{Area}(D)}
+If $f\ge 0$, $\iint_D f\,dA$ is volume under $z=f(x,y)$.
+
+Triple integral:
+\boxeq{\iiint_E f(x,y,z)\,dV}
+Volume:
+\boxeq{\iiint_E1\,dV=\operatorname{Vol}(E)}
+If $z_{\min}(x,y)\le z\le z_{\max}(x,y)$:
+\boxeq{\iiint_E f\,dV=\iint_D\int_{z_{\min}}^{z_{\max}} f\,dz\,dA}
+\textbf{Rule:} read iterated integrals from inside out.
+
+\section*{4. Polar Coordinates}
+Use for disks, circles, annuli, sectors, or $x^2+y^2$.
+\boxeq{x=r\cos\theta,\quad y=r\sin\theta,\quad x^2+y^2=r^2}
+\boxeq{dA=r\,dr\,d\theta}
+Therefore
+\boxeq{\iint_D f\,dA=\int_{\alpha}^{\beta}\int_{r_1(\theta)}^{r_2(\theta)}f(r\cos\theta,r\sin\theta)\,r\,dr\,d\theta}
+Standard angles:
+\begin{itemize}
+\item Full circle: $0\le\theta\le2\pi$.
+\item Upper half: $0\le\theta\le\pi$.
+\item First quadrant: $0\le\theta\le\pi/2$.
+\item Right half: $-\pi/2\le\theta\le\pi/2$.
+\end{itemize}
+Useful conversions:
+\[
+x^2+y^2=R^2\Rightarrow r=R.
+\]
+For other boundaries, substitute $x=r\cos\theta$ and $y=r\sin\theta$ and solve directly for $r$.
+\textbf{Trap:} never forget the Jacobian factor $r$.
+
+\section*{5. Spherical Coordinates}
+Use for spheres, hemispheres, cones with vertex at the origin, radial functions.
+\boxeq{x=\rho\sin\phi\cos\theta}
+\boxeq{y=\rho\sin\phi\sin\theta}
+\boxeq{z=\rho\cos\phi}
+\boxeq{x^2+y^2+z^2=\rho^2,\qquad \sqrt{x^2+y^2}=\rho\sin\phi}
+Volume element:
+\boxeq{dV=\rho^2\sin\phi\,d\rho\,d\phi\,d\theta}
+Meaning:
+\begin{itemize}
+\item $\rho$: distance from origin.
+\item $\theta$: rotation around the $z$-axis.
+\item $\phi$: angle measured down from the positive $z$-axis.
+\end{itemize}
+Whole sphere: $0\le\rho\le R$, $0\le\phi\le\pi$, $0\le\theta\le2\pi$.
+Upper hemisphere: $0\le\phi\le\pi/2$.
+
+Cone trick: for $z=\sqrt{x^2+y^2}$,
+\[
+\rho\cos\phi=\rho\sin\phi\Rightarrow \phi=\frac{\pi}{4}.
+\]
+\textbf{Memory rule:} sphere $\to\rho$ bound; cone $\to\phi$ bound; rotation $\to\theta$ bound.
+
+\section*{6. Scalar Line Integral (Type 1)}
+Parametrize the curve:
+\boxeq{\mathbf r(t)=\langle x(t),y(t),z(t)\rangle}
+Then
+\boxeq{\mathbf r'(t)=\langle x'(t),y'(t),z'(t)\rangle}
+\boxeq{ds=|\mathbf r'(t)|\,dt}
+where
+\boxeq{|\mathbf r'(t)|=\sqrt{x'(t)^2+y'(t)^2+z'(t)^2}}
+Core formula:
+\boxeq{\int_C f\,ds=\int_a^b f(\mathbf r(t))|\mathbf r'(t)|\,dt}
+In 2D simply omit $z'(t)^2$.
+
+Special case:
+\boxeq{\int_C1\,ds=\text{length of }C}
+If $f$ is linear density, $\int_C f\,ds$ is mass of a wire.
+
+\textbf{Orientation:}
+\boxeq{\int_C f\,ds=\int_{-C}f\,ds}
+Type 1 does not care which way the curve is traversed.
+
+Useful parametrizations:
+\[
+\mathbf r(t)=A+t(B-A),\ 0\le t\le1
+\]
+for a line segment, and
+\[
+x=a+R\cos t,\qquad y=b+R\sin t
+\]
+for a circle.
+
+\section*{7. Green's Theorem}
+For $\mathbf F=(P,Q)$ and positively oriented (counterclockwise) closed curve $C=\partial D$:
+\boxeq{\oint_C P\,dx+Q\,dy=\iint_D\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)\,dA}
+Memorize:
+\boxeq{Q_x-P_y}
+Positive orientation = counterclockwise = region stays on your left.
+
+If $C$ is clockwise:
+\boxeq{\oint_C P\,dx+Q\,dy=-\iint_D(Q_x-P_y)\,dA}
+\textbf{Workflow:} identify $P,Q$ $\to$ compute $Q_x-P_y$ $\to$ find region $D$ $\to$ integrate.
+
+\textbf{Trap:} Green applies to a \emph{vector/type-2 line integral}, not to $\int_C f\,ds$.
+
+\section*{8. Surface Integral Type 2 (Flux)}
+For vector field
+\boxeq{\mathbf F=(P,Q,R)}
+flux through an oriented surface $S$ is
+\boxeq{I=\iint_S\mathbf F\cdot\mathbf n\,dS}
+Lecture notation:
+\boxeq{I=\iint_S P\,dy\,dz+Q\,dz\,dx+R\,dx\,dy}
+$\mathbf F\cdot\mathbf n$ extracts the component of the field normal to the surface.
+
+If a surface is implicit, $G(x,y,z)=0$:
+\boxeq{\nabla G=\langle G_x,G_y,G_z\rangle\text{ is normal to }S}
+Unit normal:
+\boxeq{\mathbf n=\pm\frac{\nabla G}{\|\nabla G\|}}
+
+\subsection*{Graph shortcut: $z=g(x,y)$}
+For \textbf{upward} orientation:
+\boxeq{\mathbf n\,dS=\langle-g_x,-g_y,1\rangle\,dx\,dy}
+Hence
+\boxeq{\iint_S\mathbf F\cdot\mathbf n\,dS=\iint_D(-Pg_x-Qg_y+R)\,dx\,dy}
+For \textbf{downward} orientation:
+\boxeq{\mathbf n\,dS=\langle g_x,g_y,-1\rangle\,dx\,dy}
+Hence
+\boxeq{\iint_S\mathbf F\cdot\mathbf n\,dS=\iint_D(Pg_x+Qg_y-R)\,dx\,dy}
+Evaluate $P,Q,R$ on the surface $z=g(x,y)$.
+
+\textbf{Why no normalization?} In the product $\mathbf n\,dS$, the unit-normal denominator $\sqrt{1+g_x^2+g_y^2}$ cancels the same factor in $dS$.
+
+\subsection*{Parametric surface}
+If $\mathbf r(u,v)$ parametrizes $S$,
+\boxeq{\iint_S\mathbf F\cdot\mathbf n\,dS=\iint_D\mathbf F(\mathbf r(u,v))\cdot(\mathbf r_u\times\mathbf r_v)\,du\,dv}
+If orientation is opposite, multiply the normal by $-1$.
+
+\section*{9. Physical / Geometric Meaning}
+\begin{itemize}
+\item $\int_a^b f(x)\,dx$: accumulation along an interval.
+\item $\iint_D f\,dA$: accumulation over area; if $f\ge0$, volume under a surface.
+\item $\iiint_E f\,dV$: accumulation over volume; $f=1$ gives volume.
+\item $\int_C f\,ds$: accumulation along curve length; $f=1$ gives curve length.
+\item $\iint_S \mathbf F\cdot\mathbf n\,dS$: net normal flow (flux) through a surface.
+\end{itemize}
+Flux signs (for chosen normal):
+\begin{itemize}
+\item $\Phi>0$: net flow in the normal direction.
+\item $\Phi<0$: net flow opposite the normal direction.
+\item $\Phi=0$: tangent flow or cancellation of positive/negative contributions; field need not be zero.
+\end{itemize}
+
+\section*{10. Last-Minute Traps}
+\begin{enumerate}
+\item Directional derivative: normalize the direction vector.
+\item Absolute extrema: check interior + boundary + corners.
+\item Polar: $dA=r\,dr\,d\theta$.
+\item Spherical: $dV=\rho^2\sin\phi\,d\rho\,d\phi\,d\theta$.
+\item $\theta$ rotates around $z$; $\phi$ is measured down from $+z$.
+\item Scalar line integral: include $ds=|\mathbf r'(t)|dt$.
+\item Green: curve must be closed; CCW is positive.
+\item Flux: orientation matters; reversing the normal changes the sign.
+\item Graph-flux shortcut already combines $\mathbf n$ and $dS$; do not normalize again.
+\end{enumerate}
+
+\end{multicols}
+
+\begin{rulebox}
+\textbf{10 formulas to memorize first:}\quad
+$\nabla f$, \quad
+$\mathbf u=\mathbf v/|\mathbf v|$, \quad
+$D_{\mathbf u}f=\nabla f\cdot\mathbf u$, \quad
+$\nabla f=\lambda\nabla g$, \quad
+$dA=r\,dr\,d\theta$, \quad
+$dV=\rho^2\sin\phi\,d\rho\,d\phi\,d\theta$, \quad
+$\int_C f\,ds=\int f(\mathbf r(t))|\mathbf r'(t)|dt$, \quad
+$\oint_C Pdx+Qdy=\iint_D(Q_x-P_y)dA$, \quad
+$I=\iint_S\mathbf F\cdot\mathbf n\,dS$, \quad
+$z=g(x,y):\ \text{up }(-g_x,-g_y,1),\ \text{down }(g_x,g_y,-1)$.
+\end{rulebox}
+
+\end{document}
