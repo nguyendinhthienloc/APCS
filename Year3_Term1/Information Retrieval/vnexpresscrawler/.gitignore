@@ -1,0 +1,10 @@
+# Ignored crawler outputs (extracted data and downloaded images)
+downloaded_images/
+*.json
+*.csv
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/

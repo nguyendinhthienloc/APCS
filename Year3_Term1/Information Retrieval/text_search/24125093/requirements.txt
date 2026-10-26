@@ -1,0 +1,2 @@
+Whoosh>=2.7.4
+streamlit>=1.30.0

@@ -20,16 +20,25 @@ throughout the code to learn how specific Python constructs work.
 """
 
 import os
+import sys
 import re
 import csv
 import json
 import time
+import hashlib
 import argparse
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
+
+# PYTHON SYNTAX / WINDOWS NOTE (`sys.stdout.reconfigure`):
+# On Windows, the terminal (PowerShell / CMD) defaults to an older encoding (`cp1252`)
+# that crashes with `UnicodeEncodeError` when printing Vietnamese characters like `ự` or `đ`.
+# This line tells Python's `print()` function to always output UTF-8 text safely!
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
 # ==============================================================================
@@ -111,7 +120,7 @@ def fetch_webpage_html(url, timeout=15):
 
 
 def extract_article_id_from_url(url):
-    """
+    r"""
     Extracts the numeric article ID from a VnExpress URL.
     Example:
       Input:  "https://vnexpress.net/gia-dau-cham-moc-115-usd-5136174.html"
@@ -371,42 +380,47 @@ def extract_article_images(soup):
     # 1. Extract images inside the main article body (`<article class="fck_detail">`)
     article_body = soup.find("article", class_="fck_detail") or soup
 
-    # Check `<figure>` blocks first (VnExpress wraps article photos in `<figure>`)
+    # Check `<figure>` blocks first (VnExpress wraps article photos in `<figure>`).
+    # IMPORTANT: Each `<figure>` often contains BOTH `<meta itemprop="url">` AND `<img data-src="...">`
+    # pointing to slightly different CDN crops of the same photo. We use `if ... elif ...`
+    # so we only take ONE URL per `<figure>`!
     for figure in article_body.find_all("figure"):
         meta_url = figure.find("meta", attrs={"itemprop": "url"})
+        img_tag = figure.find("img")
+
         if meta_url and meta_url.get("content"):
             add_image_if_new(meta_url.get("content"))
-
-        img_tag = figure.find("img")
-        if img_tag:
+        elif img_tag:
             # Prefer `data-src` over `src` because of lazy loading!
             real_img_url = img_tag.get("data-src") or img_tag.get("src")
             add_image_if_new(real_img_url)
 
-    # Also check any standalone `<img>` tags inside the article body
-    if article_body != soup:
+    # Fallback A: If the article didn't use `<figure>` tags, check standalone `<img>` tags
+    if not image_urls and article_body != soup:
         for img_tag in article_body.find_all("img"):
             real_img_url = img_tag.get("data-src") or img_tag.get("src")
             add_image_if_new(real_img_url)
 
-    # 2. If the article body had no inline photos (or in addition to them),
-    # check the OpenGraph main thumbnail `<meta property="og:image">`
-    og_image = soup.find("meta", attrs={"property": "og:image"})
-    if og_image and og_image.get("content"):
-        og_url = og_image.get("content")
-        # Skip VnExpress default fallback logo thumbnail
-        if "default/thumb" not in og_url:
-            add_image_if_new(og_url)
+    # Fallback B: ONLY if the article body had 0 inline photos (e.g. opinion/video articles),
+    # fall back to the OpenGraph social thumbnail `<meta property="og:image">`.
+    # (If we always added `og:image`, it would duplicate the first article photo with a 16:9 crop!)
+    if not image_urls:
+        og_image = soup.find("meta", attrs={"property": "og:image"})
+        if og_image and og_image.get("content"):
+            og_url = og_image.get("content")
+            if "default/thumb" not in og_url:
+                add_image_if_new(og_url)
 
     return image_urls
 
 
 def download_article_images(image_urls, article_id, output_Root_folder):
     """
-    Downloads the extracted image URLs to a local folder on disk.
+    Downloads the extracted image URLs to a local folder on disk, skipping any
+    duplicate image content using an MD5 hash check.
 
     Folder structure:
-      `<output_Root_folder>/<article_id>/image_1.jpg`, `image_2.jpg`, ...
+      `<output_Root_folder>/<article_id>/article_<article_id>_img_1.jpg`, ...
 
     PYTHON SYNTAX NOTE (`os.makedirs(..., exist_ok=True)`):
     `os.makedirs` creates the folder (and any parent folders needed).
@@ -422,7 +436,17 @@ def download_article_images(image_urls, article_id, output_Root_folder):
     article_image_folder = os.path.join(output_Root_folder, str(article_id))
     os.makedirs(article_image_folder, exist_ok=True)
 
+    # Clean up any old files inside this article's folder from previous runs
+    for old_file in os.listdir(article_image_folder):
+        old_path = os.path.join(article_image_folder, old_file)
+        if os.path.isfile(old_path):
+            try:
+                os.remove(old_path)
+            except OSError:
+                pass
+
     saved_file_paths = []
+    seen_content_hashes = set()
 
     for index, img_url in enumerate(image_urls, start=1):
         try:
@@ -432,12 +456,18 @@ def download_article_images(image_urls, article_id, output_Root_folder):
             if extension.lower() not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
                 extension = ".jpg"
 
-            filename = f"article_{article_id}_img_{index}{extension}"
-            local_path = os.path.join(article_image_folder, filename)
-
             # Download the image bytes
             response = requests.get(img_url, headers=REQUEST_HEADERS, timeout=15)
-            if response.status_code == 200:
+            if response.status_code == 200 and response.content:
+                # Compute MD5 fingerprint of the image bytes so we never save two identical images
+                content_hash = hashlib.md5(response.content).hexdigest()
+                if content_hash in seen_content_hashes:
+                    continue
+                seen_content_hashes.add(content_hash)
+
+                filename = f"article_{article_id}_img_{len(saved_file_paths) + 1}{extension}"
+                local_path = os.path.join(article_image_folder, filename)
+
                 # PYTHON SYNTAX NOTE (`with open(local_path, "wb") as img_file:`):
                 # - `"wb"` means "Write Binary" mode (used for images, PDFs, audio, etc.,
                 #   as opposed to `"w"` which is for plain text).
