@@ -1,0 +1,58 @@
+/* Shared course stylesheet — every lesson & reference links this. */
+:root{--bg:#fffff8;--fg:#111;--muted:#666;--rule:#ddd;--accent:#a00;--max:#1f5fa8;--min:#b5452a;--ok:#2a7a3a;--bad:#c0262d;--card:#f6f4ea}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1b19;--fg:#e8e6df;--muted:#9a978e;--rule:#3a3935;--accent:#ff7b6b;--max:#6ea8ff;--min:#ff8a6b;--ok:#6fcf7f;--bad:#ff6b6b;--card:#26251f}}
+:root[data-theme="dark"]{--bg:#1b1b19;--fg:#e8e6df;--muted:#9a978e;--rule:#3a3935;--accent:#ff7b6b;--max:#6ea8ff;--min:#ff8a6b;--ok:#6fcf7f;--bad:#ff6b6b;--card:#26251f}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:18px/1.6 "Iowan Old Style",Palatino,Georgia,serif;margin:0;padding:2.5rem 16px 4rem}
+main{max-width:46rem;margin:0 auto}
+h1{font-weight:400;font-size:2.1rem;line-height:1.2;margin:.2em 0}
+h2{font-weight:400;font-style:italic;font-size:1.45rem;margin-top:2.2em;border-top:1px solid var(--rule);padding-top:.8em}
+.kicker{font:600 .75rem/1 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.lede{font-size:1.15rem;color:var(--muted)}
+a{color:inherit;text-decoration-color:var(--accent);text-underline-offset:3px}
+code,pre{font-family:ui-monospace,Consolas,monospace;font-size:.85em}
+pre{background:var(--card);padding:1em;overflow-x:auto;border-radius:4px;line-height:1.45}
+.box{background:var(--card);border-left:3px solid var(--accent);padding:.8em 1.1em;margin:1.4em 0;border-radius:2px}
+.max{color:var(--max);font-weight:600}.min{color:var(--min);font-weight:600}
+.side{font-size:.85rem;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:.95rem}td,th{border-bottom:1px solid var(--rule);padding:.4em .5em;text-align:left;vertical-align:top}
+button{font:600 .85rem system-ui,sans-serif;padding:.5em 1em;border:1px solid var(--fg);background:transparent;color:var(--fg);border-radius:3px;cursor:pointer;margin:.3em .4em 0 0}
+button:hover{background:var(--fg);color:var(--bg)}
+nav.pager{display:flex;justify-content:space-between;margin-top:3em;font-size:.95rem;border-top:1px solid var(--rule);padding-top:1em}
+footer{margin-top:2em;font-size:.85rem;color:var(--muted)}
+@media print{body{background:#fff;color:#000;padding:0}button,.no-print{display:none}h2{break-after:avoid}}
+
+/* game tree component (gametree.js) */
+.gt{position:relative;margin:1.2em auto;max-width:100%;overflow-x:auto}
+.gt-inner{position:relative;margin:0 auto}
+.gt svg{position:absolute;inset:0;pointer-events:none}
+.gt-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;font:600 15px system-ui,sans-serif}
+.gt-node input{width:3.1em;text-align:center;font:600 15px system-ui,sans-serif;padding:.25em;border:2px solid var(--rule);border-radius:4px;background:var(--bg);color:var(--fg)}
+.gt-node .tri{font-size:20px;line-height:1}.gt-node.max .tri{color:var(--max)}.gt-node.min .tri{color:var(--min)}
+.gt-node .leaf{border:1px solid var(--rule);padding:.15em .5em;border-radius:3px;background:var(--card)}
+.gt-node .val{min-width:2.4em;text-align:center;border:2px solid var(--rule);border-radius:4px;padding:.15em .3em}
+.gt-node input.ok,.gt-node .val.ok{border-color:var(--ok)}.gt-node input.bad{border-color:var(--bad)}
+.gt-node .lbl{font-size:11px;color:var(--muted);font-weight:500}
+.gt-status{font:500 .9rem system-ui,sans-serif;min-height:1.4em}
+.gt-edge-best{stroke:var(--accent);stroke-width:3;stroke-opacity:1}
+
+/* alpha-beta mode */
+.gt-node .ab{font:500 10.5px/1.25 ui-monospace,Consolas,monospace;color:var(--muted);text-align:center;white-space:nowrap;min-height:1px;background:var(--bg);position:relative}
+.gt-node .lbl{background:var(--bg)}
+.gt-node.ab-path .ab{color:var(--fg)}
+.gt-node.ab-active .tri,.gt-node.ab-active .leaf{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+.gt-node.ab-active .ab{color:var(--accent)}
+.gt-node.ab-cut{opacity:.28}
+.gt-node.ab-click{cursor:pointer}
+.gt-node.ab-mark::after{content:"✂";position:absolute;top:-14px;right:-14px;font-size:15px;color:var(--accent)}
+.gt-node.ab-mark.ab-ok::after{color:var(--ok)}.gt-node.ab-mark.ab-bad::after{color:var(--bad)}
+.gt-node.ab-ok .leaf,.gt-node.ab-ok .tri{outline:2px solid var(--ok);outline-offset:3px;border-radius:3px}
+.gt-node.ab-bad .leaf,.gt-node.ab-bad .tri{outline:2px solid var(--bad);outline-offset:3px;border-radius:3px}
+.gt-ab{margin-bottom:1.5em}
+
+/* quiz component (quiz.js) */
+.quiz .q{margin:1.4em 0}.quiz .q p{margin:.2em 0 .5em}
+.quiz label{display:block;padding:.4em .7em;border:1px solid var(--rule);border-radius:4px;margin:.3em 0;cursor:pointer;font-size:.95rem}
+.quiz label.ok{border-color:var(--ok)}
+.quiz label.bad{border-color:var(--bad)}
+.quiz .why{font-size:.88rem;color:var(--muted);margin-top:.3em}

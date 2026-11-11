@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCTS vs Alpha-Beta</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/quiz.js"></script>
+</head><body><main>
+<div class="kicker">Lesson 4 · CS420 Adversarial Search · Exam Q2.2</div>
+<h1>Monte Carlo tree search vs alpha-beta</h1>
+<p class="lede">The win for today: given a true/false statement comparing MCTS and α-β, answer it <em>and</em> give the one-line reason the examiner wants.</p>
+
+<h2>The story</h2>
+<p>You’re choosing between three restaurants in a city you don’t know, and nobody can give you a reliable rating. α-β would need that rating, which is the <b>evaluation function</b>. Without one, you just try them: eat at each a few times and keep count of how often you leave happy. You go back more to the ones that seem good (<b>exploitation</b>), but now and then you try the one you’ve barely visited, because it might be great (<b>exploration</b>).</p>
+<p>That’s MCTS. It doesn’t estimate how good a position is. It <b>plays the game out to the end</b> many times and averages the results. Who won is decided by the rules of the game, not by a guess.<sup><a href="../../2026-CS420-24TT/Artificial-Intelligence-A-Modern-Approach-4th-Edition-1-compressed.pdf">[AIMA §5.4]</a></sup></p>
+
+<h2>The four steps, repeated until time runs out</h2>
+<table>
+<tr><td><b>1. Selection</b></td><td>From the root, walk down the tree using a selection policy (UCT) until you reach a leaf of the tree.</td></tr>
+<tr><td><b>2. Expansion</b></td><td>Add a new child node to that leaf.</td></tr>
+<tr><td><b>3. Simulation</b></td><td>Play out (also called a rollout) from the new node to the end of the game, choosing moves with a <em>playout policy</em>. These moves are <b>not</b> stored in the tree.</td></tr>
+<tr><td><b>4. Back-propagation</b></td><td>Update wins and playout counts on every node back up to the root.</td></tr>
+</table>
+<p>At the end, return the move with the <b>most playouts</b>, not the one with the highest win rate. 65/100 is more trustworthy than 2/3.</p>
+
+<h2>UCB1: the selection rule</h2>
+<div class="box" style="text-align:center">UCB1(n) = U(n)/N(n) &nbsp;+&nbsp; C · √( ln N(parent) / N(n) )<br>
+<span class="side">exploitation (average win rate) &nbsp;+&nbsp; exploration (large when n has been tried only a few times)</span></div>
+<p>Try it with the numbers from AIMA Fig. 5.10. The parent has 100 playouts, and two of its children are at <b>60/79</b> and <b>2/11</b>. Work out both by hand, then answer:</p>
+<div id="ucb"></div>
+
+<h2>Where each one wins</h2>
+<table>
+<tr><th>MCTS is better when…</th><th>α-β is better when…</th></tr>
+<tr><td>the <b>branching factor is huge</b> (Go: 361), so α-β can only look 4–5 ply deep</td><td>the branching factor is low (chess: about 35)</td></tr>
+<tr><td>a good <b>evaluation function is hard to write</b>, or the game is brand-new (MCTS only needs the rules)</td><td>a good evaluation function exists</td></tr>
+<tr><td>robustness matters: it <b>averages many playouts</b>, so one bad estimate doesn’t mislead it</td><td>there’s a <b>single critical move or trap</b> that random playouts might never try</td></tr>
+<tr><td>a playout costs only O(depth), so you can run millions of them</td><td>an “obvious” win would still take many moves for playouts to confirm</td></tr>
+</table>
+<p class="side">Source: AIMA 4e §5.4, which also notes that MCTS has recently done well in chess too (AlphaZero), so “α-β is always better at chess” is no longer safe to claim.</p>
+
+<h2>True or false, with your reason</h2>
+<p>Say your reason <b>out loud</b> before you click. The reason is what earns the marks.</p>
+<div id="tf"></div>
+
+<h2>Go deeper</h2>
+<p><b>Primary source:</b> <a href="../../2026-CS420-24TT/Artificial-Intelligence-A-Modern-Approach-4th-Edition-1-compressed.pdf"><i>AIMA</i> 4th ed., §5.4 “Monte Carlo Tree Search”</a>, about 6 pages, including Fig. 5.10 and the comparison paragraphs that follow it. Your slides only mention it under AlphaGo (<a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=13">slides 13–14</a>).</p>
+<p>Revision: <a href="../reference/minimax-cheatsheet.html#mcts">cheat sheet → MCTS</a>.</p>
+<div class="box">Want more true/false items in your lecturer’s style? <b>Ask me (Claude, your teacher)</b>. You can also paste past-exam statements and I’ll mark your explanations.</div>
+
+<nav class="pager"><a href="0003-alpha-beta-efficiency-proof.html">← Lesson 3: Efficiency proof</a><a href="0005-alpha-beta-true-false.html">Next: α-β true/false drill →</a></nav>
+</main>
+<script>
+Quiz.mount(document.getElementById('ucb'),[
+  {q:'With C = 1.4, which child does UCT select? (ln 100 ≈ 4.61)',options:['The 2/11 child','The 60/79 child'],answer:1,why:'60/79: 0.759 + 1.4·√(4.61/79) ≈ 0.759 + 0.338 = 1.097. 2/11: 0.182 + 1.4·√(4.61/11) ≈ 0.182 + 0.906 = 1.088. So 60/79 wins, narrowly.'},
+  {q:'Now with C = 1.5?',options:['The 2/11 child','The 60/79 child'],answer:0,why:'60/79 ≈ 0.759 + 0.362 = 1.121, while 2/11 ≈ 0.182 + 0.971 = 1.153. A larger C means more exploration, so the little-tried node wins (as stated in AIMA §5.4).'}
+]);
+const T='True', F='False';
+Quiz.mount(document.getElementById('tf'),[
+  {q:'MCTS needs a heuristic evaluation function to score positions.',options:[T,F],answer:1,why:'False. It estimates value by averaging the results of full playouts; the game rules decide who wins.'},
+  {q:'MCTS tends to beat α-β in games with a very large branching factor, such as Go.',options:[T,F],answer:0,why:'True. With b = 361, α-β only reaches 4–5 ply, while a playout costs only O(depth).'},
+  {q:'α-β is more robust than MCTS to a single badly evaluated position.',options:[T,F],answer:1,why:'False. One wrong evaluation can send α-β down the wrong path; MCTS averages many playouts, so it is less vulnerable to one error.'},
+  {q:'MCTS can play a brand-new game knowing only its rules.',options:[T,F],answer:0,why:'True. It needs no evaluation function or expert knowledge, although learned policies help.'},
+  {q:'MCTS is guaranteed to find a single hidden winning (or losing) move.',options:[T,F],answer:1,why:'False. Its random, selective nature may never explore that line. This is where α-β, which looks at every move to a fixed depth, does better.'},
+  {q:'After searching, MCTS returns the child with the highest win percentage.',options:[T,F],answer:1,why:'False. It returns the child with the most playouts, because 65/100 is more reliable than 2/3.'},
+  {q:'In UCB1, the exploration term grows as a node is visited more often.',options:[T,F],answer:1,why:'False. N(n) is in the denominator, so the exploration term shrinks as n is visited more.'},
+  {q:'Purely random playouts estimate the best move under optimal play.',options:[T,F],answer:1,why:'False. They estimate the best move when both sides play randomly. A good playout policy is needed.'},
+  {q:'With perfect ordering, α-β can search about twice as deep as minimax in the same time.',options:[T,F],answer:0,why:'True. O(b^(m/2)) instead of O(b^m) (see Lesson 3). It still returns exactly the minimax value.'},
+  {q:'α-β with a good evaluation function was long the standard for low-branching games like chess.',options:[T,F],answer:0,why:'True, although MCTS-based programs (AlphaZero) have recently done well in chess as well.'}
+]);
+</script>
+</body></html>

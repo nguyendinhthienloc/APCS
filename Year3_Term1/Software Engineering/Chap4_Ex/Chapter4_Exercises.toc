@@ -1,0 +1,11 @@
+\contentsline {section}{Exercise 4.1 -- Types of requirements}{2}{section*.2}%
+\contentsline {section}{Exercise 4.2 -- Ambiguities in the drone description}{2}{section*.3}%
+\contentsline {section}{Exercise 4.3 -- Structured specification}{3}{section*.4}%
+\contentsline {section}{Exercise 4.4 -- Non-functional requirements}{4}{section*.5}%
+\contentsline {section}{Exercise 4.5 -- Standard-format user requirements}{5}{section*.6}%
+\contentsline {section}{Exercise 4.6 -- Tracking FR/NFR relationships}{6}{section*.10}%
+\contentsline {section}{Exercise 4.7 -- ATM use cases}{7}{section*.11}%
+\contentsline {section}{Exercise 4.8 -- Two scribes in a review}{8}{section*.12}%
+\contentsline {section}{Exercise 4.9 -- Emergency change process}{8}{section*.13}%
+\contentsline {section}{Exercise 4.10 -- Ethical dilemma}{9}{section*.14}%
+\contentsline {section}{Reference}{10}{section*.15}%

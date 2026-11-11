@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Proving Alpha-Beta Efficiency</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/gametree.js"></script><script src="../assets/quiz.js"></script>
+</head><body><main>
+<div class="kicker">Lesson 3 · CS420 Adversarial Search · Exam Q2.1</div>
+<h1>Proving alpha-beta is efficient</h1>
+<p class="lede">The win for today: write, from memory, a two-part proof. Part A shows α-β gives the same answer as minimax. Part B shows that with perfect ordering it examines only about b<sup>m/2</sup> leaves instead of b<sup>m</sup>.</p>
+
+<h2>See it first: order matters</h2>
+<p>These two trees have the <b>same leaves</b> and the same root value of 5, but the children are in a different order. Step through both and watch the leaf counter.</p>
+<p><b>Best moves first</b> (perfect ordering):</p><div id="good" class="gt-ab"></div>
+<p><b>Worst moves first</b>:</p><div id="bad" class="gt-ab"></div>
+<p class="side">Perfect ordering examines 5 of 8 leaves. Worst ordering examines all 8, the same as plain minimax. The gap grows exponentially with depth.</p>
+
+<h2>Part A: α-β returns the same value as minimax</h2>
+<div class="box">
+<b>Claim.</b> A branch pruned by α-β can never change the value at the root.<br><br>
+<b>Proof (MIN-node case).</b> Suppose a ▼ node <i>n</i> prunes because its current value v ≤ α. Here α is a value that some ▲ ancestor of <i>n</i> can already guarantee through another move. MIN can only <em>lower</em> v by looking at more children, so the exact value of <i>n</i> is ≤ v ≤ α. That ancestor ▲ therefore never strictly prefers the move leading to <i>n</i>, and the exact value of <i>n</i> can’t change the ancestor’s choice or value. The ▲ case is symmetric: v ≥ β means a ▼ ancestor already has an option ≤ β and won’t let play reach here. By induction up the tree, the root value is unchanged. ∎
+</div>
+<p>Slide 29 shows the same thing with algebra: max(3, min(2, x, y), 2) = 3 for <em>any</em> x, y, because min(2, x, y) ≤ 2.<sup><a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=29">[slide 29]</a></sup></p>
+
+<h2>Part B: counting leaves with perfect ordering</h2>
+<p>Assume the best child is always searched first, with uniform branching factor b and depth m. Each node in the search has one of three jobs:</p>
+<table>
+<tr><th>Type</th><th>Its job</th><th>What it must search</th></tr>
+<tr><td><b>1 · exact</b></td><td>find its exact value (the root, and the best line)</td><td>first child: type 1; other b−1 children: type 2</td></tr>
+<tr><td><b>2 · cut</b></td><td>show “this is no better than what you already have”</td><td><b>one</b> child (the best one refutes it immediately), which is type 3</td></tr>
+<tr><td><b>3 · all</b></td><td>show “<em>none</em> of my moves is good enough”</td><td><b>all b</b> children, each type 2</td></tr>
+</table>
+<p>Let T₂(d) and T₃(d) be the leaves examined below a type-2 or type-3 node of height d (a leaf has height 0, and T₂(0) = T₃(0) = 1):</p>
+<pre>T₂(d) = T₃(d−1)          (search one child)
+T₃(d) = b · T₂(d−1)      (search all b children)
+⇒ T₂(d) = b·T₂(d−2)  ⇒  T₂(d) = b^⌊d/2⌋,   T₃(d) = b^⌈d/2⌉</pre>
+<p>Cut and all levels <b>alternate</b>: every other level branches b ways, and the levels in between branch only once. That alternation is the whole reason for the m/2.</p>
+<p>Adding up the exact line (the root’s best path plus the b−1 cut siblings at each level) gives the classic result of Knuth &amp; Moore:<sup><a href="https://doi.org/10.1016/0004-3702(75)90019-3">[Knuth &amp; Moore 1975]</a></sup></p>
+<div class="box" style="text-align:center;font-size:1.15rem">leaves examined = b<sup>⌈m/2⌉</sup> + b<sup>⌊m/2⌋</sup> − 1 = <b>O(b<sup>m/2</sup>)</b></div>
+<p>Check with the tree from slide 28 (b = 3, m = 2): 3 + 3 − 1 = <b>5</b>. If D’s best child (2) came first, you’d search B’s 3 leaves, then 1 leaf each in C and D.<sup><a href="../../2026-CS420-24TT/Artificial-Intelligence-A-Modern-Approach-4th-Edition-1-compressed.pdf">[AIMA §5.2.4]</a></sup></p>
+
+<h2>What it means</h2>
+<table>
+<tr><td>Perfect ordering</td><td>O(b<sup>m/2</sup>): effective branching factor √b (chess: about 6 instead of 35), so you can search <b>twice as deep</b> in the same time</td></tr>
+<tr><td>Random ordering</td><td>about O(b<sup>3m/4</sup>) for moderate b</td></tr>
+<tr><td>Worst ordering</td><td>O(b<sup>m</sup>), no better than minimax but never worse</td></tr>
+<tr><td>In practice</td><td>Perfect ordering is impossible (it would already need the best move), but killer moves, iterative deepening and transposition tables get close<sup><a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=31">[slides 31–32]</a></sup></td></tr>
+</table>
+
+<h2>Exam answer skeleton</h2>
+<div class="box">
+1. <b>Correctness:</b> pruned branches satisfy v ≤ α (or v ≥ β), so they can’t affect the ancestor’s choice. The root value equals minimax.<br>
+2. <b>Best case:</b> with perfect ordering, nodes alternate between “search 1 child” and “search all b”. T(d) = b·T(d−2) ⇒ b<sup>⌈m/2⌉</sup>+b<sup>⌊m/2⌋</sup>−1 = O(b<sup>m/2</sup>).<br>
+3. <b>Compare:</b> minimax O(b<sup>m</sup>). Effective branching √b, so twice the depth in the same time. Random O(b<sup>3m/4</sup>), worst O(b<sup>m</sup>).
+</div>
+<p><b>Retrieval practice:</b> close this page and write the skeleton on paper. Then reopen it and check what you missed.</p>
+
+<h2>Check your understanding</h2>
+<div id="quiz"></div>
+
+<h2>Go deeper</h2>
+<p><b>Primary source:</b> <a href="../../2026-CS420-24TT/Artificial-Intelligence-A-Modern-Approach-4th-Edition-1-compressed.pdf"><i>AIMA</i> 4th ed., §5.2.4 “Move ordering”</a>. The full proof is in Knuth &amp; Moore, <a href="https://doi.org/10.1016/0004-3702(75)90019-3">“An analysis of alpha-beta pruning”</a>, <i>Artificial Intelligence</i> 6(4), 1975.</p>
+<p>Revision: <a href="../reference/minimax-cheatsheet.html#efficiency">cheat sheet → efficiency</a>.</p>
+<div class="box">Not sure how much detail your lecturer wants? <b>Ask me (Claude, your teacher)</b> to mark a proof you write, or to explain why cut and all nodes alternate.</div>
+
+<nav class="pager"><a href="0002-alpha-beta-pruning.html">← Lesson 2: α-β pruning</a><a href="0004-mcts-vs-alpha-beta.html">Next: MCTS vs α-β →</a></nav>
+</main>
+<script>
+GameTree.alphabeta(document.getElementById('good'),
+  {t:'max',c:[{t:'min',c:[{t:'max',c:[5,4]},{t:'max',c:[7,6]}]},{t:'min',c:[{t:'max',c:[3,2]},{t:'max',c:[8,1]}]}]},{mode:'step',countLeaves:true});
+GameTree.alphabeta(document.getElementById('bad'),
+  {t:'max',c:[{t:'min',c:[{t:'max',c:[8,1]},{t:'max',c:[3,2]}]},{t:'min',c:[{t:'max',c:[7,6]},{t:'max',c:[5,4]}]}]},{mode:'step',countLeaves:true});
+Quiz.mount(document.getElementById('quiz'),[
+  {q:'With perfect ordering, b = 3 and m = 4: how many leaves does α-β examine?',options:['81','27','17','9'],answer:2,why:'3^2 + 3^2 − 1 = 17, compared with 3^4 = 81 for minimax.'},
+  {q:'With perfect ordering, how many children does a type-2 (cut) node search?',options:['Exactly one child','All b children','b − 1 children','No children at all'],answer:0,why:'Its first (best) child already proves it is no better than the alternative, so it can stop.'},
+  {q:'What is the effective branching factor with perfect ordering?',options:['b / 2','√b','log b','b²'],answer:1,why:'b^(m/2) = (√b)^m, so each ply effectively branches √b ways.'},
+  {q:'Why can’t real programs achieve perfect move ordering?',options:['It requires far too much extra memory','It only works for even depth trees','It changes the minimax value at root','It already requires knowing the best move'],answer:3,why:'An ordering function that is always right would itself play perfectly (AIMA §5.2.4). We approximate it with killer moves and iterative deepening.'}
+]);
+</script>
+</body></html>

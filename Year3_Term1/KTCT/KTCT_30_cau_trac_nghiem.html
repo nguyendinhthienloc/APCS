@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KTCT – 30 câu trắc nghiệm</title>
+<style>
+:root{
+  --bg:#f5f4ef; --surface:#ffffff; --text:#1c1c1a; --muted:#66655f; --border:#e2e0d8;
+  --chip:#ecebe4; --accent:#2b4c7e; --accent-soft:#e7eef8;
+  --ok:#1e7a4b; --ok-soft:#e5f3eb; --bad:#b4342a; --bad-soft:#fbe9e7;
+  --code:#f0eee8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151514; --surface:#1e1e1c; --text:#ecebe6; --muted:#a2a19a; --border:#33322e;
+    --chip:#292825; --accent:#93b3e3; --accent-soft:#1c2839;
+    --ok:#62c793; --ok-soft:#16301f; --bad:#f08276; --bad-soft:#3a1d1a;
+    --code:#262522;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151514; --surface:#1e1e1c; --text:#ecebe6; --muted:#a2a19a; --border:#33322e;
+  --chip:#292825; --accent:#93b3e3; --accent-soft:#1c2839;
+  --ok:#62c793; --ok-soft:#16301f; --bad:#f08276; --bad-soft:#3a1d1a;
+  --code:#262522;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:16px/1.6 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding:40px 0 20px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:600}
+h1{font-size:30px;line-height:1.25;margin:6px 0 10px}
+.sub{color:var(--muted);margin:0;max-width:680px}
+.toolbar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--border);padding:12px 0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.seg{display:inline-flex;background:var(--chip);border-radius:10px;padding:3px}
+.seg button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:14px;padding:6px 12px;border-radius:8px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{border:1px solid var(--border);background:var(--surface);color:var(--muted);font:inherit;font-size:13px;padding:4px 10px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}
+.score{font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:center}
+.score b{color:var(--text)}
+.btn-link{border:0;background:none;color:var(--accent);font:inherit;font-size:14px;cursor:pointer;padding:0;text-decoration:underline}
+main{padding:20px 0 8px}
+.q{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:0 0 14px}
+.q-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.num{font-weight:700;font-size:15px}
+.tag{font-size:12px;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:999px}
+.q-text{margin:0 0 12px;font-weight:500}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.opt{width:100%;text-align:left;display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);background:transparent;color:var(--text);
+  font:inherit;font-size:15px;line-height:1.5;padding:9px 12px;border-radius:10px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.letter{flex:0 0 24px;height:24px;border-radius:50%;background:var(--chip);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.q.revealed .opt{cursor:default}
+.q.revealed .opt:hover{border-color:var(--border)}
+.q.revealed .opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.q.revealed .opt.correct .letter{background:var(--ok);color:var(--surface)}
+.q.revealed .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.q.revealed .opt.wrong .letter{background:var(--bad);color:var(--surface)}
+.ans{display:none;margin-top:12px;border-left:3px solid var(--ok);padding:4px 0 4px 14px}
+.q.revealed .ans{display:block}
+.ans-key{font-weight:700;color:var(--ok);margin-bottom:2px}
+.ans-key.miss{color:var(--bad)}
+.exp{color:var(--text);font-size:15px}
+.exp p{margin:6px 0}
+.exp ul{margin:6px 0;padding-left:20px}
+.f{font-family:Consolas,"Cascadia Mono",Menlo,monospace;font-size:14px;background:var(--code);padding:1px 5px;border-radius:5px;white-space:nowrap}
+.formulas{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:24px 0}
+.formulas h2{font-size:19px;margin:0 0 10px}
+.ftable{width:100%;border-collapse:collapse;font-size:15px}
+.ftable td{border-top:1px solid var(--border);padding:8px 6px;vertical-align:top}
+.ftable td:first-child{color:var(--muted);width:42%}
+footer{color:var(--muted);font-size:13px;padding:8px 0 40px}
+.hidden{display:none}
+@media (max-width:560px){
+  h1{font-size:24px}
+  .q{padding:14px 14px}
+  .ftable td:first-child{width:auto}
+  .ftable tr{display:block;border-top:1px solid var(--border);padding:6px 0}
+  .ftable td{display:block;border:0;padding:2px 0}
+  .f{white-space:normal}
+}
+@media print{
+  .toolbar{display:none}
+  body{background:#fff;color:#000}
+  .q,.formulas{break-inside:avoid;border-color:#bbb}
+  .q .ans{display:block}
+}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="eyebrow">Kinh tế chính trị Mác – Lênin · BAA00102</div>
+  <h1>30 câu trắc nghiệm ôn thi (có đáp án &amp; giải thích)</h1>
+  <p class="sub">Bám theo slide 6 chương của lớp và các Nghị quyết 29-NQ/TW, 68-NQ/TW, 79-NQ/TW. Mặc định hiện đáp án ngay dưới mỗi câu; chuyển sang <b>Tự làm bài</b> để giấu đáp án và tự chấm.</p>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <div class="row">
+      <div class="seg" role="group" aria-label="Chế độ">
+        <button type="button" id="m-study" aria-pressed="true">Xem đáp án</button>
+        <button type="button" id="m-quiz" aria-pressed="false">Tự làm bài</button>
+      </div>
+      <div class="score hidden" id="score">
+        <span>Đúng <b id="s-ok">0</b>/<b id="s-done">0</b> câu đã làm</span>
+        <button type="button" class="btn-link" id="reset">Làm lại</button>
+      </div>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+</div>
+
+<main class="wrap" id="list"></main>
+
+<section class="wrap">
+  <div class="formulas">
+    <h2>Công thức hay ra bài tập</h2>
+    <table class="ftable">
+      <tr><td>Giá trị hàng hóa / chi phí sản xuất TBCN</td><td><span class="f">G = c + v + m</span>; <span class="f">k = c + v</span></td></tr>
+      <tr><td>Lượng tiền cần thiết cho lưu thông</td><td><span class="f">M = P·Q / V</span>; có tín dụng: <span class="f">M = [P·Q − (G1 + G2) + G3] / V</span></td></tr>
+      <tr><td>Tỷ suất giá trị thặng dư</td><td><span class="f">m' = m / v × 100%</span> = <span class="f">t' / t × 100%</span> (TG thặng dư / TG cần thiết)</td></tr>
+      <tr><td>Khối lượng giá trị thặng dư</td><td><span class="f">M = m' × V</span> (V: tổng tư bản khả biến)</td></tr>
+      <tr><td>Tỷ suất lợi nhuận</td><td><span class="f">p' = m / (c + v) × 100%</span>, luôn có p' &lt; m'</td></tr>
+      <tr><td>Lợi nhuận bình quân, giá cả sản xuất</td><td><span class="f">p̄' = Σm / Σ(c + v)</span>; <span class="f">p̄ = p̄' × k</span>; <span class="f">GCSX = k + p̄</span></td></tr>
+      <tr><td>Lợi tức</td><td><span class="f">0 &lt; z &lt; p̄</span>; <span class="f">z' = z / TB cho vay × 100%</span></td></tr>
+      <tr><td>Giá cả ruộng đất</td><td><span class="f">Địa tô / Tỷ suất lợi tức ngân hàng</span></td></tr>
+      <tr><td>Tốc độ chu chuyển tư bản</td><td><span class="f">n = CH / ch</span> (12 tháng / thời gian 1 vòng)</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer class="wrap">
+  Nguồn: slide bài giảng KTCT Mác – Lênin chương 1–6; Nghị quyết 29-NQ/TW (17/11/2022), 68-NQ/TW (04/5/2025), 79-NQ/TW (06/01/2026). Đây là bộ câu hỏi tự soạn để ôn tập, không phải đề thi chính thức.
+</footer>
+
+<script>
+const CH = {
+  1:"Chương 1 · Đối tượng, phương pháp",
+  2:"Chương 2 · Hàng hóa, thị trường",
+  3:"Chương 3 · Giá trị thặng dư",
+  4:"Chương 4 · Cạnh tranh & độc quyền",
+  5:"Chương 5 · KTTT định hướng XHCN",
+  6:"Chương 6 · CNH, HĐH & hội nhập"
+};
+
+const Q = [
+/* ---------- CHƯƠNG 1 ---------- */
+{ch:1, q:`Đối tượng nghiên cứu của Kinh tế chính trị Mác – Lênin là:`,
+ o:[`Lực lượng sản xuất và trình độ phát triển của lực lượng sản xuất`,
+    `Quan hệ sản xuất trong sự tác động qua lại với lực lượng sản xuất và kiến trúc thượng tầng`,
+    `Kiến trúc thượng tầng (nhà nước, pháp quyền, đảng phái…)`,
+    `Toàn bộ hoạt động sản xuất, phân phối, trao đổi, tiêu dùng hàng hóa của một quốc gia`],
+ a:1,
+ e:`<p>KTCT Mác – Lênin nghiên cứu <b>quan hệ sản xuất</b> (quan hệ giữa người với người trong sản xuất và trao đổi), đặt trong mối liên hệ biện chứng với <b>lực lượng sản xuất</b> và <b>kiến trúc thượng tầng</b>.</p>
+<ul><li>A: lực lượng sản xuất tự thân là đối tượng của khoa học kỹ thuật, công nghệ.</li>
+<li>C: kiến trúc thượng tầng tự thân là đối tượng của chính trị học, luật học.</li>
+<li>D: là định nghĩa “kinh tế” ở góc độ quốc gia, không phải đối tượng của môn học.</li></ul>`},
+
+{ch:1, q:`Phương pháp nghiên cứu đặc thù, quan trọng nhất của Kinh tế chính trị Mác – Lênin là:`,
+ o:[`Thực nghiệm khoa học trong phòng thí nghiệm`,
+    `Mô hình hóa toán học và kinh tế lượng`,
+    `Điều tra xã hội học`,
+    `Trừu tượng hóa khoa học`],
+ a:3,
+ e:`<p>Các quan hệ kinh tế không thể quan sát bằng kính hiển vi hay thuốc thử hóa học, nên phải dùng <b>trừu tượng hóa khoa học</b>: gạt bỏ những yếu tố ngẫu nhiên, tạm thời, cá biệt để giữ lại cái bản chất, phổ biến, ổn định, rồi đi từ trừu tượng đến cụ thể.</p>
+<p>Các phương pháp khác (logic kết hợp lịch sử, phân tích – tổng hợp, quy nạp – diễn dịch, thống kê…) cũng được dùng, nhưng trừu tượng hóa khoa học là phương pháp chủ yếu.</p>`},
+
+{ch:1, q:`Quan điểm “ngoại thương là nguồn gốc của sự giàu có; lợi nhuận là kết quả của trao đổi không ngang giá” là của trường phái nào?`,
+ o:[`Chủ nghĩa trọng thương`,
+    `Chủ nghĩa trọng nông`,
+    `Kinh tế chính trị tư sản cổ điển Anh`,
+    `Trường phái Keynes`],
+ a:0,
+ e:`<p><b>Trọng thương</b> (TK XV–XVII; A. Montchrétien – người đầu tiên dùng thuật ngữ “kinh tế chính trị”, 1615; Thomas Mun): tiền (vàng) là của cải; ngoại thương là nguồn gốc giàu có; lợi nhuận do mua rẻ bán đắt; đề cao vai trò nhà nước. Hạn chế: chỉ thấy lưu thông, bỏ qua sản xuất.</p>
+<ul><li>B – Trọng nông (F. Quesnay): chỉ nông nghiệp tạo ra “sản phẩm ròng”.</li>
+<li>C – Cổ điển Anh (W. Petty, A. Smith, D. Ricardo): lao động là nguồn gốc giá trị, chuyển trọng tâm sang sản xuất.</li>
+<li>D – Keynes (TK XX): nhà nước can thiệp vào tổng cầu.</li></ul>`},
+
+/* ---------- CHƯƠNG 2 ---------- */
+{ch:2, q:`Điều kiện ra đời và tồn tại của sản xuất hàng hóa là:`,
+ o:[`Phân công lao động xã hội và sự tách biệt về mặt kinh tế giữa các chủ thể sản xuất`,
+    `Có tiền tệ và có thị trường`,
+    `Có nhà nước và pháp luật bảo hộ quyền sở hữu`,
+    `Phân công lao động trong nội bộ công xưởng và sự xuất hiện của máy móc`],
+ a:0,
+ e:`<p>Hai điều kiện, thiếu một thì không có sản xuất hàng hóa:</p>
+<ul><li><b>Phân công lao động xã hội</b> → chuyên môn hóa, mỗi người chỉ làm một hoặc vài sản phẩm nên phải trao đổi.</li>
+<li><b>Tách biệt về kinh tế</b> giữa các chủ thể (ban đầu do tư hữu về tư liệu sản xuất) → muốn dùng sản phẩm của nhau phải mua bán.</li></ul>
+<p>B sai vì tiền tệ, thị trường là <i>kết quả</i> của sản xuất hàng hóa. D sai vì sản phẩm giữa các khâu trong một công xưởng không được mua bán nên không phải hàng hóa.</p>`},
+
+{ch:2, q:`Lao động trừu tượng là:`,
+ o:[`Lao động giản đơn, không cần qua đào tạo`,
+    `Lao động có ích dưới một hình thức nghề nghiệp cụ thể, tạo ra giá trị sử dụng`,
+    `Lao động của người sản xuất hàng hóa khi đã gạt bỏ những hình thức cụ thể của nó, tức sự hao phí sức lao động nói chung; nó tạo ra giá trị của hàng hóa`,
+    `Lao động trí óc, đối lập với lao động chân tay`],
+ a:2,
+ e:`<p>Tính hai mặt của lao động sản xuất hàng hóa (phát hiện của C. Mác; D. Ricardo chưa nhận ra):</p>
+<ul><li><b>Lao động cụ thể</b>: có mục đích, đối tượng, phương tiện, phương pháp, kết quả riêng → tạo ra <b>giá trị sử dụng</b> (đáp án B là định nghĩa này).</li>
+<li><b>Lao động trừu tượng</b>: sự hao phí sức lực, thần kinh của con người nói chung → tạo ra <b>giá trị</b>.</li></ul>
+<p>Lao động trừu tượng không đồng nghĩa với lao động giản đơn hay lao động trí óc.</p>`},
+
+{ch:2, q:`Lượng giá trị xã hội của một đơn vị hàng hóa được đo bằng:`,
+ o:[`Thời gian lao động cá biệt của từng người sản xuất`,
+    `Thời gian lao động của người sản xuất có điều kiện tốt nhất`,
+    `Tổng chi phí tư bản (c + v) bỏ ra`,
+    `Thời gian lao động xã hội cần thiết`],
+ a:3,
+ e:`<p><b>Thời gian lao động xã hội cần thiết</b>: thời gian cần để sản xuất một đơn vị hàng hóa trong điều kiện bình thường của xã hội, với trình độ kỹ thuật, trình độ khéo léo và cường độ lao động trung bình.</p>
+<p>Ví dụ trong slide: hàng hóa bán đúng giá trị 100 USD; công ty A hao phí 90 (lãi 10), B hao phí 70 (lãi 30), C hao phí 110 (lỗ 10). Ai có hao phí cá biệt thấp hơn mức xã hội cần thiết thì có lợi.</p>`},
+
+{ch:2, q:`Một người sản xuất trong 8 giờ làm ra 16 sản phẩm, tổng giá trị 80 USD. Nếu năng suất lao động xã hội tăng lên 2 lần (các điều kiện khác không đổi) thì tổng giá trị sản phẩm trong 8 giờ và giá trị một sản phẩm lần lượt là:`,
+ o:[`160 USD; 5 USD`,
+    `80 USD; 2,5 USD`,
+    `160 USD; 2,5 USD`,
+    `80 USD; 5 USD`],
+ a:1,
+ e:`<p>Năng suất lao động tăng thì cùng thời gian làm ra nhiều sản phẩm hơn (16 → 32), nhưng lượng lao động hao phí vẫn là 8 giờ nên <b>tổng giá trị không đổi = 80 USD</b>. Giá trị 1 sản phẩm = 80 / 32 = <b>2,5 USD</b>.</p>
+<p>Lượng giá trị một đơn vị hàng hóa <b>tỷ lệ nghịch</b> với năng suất lao động.</p>
+<p><b>Bẫy:</b> A là trường hợp <i>cường độ</i> lao động tăng 2 lần: hao phí lao động tăng, 32 sản phẩm, tổng giá trị 160 USD, giá trị 1 sản phẩm vẫn 5 USD.</p>`},
+
+{ch:2, q:`Hình thái giá trị trong đó giá trị của mọi hàng hóa được biểu hiện ở một hàng hóa làm vật ngang giá chung, nhưng vật ngang giá chung chưa cố định ở một thứ hàng hóa nhất định (mỗi địa phương một khác) là:`,
+ o:[`Hình thái giản đơn hay ngẫu nhiên`,
+    `Hình thái đầy đủ hay mở rộng`,
+    `Hình thái chung của giá trị`,
+    `Hình thái tiền tệ`],
+ a:2,
+ e:`<p>Bốn hình thái giá trị, từ thấp đến cao:</p>
+<ul><li><b>Giản đơn, ngẫu nhiên</b>: 1 hàng hóa ↔ 1 hàng hóa (5 m vải = 50 kg thóc).</li>
+<li><b>Mở rộng</b>: giá trị một hàng hóa biểu hiện ở nhiều hàng hóa khác; vẫn trao đổi trực tiếp hàng lấy hàng.</li>
+<li><b>Chung</b>: mọi hàng hóa đổi qua một vật ngang giá chung, nhưng vật đó chưa ổn định (vỏ sò, gia súc, thuốc lá… tùy nơi).</li>
+<li><b>Tiền tệ</b>: vật ngang giá chung cố định ở vàng, bạc.</li></ul>`},
+
+{ch:2, q:`Anh A mua xe máy trả góp, mỗi tháng trả ngân hàng 2 triệu đồng; chị B nộp thuế thu nhập cá nhân. Trong cả hai trường hợp, tiền thực hiện chức năng:`,
+ o:[`Phương tiện thanh toán`,
+    `Phương tiện lưu thông`,
+    `Thước đo giá trị`,
+    `Phương tiện cất trữ`],
+ a:0,
+ e:`<p><b>Phương tiện thanh toán</b>: tiền dùng để trả nợ, nộp thuế, trả tiền mua chịu… khi việc mua bán và việc trả tiền tách rời nhau về thời gian; gắn với sự phát triển của tín dụng.</p>
+<p>Phương tiện lưu thông là tiền làm môi giới trực tiếp trong trao đổi H – T – H (tiền trao cháo múc).</p>
+<p>Năm chức năng của tiền: thước đo giá trị, phương tiện lưu thông, phương tiện cất trữ, phương tiện thanh toán, tiền tệ thế giới.</p>`},
+
+{ch:2, q:`Trong năm, tổng giá cả hàng hóa đưa vào lưu thông là 1.200 tỷ đồng; tổng giá cả hàng bán chịu là 200 tỷ; tổng số tiền khấu trừ cho nhau là 100 tỷ; tổng số tiền thanh toán đến kỳ hạn là 100 tỷ; mỗi đồng tiền quay trung bình 5 vòng/năm. Lượng tiền cần thiết cho lưu thông là:`,
+ o:[`240 tỷ đồng`,
+    `220 tỷ đồng`,
+    `200 tỷ đồng`,
+    `180 tỷ đồng`],
+ a:2,
+ e:`<p>Quy luật lưu thông tiền tệ khi có tín dụng: <span class="f">M = [P·Q − (G1 + G2) + G3] / V</span></p>
+<p>M = [1.200 − (200 + 100) + 100] / 5 = 1.000 / 5 = <b>200 tỷ</b>.</p>
+<p><b>Bẫy:</b> 240 là quên trừ phần tín dụng (1.200/5); 220 là quên trừ G2; 180 là quên cộng G3.</p>`},
+
+/* ---------- CHƯƠNG 3 ---------- */
+{ch:3, q:`Theo C. Mác, giá trị thặng dư:`,
+ o:[`Được tạo ra trong lưu thông nhờ mua rẻ, bán đắt`,
+    `Được tạo ra đồng thời trong sản xuất và lưu thông, mỗi lĩnh vực tạo ra một phần`,
+    `Do máy móc, khoa học – công nghệ trực tiếp tạo ra`,
+    `Được tạo ra trong sản xuất, nhưng không thể có nếu không có lưu thông`],
+ a:3,
+ e:`<p>Công thức chung T – H – T' làm như thể tiền “tự lớn lên” trong lưu thông, nhưng lưu thông (dù ngang giá hay không ngang giá) không tạo ra giá trị mới. Đó là <b>mâu thuẫn của công thức chung của tư bản</b>.</p>
+<p>Mác giải quyết bằng <b>hàng hóa sức lao động</b>: nhà tư bản mua sức lao động trên thị trường (lưu thông), tiêu dùng nó trong sản xuất để tạo ra giá trị mới lớn hơn giá trị sức lao động, rồi bán hàng để thực hiện giá trị thặng dư (lưu thông).</p>
+<p>C sai: máy móc chỉ chuyển giá trị của nó vào sản phẩm, không tạo ra giá trị mới.</p>`},
+
+{ch:3, q:`Hai điều kiện để sức lao động trở thành hàng hóa là:`,
+ o:[`Người lao động có trình độ chuyên môn và được thị trường cần đến`,
+    `Người lao động được tự do về thân thể, và không có đủ tư liệu sản xuất nên buộc phải bán sức lao động để sống`,
+    `Có thị trường lao động và có luật lao động`,
+    `Người lao động tự nguyện ký hợp đồng và có nhà tư bản sẵn sàng thuê`],
+ a:1,
+ e:`<ul><li>(1) Người lao động <b>tự do về thân thể</b>, làm chủ sức lao động của mình và có quyền bán nó như một hàng hóa.</li>
+<li>(2) Người lao động <b>không có đủ tư liệu sản xuất</b> để tự kết hợp với sức lao động, nên buộc phải bán sức lao động.</li></ul>
+<p>Mác gọi đó là người lao động “tự do” theo hai nghĩa. Hàng hóa sức lao động đặc biệt ở chỗ: giá trị của nó có yếu tố tinh thần và lịch sử; giá trị sử dụng của nó khi được tiêu dùng tạo ra giá trị mới lớn hơn giá trị bản thân nó.</p>`},
+
+{ch:3, q:`Căn cứ vào vai trò của từng bộ phận tư bản trong quá trình sản xuất ra giá trị thặng dư, C. Mác chia tư bản thành:`,
+ o:[`Tư bản bất biến (c) và tư bản khả biến (v)`,
+    `Tư bản cố định và tư bản lưu động`,
+    `Tư bản tiền tệ, tư bản sản xuất và tư bản hàng hóa`,
+    `Tư bản công nghiệp và tư bản thương nghiệp`],
+ a:0,
+ e:`<ul><li><b>Tư bản bất biến (c)</b>: bộ phận biến thành tư liệu sản xuất; giá trị được bảo tồn và chuyển nguyên vẹn vào sản phẩm, không thay đổi về lượng.</li>
+<li><b>Tư bản khả biến (v)</b>: bộ phận biến thành sức lao động; tái tạo ra giá trị bằng chính nó và tạo ra giá trị thặng dư, tức là thay đổi về lượng.</li></ul>
+<p>B chia theo <i>phương thức chuyển giá trị</i> vào sản phẩm (từng phần hay toàn bộ). C là ba hình thái trong <i>tuần hoàn</i> tư bản.</p>`},
+
+{ch:3, q:`Ngày lao động 8 giờ, thời gian lao động cần thiết 4 giờ. Nhờ tăng năng suất lao động xã hội, thời gian lao động cần thiết giảm còn 2 giờ, độ dài ngày lao động không đổi. Tỷ suất giá trị thặng dư thay đổi thế nào, và đây là phương pháp nào?`,
+ o:[`Từ 100% lên 300%; sản xuất giá trị thặng dư tương đối`,
+    `Từ 100% lên 200%; sản xuất giá trị thặng dư tuyệt đối`,
+    `Từ 100% lên 300%; sản xuất giá trị thặng dư siêu ngạch`,
+    `Từ 50% lên 75%; sản xuất giá trị thặng dư tương đối`],
+ a:0,
+ e:`<p><span class="f">m' = t' / t × 100%</span> (thời gian thặng dư / thời gian cần thiết).</p>
+<p>Trước: 4/4 = 100%. Sau: (8 − 2)/2 = 6/2 = <b>300%</b>.</p>
+<p>Ngày lao động không đổi, thời gian lao động cần thiết rút ngắn nhờ tăng năng suất lao động xã hội → <b>giá trị thặng dư tương đối</b>. Tuyệt đối là kéo dài ngày lao động; siêu ngạch dựa trên năng suất cá biệt. D sai vì chia cho cả ngày lao động.</p>`},
+
+{ch:3, q:`Một tư bản ứng trước 1.000.000 USD, cấu tạo hữu cơ c/v = 4/1, tỷ suất giá trị thặng dư m' = 200%. Khối lượng giá trị thặng dư và tỷ suất lợi nhuận lần lượt là:`,
+ o:[`200.000 USD; 20%`,
+    `400.000 USD; 200%`,
+    `400.000 USD; 40%`,
+    `800.000 USD; 80%`],
+ a:2,
+ e:`<p>c/v = 4/1 ⇒ v = 1.000.000 × 1/5 = 200.000; c = 800.000.</p>
+<p>m = m' × v = 200% × 200.000 = <b>400.000 USD</b>.</p>
+<p>p' = m / (c + v) = 400.000 / 1.000.000 = <b>40%</b>.</p>
+<p>Về lượng, p' luôn nhỏ hơn m'. Về chất, m' phản ánh trình độ bóc lột, còn p' phản ánh mức doanh lợi của việc đầu tư.</p>`},
+
+{ch:3, q:`Giá trị thặng dư siêu ngạch là phần giá trị thặng dư thu được do:`,
+ o:[`Kéo dài ngày lao động trong khi thời gian lao động cần thiết không đổi`,
+    `Tăng năng suất lao động xã hội, làm giảm giá trị sức lao động`,
+    `Bán hàng hóa cao hơn giá trị nhờ vị thế độc quyền`,
+    `Tăng năng suất lao động cá biệt, làm giá trị cá biệt của hàng hóa thấp hơn giá trị xã hội`],
+ a:3,
+ e:`<p>Nhà tư bản cá biệt áp dụng kỹ thuật mới, tăng năng suất cá biệt → giá trị cá biệt thấp hơn giá trị xã hội, nhưng vẫn bán theo giá trị xã hội → thu thêm phần chênh lệch. Mác gọi đây là <b>hình thái biến tướng của giá trị thặng dư tương đối</b>.</p>
+<ul><li>Siêu ngạch: năng suất cá biệt, từng nhà tư bản thu, mang tính tạm thời.</li>
+<li>Tương đối: năng suất xã hội, toàn bộ giai cấp tư sản thu.</li></ul>
+<p>A là giá trị thặng dư tuyệt đối; B là tương đối; C là lợi nhuận độc quyền (chương 4).</p>`},
+
+{ch:3, q:`Hai ngân hàng thương mại sáp nhập thành một ngân hàng lớn hơn. Đây là ví dụ của:`,
+ o:[`Tích tụ tư bản, làm tăng quy mô tư bản xã hội`,
+    `Tập trung tư bản, làm tăng quy mô tư bản cá biệt nhưng không làm tăng quy mô tư bản xã hội`,
+    `Tích lũy tư bản, tức tư bản hóa giá trị thặng dư`,
+    `Xuất khẩu tư bản`],
+ a:1,
+ e:`<ul><li><b>Tập trung tư bản</b>: hợp nhất các tư bản cá biệt có sẵn (sáp nhập, thôn tính, góp vốn cổ phần) → chỉ tăng quy mô tư bản cá biệt, tư bản xã hội không đổi; tăng nhanh.</li>
+<li><b>Tích tụ tư bản</b>: tăng quy mô tư bản cá biệt bằng cách tư bản hóa giá trị thặng dư → đồng thời làm tăng tư bản xã hội; tăng chậm.</li></ul>`},
+
+{ch:3, q:`Phát biểu nào đúng về lợi tức (z) trong chủ nghĩa tư bản?`,
+ o:[`Lợi tức là một phần lợi nhuận bình quân mà nhà tư bản đi vay trả cho nhà tư bản cho vay, nên thông thường 0 < z < p̄`,
+    `Lợi tức do tiền tự sinh ra trong vận động T – T'`,
+    `Lợi tức luôn lớn hơn lợi nhuận bình quân`,
+    `Lợi tức là giá trị thặng dư do nhà tư bản cho vay trực tiếp bóc lột công nhân`],
+ a:0,
+ e:`<p>Tư bản cho vay vận động theo T – T' (T' = T + z) nên trông như tiền tự đẻ ra tiền (hình thái tư bản được “sùng bái” nhất). Thực chất, lợi tức là một phần lợi nhuận bình quân do nhà tư bản đi vay trích ra trả cho người cho vay; nguồn gốc vẫn là giá trị thặng dư do công nhân tạo ra trong sản xuất.</p>
+<p>Vì vậy <span class="f">0 &lt; z &lt; p̄</span>; nếu z ≥ p̄ thì không ai đi vay. Tỷ suất lợi tức <span class="f">z' = z / TB cho vay × 100%</span>.</p>`},
+
+{ch:3, q:`Một mảnh đất mỗi năm đem lại địa tô 30 triệu đồng; tỷ suất lợi tức tiền gửi ngân hàng là 6%/năm. Theo lý luận của C. Mác, giá cả mảnh đất đó là:`,
+ o:[`180 triệu đồng`,
+    `300 triệu đồng`,
+    `500 triệu đồng`,
+    `1.800 triệu đồng`],
+ a:2,
+ e:`<p><span class="f">Giá cả ruộng đất = Địa tô / Tỷ suất lợi tức ngân hàng</span> = 30 / 6% = <b>500 triệu đồng</b>.</p>
+<p>Người mua bỏ ra số tiền mà nếu gửi ngân hàng cũng thu được lợi tức đúng bằng địa tô. Đất đai không do lao động tạo ra nên không có giá trị; giá cả ruộng đất là <b>địa tô tư bản hóa</b>, tức giá mua quyền thu địa tô, một phạm trù kinh tế bất hợp lý.</p>`},
+
+/* ---------- CHƯƠNG 4 ---------- */
+{ch:4, q:`Hình thức tổ chức độc quyền trong đó các thành viên vẫn độc lập về sản xuất, nhưng việc mua nguyên liệu và tiêu thụ sản phẩm do một ban quản trị chung đảm nhận là:`,
+ o:[`Cartel`,
+    `Syndicate`,
+    `Trust`,
+    `Consortium`],
+ a:1,
+ e:`<ul><li><b>Cartel</b>: thỏa thuận về giá cả, sản lượng, thị trường; thành viên độc lập cả về sản xuất lẫn lưu thông (lỏng lẻo nhất).</li>
+<li><b>Syndicate</b>: độc lập về sản xuất nhưng thống nhất về lưu thông (mua, bán qua ban quản trị chung).</li>
+<li><b>Trust</b>: thống nhất cả sản xuất lẫn tiêu thụ dưới một ban quản trị; các thành viên trở thành cổ đông.</li>
+<li><b>Consortium</b>: liên kết dọc, đa ngành, có sự tham gia của tập đoàn tài chính (hình thức cao nhất).</li></ul>`},
+
+{ch:4, q:`Theo V.I. Lênin, tư bản tài chính là:`,
+ o:[`Tư bản của các ngân hàng nói chung`,
+    `Tư bản đầu tư vào thị trường chứng khoán`,
+    `Tư bản của nhà nước tư sản đầu tư vào doanh nghiệp`,
+    `Sự hợp nhất giữa tư bản ngân hàng của một số ít ngân hàng độc quyền lớn nhất với tư bản của những liên minh độc quyền các nhà công nghiệp`],
+ a:3,
+ e:`<p>Tập trung trong ngân hàng dẫn đến độc quyền ngân hàng. Ngân hàng có vai trò mới: không chỉ trung gian thanh toán, tín dụng mà còn nắm cổ phần, chi phối doanh nghiệp. Ngược lại, độc quyền công nghiệp cũng mua cổ phần ngân hàng. Hai loại tư bản xâm nhập vào nhau, hợp nhất thành <b>tư bản tài chính</b>.</p>
+<p>Sự phát triển của tư bản tài chính hình thành nhóm <b>đầu sỏ tài chính</b> (tài phiệt), thống trị kinh tế qua <b>chế độ tham dự</b> và chi phối cả đời sống chính trị.</p>`},
+
+{ch:4, q:`Đâu KHÔNG phải là một trong năm đặc điểm kinh tế cơ bản của chủ nghĩa tư bản độc quyền theo V.I. Lênin?`,
+ o:[`Tập trung sản xuất và các tổ chức độc quyền`,
+    `Tư bản tài chính và đầu sỏ tài chính`,
+    `Xuất khẩu hàng hóa trở thành phổ biến`,
+    `Sự phân chia thế giới về lãnh thổ giữa các cường quốc`],
+ a:2,
+ e:`<p>Năm đặc điểm (Lênin, 1916):</p>
+<ul><li>(1) Tập trung sản xuất và các tổ chức độc quyền;</li>
+<li>(2) Tư bản tài chính và đầu sỏ tài chính;</li>
+<li>(3) <b>Xuất khẩu tư bản</b> trở thành phổ biến;</li>
+<li>(4) Phân chia thế giới về kinh tế giữa các tổ chức độc quyền;</li>
+<li>(5) Phân chia thế giới về lãnh thổ giữa các cường quốc.</li></ul>
+<p>Xuất khẩu <i>hàng hóa</i> là đặc trưng của giai đoạn tự do cạnh tranh. Ở giai đoạn độc quyền, do “thừa tư bản” tương đối, xuất khẩu <i>tư bản</i> mới là đặc điểm.</p>`},
+
+{ch:4, q:`Mối quan hệ giữa độc quyền và cạnh tranh trong giai đoạn chủ nghĩa tư bản độc quyền là:`,
+ o:[`Độc quyền sinh ra từ cạnh tranh tự do, nhưng không thủ tiêu cạnh tranh mà làm cạnh tranh đa dạng và gay gắt hơn`,
+    `Độc quyền thủ tiêu hoàn toàn cạnh tranh`,
+    `Cạnh tranh chỉ còn diễn ra giữa các xí nghiệp nhỏ ngoài độc quyền`,
+    `Độc quyền và cạnh tranh tồn tại tách biệt, không liên quan đến nhau`],
+ a:0,
+ e:`<p>Độc quyền là kết quả tất yếu của cạnh tranh tự do (tích tụ, tập trung sản xuất). Nhưng độc quyền tồn tại song song với cạnh tranh, làm cạnh tranh gay gắt hơn dưới ba dạng:</p>
+<ul><li>giữa các tổ chức độc quyền với các xí nghiệp ngoài độc quyền;</li>
+<li>giữa các tổ chức độc quyền với nhau;</li>
+<li>trong nội bộ tổ chức độc quyền (tranh giành tỷ lệ cổ phần khống chế, thị phần).</li></ul>`},
+
+/* ---------- CHƯƠNG 5 ---------- */
+{ch:5, q:`Đại hội nào của Đảng chính thức xác định kinh tế thị trường định hướng xã hội chủ nghĩa là mô hình kinh tế tổng quát của Việt Nam trong thời kỳ quá độ lên chủ nghĩa xã hội?`,
+ o:[`Đại hội VI (1986)`,
+    `Đại hội VII (1991)`,
+    `Đại hội XII (2016)`,
+    `Đại hội IX (2001)`],
+ a:3,
+ e:`<ul><li><b>Đại hội VI (1986)</b>: khởi xướng đổi mới, thừa nhận kinh tế hàng hóa nhiều thành phần.</li>
+<li><b>Đại hội VII (1991)</b>: kinh tế hàng hóa nhiều thành phần vận hành theo cơ chế thị trường, có sự quản lý của Nhà nước.</li>
+<li><b>Đại hội IX (2001)</b>: chính thức xác định KTTT định hướng XHCN là mô hình kinh tế tổng quát.</li>
+<li><b>Đại hội XII (2016)</b>: nêu khái niệm đầy đủ: nền kinh tế vận hành đầy đủ, đồng bộ theo các quy luật của KTTT, đồng thời bảo đảm định hướng XHCN…</li></ul>`},
+
+{ch:5, q:`Đặc trưng về quan hệ phân phối trong nền kinh tế thị trường định hướng XHCN ở Việt Nam là:`,
+ o:[`Chỉ thực hiện phân phối theo lao động`,
+    `Nhiều hình thức phân phối: theo kết quả lao động, theo hiệu quả kinh tế, theo mức đóng góp vốn và các nguồn lực khác, và qua hệ thống an sinh, phúc lợi xã hội`,
+    `Phân phối bình quân để bảo đảm công bằng`,
+    `Phân phối chủ yếu theo vốn, như mọi nền kinh tế thị trường`],
+ a:1,
+ e:`<p>Năm đặc trưng của KTTT định hướng XHCN:</p>
+<ul><li><b>Mục tiêu</b>: dân giàu, nước mạnh, dân chủ, công bằng, văn minh.</li>
+<li><b>Sở hữu</b>: nhiều hình thức sở hữu, nhiều thành phần kinh tế; kinh tế nhà nước giữ vai trò chủ đạo.</li>
+<li><b>Quản lý</b>: Đảng lãnh đạo, Nhà nước pháp quyền XHCN quản lý bằng pháp luật, chiến lược, kế hoạch, chính sách.</li>
+<li><b>Phân phối</b>: nhiều hình thức như đáp án B.</li>
+<li><b>Tăng trưởng</b> gắn với tiến bộ và công bằng xã hội.</li></ul>
+<p>Phân phối bình quân (cào bằng) là đặc điểm thời bao cấp, từng triệt tiêu động lực phát triển.</p>`},
+
+{ch:5, q:`Phát biểu nào đúng về lợi ích kinh tế?`,
+ o:[`Lợi ích kinh tế là lợi ích tinh thần, phản ánh nhu cầu văn hóa của con người`,
+    `Lợi ích kinh tế chỉ tồn tại trong nền kinh tế tư bản chủ nghĩa`,
+    `Lợi ích kinh tế là lợi ích vật chất, là động lực trực tiếp của các chủ thể và hoạt động kinh tế – xã hội`,
+    `Để hài hòa lợi ích, Nhà nước cần xóa bỏ mâu thuẫn lợi ích bằng phân phối bình quân`],
+ a:2,
+ e:`<p>Lợi ích kinh tế là <b>lợi ích vật chất</b>; về bản chất, nó phản ánh mục đích và động cơ của các quan hệ giữa các chủ thể trong sản xuất xã hội. Biểu hiện: lợi nhuận (chủ doanh nghiệp), tiền công (người lao động), lợi tức (người cho vay), địa tô (người cho thuê).</p>
+<p>Vai trò: là <b>động lực trực tiếp</b> của các chủ thể và hoạt động kinh tế – xã hội; là cơ sở thúc đẩy các lợi ích khác. Nhà nước không xóa bỏ mâu thuẫn lợi ích mà <b>điều hòa</b> và giải quyết nó (bảo vệ lợi ích hợp pháp, điều hòa lợi ích cá nhân – doanh nghiệp – xã hội, kiểm soát lợi ích tiêu cực).</p>`},
+
+{ch:5, tag:"Chương 5 · NQ 68 & NQ 79", q:`Theo Nghị quyết 68-NQ/TW (04/5/2025) về phát triển kinh tế tư nhân và Nghị quyết 79-NQ/TW (06/01/2026) về phát triển kinh tế nhà nước, cặp nhận định nào đúng?`,
+ o:[`Kinh tế tư nhân giữ vai trò chủ đạo; kinh tế nhà nước là một động lực quan trọng nhất`,
+    `Kinh tế tư nhân là một động lực quan trọng nhất của nền kinh tế quốc gia; kinh tế nhà nước giữ vai trò chủ đạo`,
+    `Kinh tế tư nhân là động lực quan trọng; kinh tế nhà nước là nền tảng duy nhất của nền kinh tế`,
+    `Kinh tế có vốn đầu tư nước ngoài là động lực chính; kinh tế nhà nước giữ vai trò chủ đạo`],
+ a:1,
+ e:`<p><b>NQ 68</b>: kinh tế tư nhân là “một động lực quan trọng nhất” của nền kinh tế quốc gia, lực lượng tiên phong thúc đẩy tăng trưởng; cùng kinh tế nhà nước và kinh tế tập thể giữ vai trò nòng cốt xây dựng nền kinh tế độc lập, tự chủ. Mục tiêu 2030: 2 triệu doanh nghiệp, 20 doanh nghiệp/1.000 dân, ít nhất 20 doanh nghiệp lớn tham gia chuỗi giá trị toàn cầu; tăng trưởng 10–12%/năm; đóng góp 55–58% GDP.</p>
+<p><b>NQ 79</b>: kinh tế nhà nước giữ <b>vai trò chủ đạo</b>, bảo đảm ổn định vĩ mô, các cân đối lớn, và bình đẳng trước pháp luật với các khu vực kinh tế khác. Mục tiêu 2030: 50 DNNN vào top 500 doanh nghiệp lớn nhất Đông Nam Á, 1–3 DNNN vào top 500 thế giới, ít nhất 3 NHTM nhà nước vào top 100 ngân hàng lớn nhất châu Á.</p>`},
+
+/* ---------- CHƯƠNG 6 ---------- */
+{ch:6, q:`Theo quan điểm của Đảng, công nghiệp hóa, hiện đại hóa ở Việt Nam hiện nay có đặc điểm nào?`,
+ o:[`Gắn với phát triển kinh tế tri thức, diễn ra trong điều kiện KTTT định hướng XHCN và hội nhập kinh tế quốc tế`,
+    `Ưu tiên phát triển công nghiệp nặng theo cơ chế kế hoạch hóa tập trung`,
+    `Đóng cửa, bảo hộ tuyệt đối để thay thế hàng nhập khẩu`,
+    `Là nhiệm vụ riêng của Nhà nước và các doanh nghiệp nhà nước`],
+ a:0,
+ e:`<p>Đặc điểm CNH, HĐH ở Việt Nam hiện nay: theo định hướng XHCN; gắn với phát triển kinh tế tri thức; trong điều kiện KTTT định hướng XHCN; trong bối cảnh toàn cầu hóa và hội nhập kinh tế quốc tế.</p>
+<p>B là đặc điểm giai đoạn 1960–1990. D sai: từ 1991 CNH là sự nghiệp của toàn dân. NQ 29-NQ/TW cũng khẳng định đây là “sự nghiệp của toàn dân và cả hệ thống chính trị”, lấy con người là trung tâm, doanh nghiệp là chủ thể.</p>`},
+
+{ch:6, q:`Việt Nam chính thức trở thành thành viên của Tổ chức Thương mại Thế giới (WTO) vào thời điểm nào?`,
+ o:[`Tháng 7/1995`,
+    `Tháng 11/1998`,
+    `Tháng 11/2018`,
+    `Tháng 1/2007`],
+ a:3,
+ e:`<p>Các mốc hội nhập cần nhớ:</p>
+<ul><li>7/1995: gia nhập ASEAN; 1/1/1996: tham gia AFTA.</li>
+<li>1996: tham gia ASEM; 11/1998: gia nhập APEC.</li>
+<li><b>11/1/2007</b>: thành viên thứ 150 của WTO.</li>
+<li>15/11/2018: Quốc hội phê chuẩn CPTPP.</li></ul>
+<p>Trước đổi mới, Việt Nam chủ yếu quan hệ với các nước XHCN (tham gia Hội đồng tương trợ kinh tế SEV năm 1978).</p>`},
+
+{ch:6, tag:"Chương 6 · NQ 29", q:`Theo Nghị quyết 29-NQ/TW (17/11/2022) về tiếp tục đẩy mạnh CNH, HĐH đất nước đến năm 2030, tầm nhìn đến năm 2045, mục tiêu tổng quát đến năm 2030 là:`,
+ o:[`Trở thành nước phát triển, thu nhập cao`,
+    `Hoàn thành mục tiêu trở thành nước công nghiệp theo hướng hiện đại`,
+    `Cơ bản đạt các tiêu chí của nước công nghiệp; là nước đang phát triển có công nghiệp hiện đại, thu nhập trung bình cao`,
+    `Ra khỏi tình trạng kém phát triển`],
+ a:2,
+ e:`<p>NQ 29 (Hội nghị Trung ương 6 khóa XIII): đến <b>2030</b> là nước đang phát triển có công nghiệp hiện đại, thu nhập trung bình cao; đến <b>2045</b> là nước phát triển, thu nhập cao (đáp án A).</p>
+<p>B là mục tiêu cũ (đến năm 2020) đã <b>không hoàn thành</b>. D là mục tiêu của giai đoạn trước, đã đạt khoảng năm 2010.</p>
+<p>Một số chỉ tiêu 2030: GDP tăng bình quân khoảng 7%/năm; GDP/người khoảng 7.500 USD; công nghiệp trên 40% GDP; công nghiệp chế biến, chế tạo khoảng 30% GDP; lao động nông nghiệp dưới 20%. Quan điểm: coi công nghiệp chế tạo, chế biến là then chốt; chuyển đổi số là phương thức mới có tính đột phá.</p>`}
+];
+
+const L = ["A","B","C","D"];
+const list = document.getElementById("list");
+const state = { mode:"study", filter:"all", picked:{} };
+
+function store(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+
+Q.forEach((it, i) => {
+  const art = document.createElement("article");
+  art.className = "q";
+  art.dataset.ch = it.ch;
+  art.dataset.i = i;
+  const opts = it.o.map((t, j) =>
+    `<li><button type="button" class="opt${j === it.a ? " correct" : ""}" data-j="${j}"><span class="letter">${L[j]}</span><span>${t.replace(/</g,"&lt;")}</span></button></li>`
+  ).join("");
+  art.innerHTML =
+    `<div class="q-head"><span class="num">Câu ${i + 1}</span><span class="tag">${it.tag || CH[it.ch]}</span></div>
+     <p class="q-text">${it.q}</p>
+     <ol class="opts">${opts}</ol>
+     <div class="ans"><div class="ans-key">Đáp án: ${L[it.a]}</div><div class="exp">${it.e}</div></div>`;
+  list.appendChild(art);
+});
+
+list.addEventListener("click", ev => {
+  const btn = ev.target.closest(".opt");
+  if (!btn || state.mode !== "quiz") return;
+  const card = btn.closest(".q");
+  const i = +card.dataset.i;
+  if (i in state.picked) return;
+  const j = +btn.dataset.j;
+  state.picked[i] = j;
+  paintCard(card);
+  updateScore();
+});
+
+function paintCard(card){
+  const i = +card.dataset.i, it = Q[i];
+  const key = card.querySelector(".ans-key");
+  card.querySelectorAll(".opt").forEach(b => b.classList.remove("wrong"));
+  if (state.mode === "study"){
+    card.classList.add("revealed");
+    key.textContent = "Đáp án: " + L[it.a];
+    key.classList.remove("miss");
+    return;
+  }
+  if (i in state.picked){
+    const j = state.picked[i];
+    card.classList.add("revealed");
+    if (j !== it.a){
+      card.querySelector(`.opt[data-j="${j}"]`).classList.add("wrong");
+      key.textContent = `Bạn chọn ${L[j]} – chưa đúng. Đáp án: ${L[it.a]}`;
+      key.classList.add("miss");
+    } else {
+      key.textContent = `Chính xác! Đáp án: ${L[it.a]}`;
+      key.classList.remove("miss");
+    }
+  } else {
+    card.classList.remove("revealed");
+  }
+}
+
+function paintAll(){ list.querySelectorAll(".q").forEach(paintCard); }
+
+function updateScore(){
+  const done = Object.keys(state.picked);
+  const ok = done.filter(i => state.picked[i] === Q[i].a).length;
+  document.getElementById("s-ok").textContent = ok;
+  document.getElementById("s-done").textContent = done.length;
+}
+
+function setMode(m){
+  state.mode = m;
+  document.getElementById("m-study").setAttribute("aria-pressed", m === "study");
+  document.getElementById("m-quiz").setAttribute("aria-pressed", m === "quiz");
+  document.getElementById("score").classList.toggle("hidden", m !== "quiz");
+  store("ktct-mode", m);
+  paintAll();
+}
+
+function setFilter(f){
+  state.filter = f;
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.f === f));
+  list.querySelectorAll(".q").forEach(card => {
+    card.classList.toggle("hidden", f !== "all" && card.dataset.ch !== f);
+  });
+}
+
+const chips = document.getElementById("chips");
+const chipDefs = [["all","Tất cả (30)"]].concat(Object.keys(CH).map(k => {
+  const n = Q.filter(x => String(x.ch) === k).length;
+  return [k, `Chương ${k} (${n})`];
+}));
+chipDefs.forEach(([f, label]) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chip"; b.dataset.f = f; b.textContent = label;
+  b.addEventListener("click", () => setFilter(f));
+  chips.appendChild(b);
+});
+
+document.getElementById("m-study").addEventListener("click", () => setMode("study"));
+document.getElementById("m-quiz").addEventListener("click", () => setMode("quiz"));
+document.getElementById("reset").addEventListener("click", () => { state.picked = {}; updateScore(); paintAll(); window.scrollTo({top:0}); });
+
+setFilter("all");
+setMode(load("ktct-mode") === "quiz" ? "quiz" : "study");
+</script>
+</body>
+</html>

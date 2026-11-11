@@ -1,0 +1,389 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{hyperref}
+
+\definecolor{qblue}{RGB}{0,120,180}
+\newtcolorbox{question}[1]{colback=qblue!6,colframe=qblue,fonttitle=\bfseries,
+  title={Exercise #1},breakable}
+\newcommand{\answer}{\par\noindent\textbf{Answer.}\ }
+\newcommand{\refsec}[1]{\hfill\textit{\small[Ref.\ Sec.~#1]}}
+
+\newcommand{\spec}[2]{\noindent\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{3.3cm}X@{}}\toprule
+\multicolumn{2}{@{}l}{\textbf{#1}}\\\midrule #2 \bottomrule\end{tabularx}\par\medskip}
+
+\title{Software Engineering (10th ed.) --- Chapter 4: Requirements Engineering\\
+\large Answers to Exercises 4.1--4.10}
+\author{Nguyễn Đình Thiên Lộc}
+\date{\today}
+
+\begin{document}
+\maketitle
+\noindent\textit{Section references (e.g.\ Sec.~4.1.2) point to the sections of Chapter~4 of
+I.~Sommerville, \emph{Software Engineering}, 10th ed., where the supporting material is found.}
+
+\tableofcontents
+\newpage
+
+%=====================================================================
+\section*{Exercise 4.1}\addcontentsline{toc}{section}{Exercise 4.1 -- Types of requirements}
+\begin{question}{4.1}
+Identify and briefly describe four types of requirements that may be defined for a computer-based system.
+\end{question}
+\answer
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{User requirements} -- statements in natural language plus diagrams of the services the
+  system provides and the constraints under which it operates, written for customers and end-users.
+  \refsec{4 (intro)}
+  \item \textbf{System requirements} -- more detailed descriptions of the system's functions, services and
+  operational constraints; they define exactly what is to be implemented and may form part of the contract.
+  \refsec{4 (intro)}
+  \item \textbf{Functional requirements} -- statements of the services the system should provide, how it
+  should react to particular inputs and behave in particular situations (and sometimes what it should not do).
+  \refsec{4.1.1}
+  \item \textbf{Non-functional requirements} -- constraints on the services or the system as a whole, such as
+  timing, reliability, security, usability, and constraints imposed by standards. They are classified as
+  \emph{product}, \emph{organizational} and \emph{external} requirements. \refsec{4.1.2}
+\end{enumerate}
+
+%=====================================================================
+\section*{Exercise 4.2}\addcontentsline{toc}{section}{Exercise 4.2 -- Ambiguities in the drone description}
+\begin{question}{4.2}
+Discover ambiguities or omissions in the following statement of the requirements for part of a drone
+system intended for search and recovery:\\[2pt]
+\textit{The drone, a quad chopper, will be very useful in search and recovery operations, especially in
+remote areas or in extreme weather conditions. It will click high-resolution images. It will fly according
+to a path preset by a ground operator, but will be able to avoid obstacles on its own, returning to its
+original path whenever possible. The drone will also be able to identify various objects and match them
+to the target it is looking for.}
+\end{question}
+\answer Natural-language requirements suffer from lack of clarity, confusion between functional and
+non-functional requirements, and amalgamation of several requirements in one sentence
+\refsec{4.4.1}. Problems found:
+\begin{enumerate}[leftmargin=*]
+  \item \emph{``very useful''} -- a goal, not a verifiable requirement \refsec{4.1.2}.
+  \item \emph{``remote areas''} -- maximum operating range from the ground station is not stated; nor is
+  the communication link used when out of radio range.
+  \item \emph{``extreme weather conditions''} -- undefined: which wind speeds, temperatures, rain/snow levels?
+  \item \emph{``high-resolution images''} -- no resolution, frame rate, still vs.\ video, day/night (thermal)
+  capability; how often are images taken and where are they stored or transmitted?
+  \item \emph{``a path preset by a ground operator''} -- how is it specified (waypoints, altitude)? Can it
+  be changed during flight? Can the operator take manual control?
+  \item \emph{``avoid obstacles''} -- which obstacles (static, moving), at what minimum distance?
+  \emph{``whenever possible''} -- what happens when it is not possible (hover, return home, alert operator)?
+  \item \emph{``identify various objects''} -- which object classes? How is the target described to the
+  drone? Required accuracy / false-positive rate? What does the drone do after a match (notify, hover,
+  mark GPS position)?
+  \item \textbf{Omissions}: flight endurance and battery behaviour (low-battery return), loss of
+  communication behaviour, maximum altitude/speed, payload (e.g.\ dropping supplies for ``recovery''),
+  safety and legal constraints (aviation regulations) \refsec{4.1.2}, and response times.
+\end{enumerate}
+
+%=====================================================================
+\section*{Exercise 4.3}\addcontentsline{toc}{section}{Exercise 4.3 -- Structured specification}
+\begin{question}{4.3}
+Rewrite the above description using the structured approach described in this chapter. Resolve the
+identified ambiguities in a sensible way.
+\end{question}
+\answer Using the standard form of a structured specification \refsec{4.4.2}
+(function, description, inputs, source, outputs, destination, action, requirements, pre/post-conditions,
+side effects), with ambiguities resolved by reasonable assumptions:
+
+\spec{Drone/SR/01 -- Follow preset flight path}{
+Function & Follow flight path \\
+Description & Fly the quad-chopper along a route defined by the ground operator. \\
+Inputs & Ordered list of waypoints (latitude, longitude, altitude 30--120\,m), cruise speed ($\le$ 15\,m/s). \\
+Source & Ground control station (GCS) operator. \\
+Outputs & Current position, heading, battery level (telemetry at 1\,Hz). \\
+Destination & GCS. \\
+Action & The drone flies from waypoint to waypoint. The operator may upload a new path or take manual
+control at any time. If the GCS link is lost for more than 30\,s, or the battery falls below 25\%, the
+drone returns to the launch point. \\
+Requires & Valid path uploaded; GPS fix; battery $\ge$ 80\% at take-off. \\
+Pre-condition & Pre-flight self-test passed. \\
+Post-condition & Drone has landed at launch point or at an operator-specified landing point. \\
+Side effects & None. \\
+}
+
+\spec{Drone/SR/02 -- Avoid obstacles}{
+Function & Obstacle avoidance \\
+Description & Detect and avoid static or moving obstacles on the flight path. \\
+Inputs & Proximity/vision sensor readings. \\
+Source & On-board sensors (range $\ge$ 20\,m). \\
+Outputs & Avoidance manoeuvre; obstacle event message. \\
+Destination & Flight controller; GCS log. \\
+Action & When an obstacle is detected within 10\,m on the path, the drone deviates to keep a clearance
+of at least 5\,m, then rejoins the original path at the nearest point beyond the obstacle. If no safe
+route is found within 30\,s, it hovers and requests operator instructions. \\
+Requires & Sensors operational. \\
+Pre-condition & Drone is in autonomous flight. \\
+Post-condition & Drone is back on the original path, or hovering awaiting the operator. \\
+Side effects & Mission time increases. \\
+}
+
+\spec{Drone/SR/03 -- Capture images}{
+Function & Capture images \\
+Description & Record imagery of the search area. \\
+Inputs & Camera and thermal sensor data. \\
+Source & On-board camera (minimum 12\,MP stills, 4K/30\,fps video) and thermal camera. \\
+Outputs & Geo-tagged images, every 2\,s or on operator command. \\
+Destination & On-board storage; low-resolution preview streamed to GCS. \\
+Action & Images are tagged with GPS position, altitude and time and stored; a preview is transmitted to the GCS. \\
+Requires & At least 2\,GB free storage. \\
+Pre-condition & Drone airborne. \\
+Post-condition & Images stored. \\
+Side effects & None. \\
+}
+
+\spec{Drone/SR/04 -- Identify target}{
+Function & Identify target objects \\
+Description & Recognize objects in images and match them to the search target. \\
+Inputs & Captured images; target description (class: person, vehicle, boat; colour; reference photo). \\
+Source & Drone/SR/03; GCS operator. \\
+Outputs & Match alert with confidence score, image and GPS location. \\
+Destination & GCS. \\
+Action & Each image is classified; any object of the target class with a match confidence $\ge$ 80\% raises
+an alert and the drone hovers over the location until the operator confirms or rejects the match. \\
+Requires & Target description uploaded before or during the mission. \\
+Pre-condition & Drone/SR/03 active. \\
+Post-condition & Alert acknowledged by operator. \\
+Side effects & Mission path is paused while waiting. \\
+}
+
+\noindent\textbf{Environmental constraint (non-functional):} the drone shall operate in winds up to
+40\,km/h, in rain up to 10\,mm/h, and at temperatures from $-20^\circ$C to $+45^\circ$C, at up to 5\,km from the GCS.
+
+%=====================================================================
+\section*{Exercise 4.4}\addcontentsline{toc}{section}{Exercise 4.4 -- Non-functional requirements}
+\begin{question}{4.4}
+Write a set of non-functional requirements for the drone system, setting out its expected safety and
+response time.
+\end{question}
+\answer Non-functional requirements should be written quantitatively so they can be tested, using
+metrics such as speed, reliability or robustness \refsec{4.1.2}.
+
+\smallskip\noindent\textbf{Safety (product requirements)}
+\begin{enumerate}[label=NFR-S\arabic*,leftmargin=*]
+  \item If the communication link with the GCS is lost for more than 30\,s, the drone shall automatically return to its launch point.
+  \item When battery charge falls below 25\%, the drone shall abort the mission and return; below 10\% it shall perform an immediate controlled landing.
+  \item The drone shall maintain a minimum separation of 5\,m from any detected obstacle and 30\,m from people not designated as targets.
+  \item The drone shall not exceed an altitude of 120\,m above ground level nor enter geo-fenced no-fly zones (external/legislative requirement).
+  \item A manual operator override command shall take precedence over all autonomous behaviour.
+  \item The probability of an uncontrolled crash shall be less than 1 per 10{,}000 flight hours.
+\end{enumerate}
+
+\noindent\textbf{Response time (performance)}
+\begin{enumerate}[label=NFR-R\arabic*,leftmargin=*]
+  \item The drone shall start an avoidance manoeuvre within 200\,ms of detecting an obstacle.
+  \item Operator commands shall be executed within 500\,ms of being sent from the GCS.
+  \item A target-match alert shall reach the GCS within 2\,s of the image being captured.
+  \item The live video preview latency at the GCS shall not exceed 1\,s.
+  \item Telemetry (position, battery) shall be updated at the GCS at least once per second.
+  \item The drone shall be ready for take-off within 3\,minutes of power-on.
+\end{enumerate}
+
+%=====================================================================
+\section*{Exercise 4.5}\addcontentsline{toc}{section}{Exercise 4.5 -- Standard-format user requirements}
+\begin{question}{4.5}
+Using the technique suggested here, where natural language descriptions are presented in a standard
+format, write plausible user requirements for the following functions:
+\begin{itemize}
+  \item An unattended petrol (gas) pump system that includes a credit card reader. The customer swipes the
+  card through the reader, then specifies the amount of fuel required. The fuel is delivered and the
+  customer's account debited.
+  \item The cash-dispensing function in a bank ATM.
+  \item In an Internet banking system, a facility that allows customers to transfer funds from one account
+  held with the bank to another account with the same bank.
+\end{itemize}
+\end{question}
+\answer Guidelines followed \refsec{4.4.1}: a standard format, ``shall'' for mandatory and ``should''
+for desirable requirements, one requirement per statement, plus a rationale.
+
+\subsection*{(a) Unattended petrol pump}
+\begin{enumerate}[label=PUMP-\arabic*,leftmargin=*]
+  \item The system \textbf{shall} allow the customer to pay by swiping a credit or debit card in the card reader.\\
+  \textit{Rationale:} the pump is unattended, so no cashier is available.
+  \item The system \textbf{shall} validate the card with the card issuer and reject expired, blocked or unreadable cards with an explanatory message.
+  \item After card validation the system \textbf{shall} ask the customer to enter the amount of fuel, either as a volume (litres) or a monetary value, up to a pre-authorized maximum.
+  \item The system \textbf{shall} pre-authorize the requested amount on the card account before enabling the pump.\\
+  \textit{Rationale:} prevents delivery of fuel that cannot be paid for.
+  \item The system \textbf{shall} stop delivery automatically when the requested amount is reached or the nozzle is replaced.
+  \item The system \textbf{shall} debit the customer's account with the cost of the fuel actually delivered, not the requested amount.
+  \item The system \textbf{should} offer a printed or e-mailed receipt.
+\end{enumerate}
+
+\subsection*{(b) ATM cash dispensing}
+\begin{enumerate}[label=ATM-\arabic*,leftmargin=*]
+  \item The ATM \textbf{shall} dispense cash only after the customer has inserted a valid card and entered the correct PIN.
+  \item The ATM \textbf{shall} allow the customer to select a predefined amount or enter an amount that is a multiple of the smallest note available.
+  \item The ATM \textbf{shall} refuse a withdrawal that exceeds the account balance/overdraft limit or the daily withdrawal limit, and inform the customer of the reason.
+  \item The ATM \textbf{shall} return the card before dispensing the cash.\\
+  \textit{Rationale:} reduces the number of cards left in the machine.
+  \item The ATM \textbf{shall} debit the account only after the cash has been successfully dispensed; if dispensing fails, no debit shall occur.
+  \item The ATM \textbf{shall} retract cash that is not taken within 30\,s and record the event.
+  \item The ATM \textbf{should} offer a receipt showing the amount withdrawn and remaining balance.
+\end{enumerate}
+
+\subsection*{(c) Internet banking -- internal funds transfer}
+\begin{enumerate}[label=TRF-\arabic*,leftmargin=*]
+  \item The system \textbf{shall} allow an authenticated customer to transfer funds from one of their accounts to any account held at the same bank.
+  \item The customer \textbf{shall} specify the source account, destination account number, amount and an optional reference.
+  \item The system \textbf{shall} display the name of the destination account holder and ask the customer to confirm before executing the transfer.\\
+  \textit{Rationale:} reduces transfers to wrong accounts.
+  \item The system \textbf{shall} reject transfers that exceed the available balance or the customer's daily transfer limit.
+  \item Transfers above a bank-defined threshold \textbf{shall} require a one-time password as second-factor authentication.
+  \item The transfer \textbf{shall} be applied to both accounts atomically and immediately, and a confirmation with a transaction ID shown.
+  \item The system \textbf{should} allow the customer to save frequent destination accounts as payees.
+\end{enumerate}
+
+%=====================================================================
+\section*{Exercise 4.6}\addcontentsline{toc}{section}{Exercise 4.6 -- Tracking FR/NFR relationships}
+\begin{question}{4.6}
+Suggest how an engineer responsible for drawing up a system requirements specification might keep track
+of the relationships between functional and non-functional requirements.
+\end{question}
+\answer Non-functional requirements often affect many functional requirements, and one NFR can generate
+several functional requirements \refsec{4.1.2}. To keep track:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Unique identification} -- give every requirement a unique ID (e.g.\ FR-12, NFR-PERF-3) so it can be cross-referenced \refsec{4.6.1}.
+  \item \textbf{Traceability matrix} -- build a table with functional requirements as rows and non-functional requirements as columns; mark each cell where the NFR constrains the FR (``D'' for depends, ``R'' for weaker relation). This makes impact analysis easy when either changes \refsec{4.6.1, 4.6.2}.
+  \item \textbf{Explicit links in the specification} -- in each structured specification form \refsec{4.4.2}, include a field ``Related NFRs'', and for each NFR list the FRs it constrains or was derived from.
+  \item \textbf{Record rationale and source} -- note why each NFR exists and which stakeholder proposed it, so conflicts can be traced to their origin.
+  \item \textbf{Tool support} -- use a requirements management tool (e.g.\ IBM DOORS) or at least a shared spreadsheet/database that stores requirements and links and can report affected requirements automatically \refsec{4.6.1}.
+\end{enumerate}
+
+%=====================================================================
+\section*{Exercise 4.7}\addcontentsline{toc}{section}{Exercise 4.7 -- ATM use cases}
+\begin{question}{4.7}
+Using your knowledge of how an ATM is used, develop a set of use cases that could serve as a basis for
+understanding the requirements for an ATM system.
+\end{question}
+\answer Use cases identify the actors in an interaction and name the type of interaction; each is then
+described in more detail \refsec{4.4.3}. Scenarios can be written for each \refsec{4.3.2}.
+
+\noindent\textbf{Actors:} Bank customer, Bank system (account database), ATM operator/maintenance staff, Card issuer network.
+
+\begin{longtable}{@{}p{3.2cm}p{2.8cm}p{9.2cm}@{}}
+\toprule
+\textbf{Use case} & \textbf{Actors} & \textbf{Description} \\ \midrule\endhead
+Validate user & Customer, Bank & Customer inserts card and enters PIN; system checks card validity and PIN; card retained after 3 failed attempts. Included in all customer use cases. \\
+Withdraw cash & Customer, Bank & Customer selects amount; bank checks balance and limits; card returned; cash dispensed; account debited; optional receipt. \\
+Check balance & Customer, Bank & Displays or prints current and available balance. \\
+Deposit cash/cheque & Customer, Bank & Customer inserts notes or cheque; ATM counts/scans; amount confirmed; account credited (cheques pending clearance). \\
+Transfer funds & Customer, Bank & Transfer between the customer's linked accounts. \\
+Change PIN & Customer, Bank & Customer enters old PIN and new PIN twice; bank updates PIN. \\
+Print mini-statement & Customer, Bank & Prints the last 10 transactions. \\
+Use foreign card & Customer, Card network & Card of another bank is validated through the inter-bank network; fee shown before confirmation. \\
+Replenish ATM & Operator & Operator authenticates, reloads cash cassettes and paper, records the amounts loaded. \\
+Run maintenance & Operator & Diagnostics, clear jams, retrieve retained cards and deposits. \\
+Report status & ATM, Bank & ATM periodically reports cash level and faults to the bank. \\
+\bottomrule
+\end{longtable}
+
+\noindent\textbf{Example detailed use case -- Withdraw cash}
+\begin{description}[leftmargin=2.6cm,style=nextline]
+  \item[Actors] Customer, Bank system.
+  \item[Pre-condition] Customer validated (\emph{Validate user}).
+  \item[Normal flow] 1. Customer chooses ``Withdraw''. 2. Selects account and amount. 3. ATM requests authorization from bank. 4. Bank approves. 5. Card returned. 6. Cash dispensed. 7. Account debited; receipt printed if requested.
+  \item[Alternatives] Insufficient funds or limit exceeded $\rightarrow$ message, return to menu. ATM lacks notes $\rightarrow$ suggest a different amount. Cash not taken in 30\,s $\rightarrow$ retracted, transaction reversed.
+  \item[Post-condition] Account balance reduced by the dispensed amount; transaction logged.
+\end{description}
+
+%=====================================================================
+\section*{Exercise 4.8}\addcontentsline{toc}{section}{Exercise 4.8 -- Two scribes in a review}
+\begin{question}{4.8}
+To minimize mistakes during a requirements review, an organization decides to allocate two scribes to
+document the review session. Explain how this can be done.
+\end{question}
+\answer In a requirements review a team of customer and developer staff reads the document and checks
+for errors, anomalies and inconsistencies, which must be recorded before being negotiated \refsec{4.5}.
+Two scribes can be used as follows:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Divide responsibilities.} Scribe A records the \emph{problems} raised (requirement ID,
+  description, type -- ambiguity, inconsistency, omission, unrealistic, unverifiable -- and who raised it);
+  Scribe B records the \emph{discussion and decisions} (agreed resolution, actions, owner, deadline).
+  Alternatively, they may split by document section.
+  \item \textbf{Use a common template} -- both use the same requirement IDs and problem categories
+  (validity, consistency, completeness, realism, verifiability \refsec{4.5}) so records can be merged.
+  \item \textbf{Independent overlapping notes} -- for important items both scribes record independently;
+  differences highlight possible misunderstandings.
+  \item \textbf{Reconcile after the session} -- the scribes compare and merge their notes into one review
+  report soon after the meeting, resolving discrepancies (with the moderator if needed).
+  \item \textbf{Confirm with participants} -- the consolidated report is circulated to reviewers, customer
+  and developers for confirmation; it then feeds into the change management process \refsec{4.6.2}.
+\end{enumerate}
+
+%=====================================================================
+\section*{Exercise 4.9}\addcontentsline{toc}{section}{Exercise 4.9 -- Emergency change process}
+\begin{question}{4.9}
+When emergency changes have to be made to systems, the system software may have to be modified before
+changes to the requirements have been approved. Suggest a model of a process for making these
+modifications that will ensure that the requirements document and the system implementation do not
+become inconsistent.
+\end{question}
+\answer The normal change process is \emph{problem analysis and change specification $\rightarrow$
+change analysis and costing $\rightarrow$ change implementation} \refsec{4.6.2}. If urgent changes are
+made to the system first, it is easy to forget to update the requirements document, so it must be
+updated as soon as possible \refsec{4.6.2}. A suggested emergency process:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Raise an emergency change request (ECR)} -- record the problem, the affected
+  requirement IDs and the reason the change is urgent. The ECR is logged in the change management tool
+  with status \emph{``Emergency -- requirements pending''}.
+  \item \textbf{Fast authorization} -- a small authority (e.g.\ project manager plus customer
+  representative) approves the emergency fix, instead of the full change board.
+  \item \textbf{Implement the fix} -- code is modified; every commit references the ECR ID, and a brief
+  draft of the changed requirement is attached to the ECR.
+  \item \textbf{Mandatory follow-up} -- the ECR cannot be closed until the requirements document is
+  updated. The system is labelled as a ``temporary'' release.
+  \item \textbf{Retrospective change analysis} -- within a fixed deadline (e.g.\ 5 working days) the
+  change goes through normal analysis and costing using traceability links \refsec{4.6.1} to find other
+  affected requirements and design.
+  \item \textbf{Approve and update} -- the change board formally approves (or requests rework of) the
+  change; the requirements document, design and tests are updated, and the ECR is closed.
+  \item \textbf{Audit} -- periodic reports list all open ECRs, so no emergency change remains undocumented.
+\end{enumerate}
+
+%=====================================================================
+\section*{Exercise 4.10}\addcontentsline{toc}{section}{Exercise 4.10 -- Ethical dilemma}
+\begin{question}{4.10}
+You have taken a job with a software user who has contracted your previous employer to develop a system
+for them. You discover that your company's interpretation of the requirements is different from the
+interpretation taken by your previous employer. Discuss what you should do in such a situation. You know
+that the costs to your current employer will increase if the ambiguities are not resolved. However, you
+also have a responsibility of confidentiality to your previous employer.
+\end{question}
+\answer This is a professional-ethics problem. Requirements are often ambiguous and different
+stakeholders interpret them differently \refsec{4.4.1}; resolving that is the purpose of requirements
+validation and negotiation \refsec{4.3, 4.5}. A reasonable course of action:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Do not disclose confidential information} of the previous employer (internal
+  designs, documents, costings, strategies). Confidentiality obligations continue after leaving.
+  \item \textbf{Raise the issue using only public/shared information.} The requirements document is
+  shared between the customer (your current employer) and the contractor, so you can legitimately point
+  out that particular requirements are \emph{ambiguous} and could be interpreted in more than one way,
+  without revealing how the previous employer interprets them.
+  \item \textbf{Recommend a formal requirements review} \refsec{4.5} with the contractor, in which both
+  parties state their interpretation of the ambiguous requirements; the differences will then appear
+  naturally and can be negotiated \refsec{4.3.1}.
+  \item \textbf{Declare the conflict of interest} to your current manager and, if necessary, ask not to be
+  involved in negotiations where your previous knowledge would be relevant.
+  \item \textbf{If unsure, seek advice} (e.g.\ professional code of ethics, legal department) before
+  acting.
+\end{enumerate}
+In this way you protect your current employer's interests (the ambiguity gets resolved early, when it is
+cheapest) while honouring your duty of confidentiality to the previous employer.
+
+\section*{Reference}
+\addcontentsline{toc}{section}{Reference}
+I.~Sommerville, \emph{Software Engineering}, 10th ed., Pearson, 2016, Chapter~4 ``Requirements engineering''
+(Sec.~4.1 Functional and non-functional requirements; 4.2 RE processes; 4.3 Requirements elicitation;
+4.4 Requirements specification; 4.5 Requirements validation; 4.6 Requirements change).
+
+\end{document}

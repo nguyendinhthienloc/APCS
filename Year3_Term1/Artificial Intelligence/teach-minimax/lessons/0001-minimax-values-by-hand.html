@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Minimax by Hand</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/gametree.js"></script><script src="../assets/quiz.js"></script>
+</head><body><main>
+<div class="kicker">Lesson 1 · CS420 Adversarial Search</div>
+<h1>Minimax values, by hand</h1>
+<p class="lede">The win for today: fill in every node of an exam-style game tree correctly, first try, in under three minutes.</p>
+
+<h2>The one idea</h2>
+<p>Two players alternate. <span class="max">MAX ▲</span> wants the utility as high as possible; <span class="min">MIN ▼</span> wants it as low as possible. Both are assumed to play <em>optimally</em>.<sup><a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=16">[slide 16]</a></sup> So the value of a node is:</p>
+<div class="box">
+<b>leaf</b> → its utility (already given)<br>
+<span class="max">▲ node</span> → <b>max</b> of its children<br>
+<span class="min">▼ node</span> → <b>min</b> of its children
+</div>
+<p>You compute it <b>bottom-up</b>: values are “backed up” from leaves to the root as the recursion unwinds.<sup><a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=18">[slide 18]</a></sup> The root’s best move is the child whose value equals the root’s value.</p>
+
+<h2>Worked example</h2>
+<p>The classic two-ply tree from the slides and AIMA Fig. 5.2.<sup><a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=19">[slide 19]</a></sup> Bottom row of ▼ nodes: min(3,12,8)=<b>3</b>, min(2,4,6)=<b>2</b>, min(14,5,2)=<b>2</b>. Root ▲: max(3,2,2)=<b>3</b>. MAX plays the left move <i>a₁</i>; MIN replies <i>b₁</i>.</p>
+<div id="ex"></div>
+
+<p class="side">Exam habit: write each backed-up value <em>next to</em> the node, row by row, deepest row first. Never compute a node before all its children have values.</p>
+
+<h2>Your turn</h2>
+<p>Type a value in every box, then press <b>Check</b>. Don’t look back at the example.</p>
+<p><b>Tree A</b> (2-ply)</p><div id="pA"></div>
+<p><b>Tree B</b> (3-ply: ▲ → ▼ → ▲ → leaves). Watch the operator flip at each level.</p><div id="pB"></div>
+<p><b>Tree C</b> (uneven branching, the kind examiners like)</p><div id="pC"></div>
+
+<h2>Check your understanding</h2>
+<div id="quiz"></div>
+
+<h2>Go deeper</h2>
+<p><b>Primary source:</b> Russell &amp; Norvig, <a href="../../2026-CS420-24TT/Artificial-Intelligence-A-Modern-Approach-4th-Edition-1-compressed.pdf"><i>AIMA</i> 4th ed., §5.2.1 “The minimax search algorithm”</a> — the exact text your slides follow. Then try <b>Quiz 01 on slide 25</b> of your <a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=25">lecture</a> on paper.</p>
+<p>Keep the <a href="../reference/minimax-cheatsheet.html">minimax cheat sheet</a> for revision.</p>
+<div class="box">Stuck on anything, or want more trees? <b>Ask me (your teacher, Claude) a follow-up question</b> — e.g. “give me 3 harder trees” or “why is space O(bm)?”</div>
+
+<nav class="pager"><span></span><a href="0002-alpha-beta-pruning.html">Next: α-β pruning →</a></nav>
+</main>
+<script>
+GameTree.mount(document.getElementById('ex'),
+  {t:'max',label:'A',c:[{t:'min',label:'B',c:[3,12,8]},{t:'min',label:'C',c:[2,4,6]},{t:'min',label:'D',c:[14,5,2]}]},{mode:'show'});
+GameTree.mount(document.getElementById('pA'),
+  {t:'max',c:[{t:'min',c:[5,9,7]},{t:'min',c:[1,8,3]},{t:'min',c:[6,4,10]}]});
+GameTree.mount(document.getElementById('pB'),
+  {t:'max',c:[{t:'min',c:[{t:'max',c:[3,7]},{t:'max',c:[2,9]}]},{t:'min',c:[{t:'max',c:[4,1]},{t:'max',c:[8,6]}]}]});
+GameTree.mount(document.getElementById('pC'),
+  {t:'max',c:[{t:'min',c:[{t:'max',c:[2,5]},{t:'max',c:[6,1,4]}]},{t:'min',c:[{t:'max',c:[9,3]},{t:'max',c:[0,7]},11]}]});
+Quiz.mount(document.getElementById('quiz'),[
+  {q:'A ▼ node has children with values 4, 9, 2. What is its value?',options:['9','4','15','2'],answer:3,why:'▼ is MIN, so take the minimum: 2.'},
+  {q:'What does minimax assume about the opponent?',options:['MIN picks moves uniformly at random','MIN always copies MAX\'s last move','MIN always plays the optimal move','MIN maximizes the same utility function'],answer:2,why:'Minimax assumes both players play optimally (slide 16). Random opponents lead to expectimax instead.'},
+  {q:'Time complexity of full minimax, with branching factor b and max depth m?',options:['O(bm)','O(m^b)','O(b+m)','O(b^m)'],answer:3,why:'It explores the whole tree: O(b^m) (slide 22).'},
+  {q:'Space complexity of minimax (depth-first)?',options:['O(b^m)','O(bm)','O(m^b)','O(b+m)'],answer:1,why:'Depth-first only stores the current path plus siblings: O(bm) (slide 22).'},
+  {q:'If MIN plays suboptimally, what happens to MAX following minimax?',options:['MAX can score below the minimax value','MAX scores at least the minimax value','MAX always scores exactly the minimax value','MAX scores at most the minimax value'],answer:1,why:'Minimax is a worst-case guarantee: a weaker MIN can only help MAX (slide 21).'}
+]);
+</script>
+</body></html>

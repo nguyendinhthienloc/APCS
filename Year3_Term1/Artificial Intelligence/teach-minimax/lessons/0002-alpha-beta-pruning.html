@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alpha-Beta Pruning</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/gametree.js"></script><script src="../assets/quiz.js"></script>
+</head><body><main>
+<div class="kicker">Lesson 2 · CS420 Adversarial Search</div>
+<h1>Alpha-beta pruning</h1>
+<p class="lede">The win for today: trace α-β by hand and mark exactly which branches get pruned. Exam question type: Quiz 02, slide 33.</p>
+
+<h2>Back to the boxes</h2>
+<p>Same game as before: you (▲) pick a box, your opponent (▼) picks which envelope you get.</p>
+<pre>Box L: $3, $12          Box R: $2, ?, ?</pre>
+<p>You open Box L and see that it guarantees you <b>$3</b>. Then you open Box R and the first envelope you see is <b>$2</b>.</p>
+<p>Stop. Whatever is in the other envelopes, your opponent can always hand you that $2, so Box R is worth <b>at most $2</b>. You already have $3 from L, so you will never choose R. <b>You don’t need to look at the rest of R.</b></p>
+<div class="box">That’s alpha-beta pruning: <b>skip branches that can’t change the decision.</b> You get the same answer as minimax with less work.<sup><a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=26">[slide 26]</a></sup></div>
+
+<h2>The two numbers</h2>
+<p>As you walk down the tree, you carry two numbers along the path:<sup><a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=27">[slide 27]</a></sup></p>
+<table>
+<tr><td><b>α</b> (alpha)</td><td>the best score <span class="max">MAX</span> can already guarantee somewhere on the path. Starts at −∞ and only goes <b>up</b>.</td></tr>
+<tr><td><b>β</b> (beta)</td><td>the best score <span class="min">MIN</span> can already guarantee somewhere on the path. Starts at +∞ and only goes <b>down</b>.</td></tr>
+</table>
+<p>In the boxes: after Box L, α = 3. Inside Box R, MIN’s v drops to 2 ≤ α, so you prune.</p>
+
+<h2>The procedure</h2>
+<div class="box">
+<b>1.</b> Start at the root with α = −∞, β = +∞. Explore children <b>left to right</b>, depth-first.<br>
+<b>2.</b> Pass α and β <b>down</b> to each child unchanged.<br>
+<b>3.</b> When a child returns, update the node’s value v:<br>
+&nbsp;&nbsp;<span class="max">▲</span> v = max(v, child), then <b>α = max(α, v)</b>. <b>Prune if v ≥ β.</b><br>
+&nbsp;&nbsp;<span class="min">▼</span> v = min(v, child), then <b>β = min(β, v)</b>. <b>Prune if v ≤ α.</b><br>
+<b>4.</b> Return v to the parent. Only v goes back up; α and β don’t.
+</div>
+<p class="side">This follows the pseudocode on <a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=30">slide 30</a> (AIMA Fig. 5.7). Note the <b>≥ / ≤</b>: ties prune too.</p>
+<p>A memory hook: <b>▲ watches β, ▼ watches α.</b> Each node checks the bound set by the <em>other</em> player higher up, because that player will refuse to let the game come here.</p>
+
+<h2>Watch it step by step</h2>
+<p>This is the tree from Lesson 1 (slide 28). Press <b>Next</b> and predict each step before you click.</p>
+<div id="ex" class="gt-ab"></div>
+<p class="side">Result: leaves 4 and 6 under C are pruned, which is the x and y on <a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=29">slide 29</a>. The root is still 3, just as minimax gave.</p>
+
+<h2>Your turn</h2>
+<p><b>Click each node you think gets pruned</b>, then press Check. Only mark the <em>top</em> of each pruned branch; anything below it is pruned automatically. Use paper and write α, β next to each node.</p>
+<p><b>Tree A</b>, 2-ply.</p><div id="pA" class="gt-ab"></div>
+<p><b>Tree B</b>, 3-ply. One cut here removes a whole subtree.</p><div id="pB" class="gt-ab"></div>
+<p><b>Tree C</b>. Watch out for ties.</p><div id="pC" class="gt-ab"></div>
+
+<h2>Check your understanding</h2>
+<div id="quiz"></div>
+
+<h2>Go deeper</h2>
+<p><b>Primary source:</b> Russell &amp; Norvig, <a href="../../2026-CS420-24TT/Artificial-Intelligence-A-Modern-Approach-4th-Edition-1-compressed.pdf"><i>AIMA</i> 4th ed., §5.2.3 “Alpha–Beta Pruning”</a>. Then do <b>Quiz 02 on <a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=33">slide 33</a></b> on paper. For extra practice, UC Berkeley <a href="https://inst.eecs.berkeley.edu/~cs188/">CS188</a> past exams have many α-β trees with solutions.</p>
+<p>Revision: <a href="../reference/minimax-cheatsheet.html#alphabeta">cheat sheet → α-β</a>.</p>
+<div class="box">Confused by a step? <b>Ask me (Claude, your teacher) a follow-up</b>, e.g. “why does β pass down but not up?” or “give me 3 more trees”.</div>
+
+<nav class="pager"><a href="0001-minimax-values-by-hand.html">← Lesson 1: Minimax values</a><a href="0003-alpha-beta-efficiency-proof.html">Next: proving α-β efficiency →</a></nav>
+</main>
+<script>
+GameTree.alphabeta(document.getElementById('ex'),
+  {t:'max',label:'A',c:[{t:'min',label:'B',c:[3,12,8]},{t:'min',label:'C',c:[2,4,6]},{t:'min',label:'D',c:[14,5,2]}]},{mode:'step'});
+GameTree.alphabeta(document.getElementById('pA'),
+  {t:'max',c:[{t:'min',c:[5,6]},{t:'min',c:[3,7,9]},{t:'min',c:[8,2,1]}]},{mode:'practice'});
+GameTree.alphabeta(document.getElementById('pB'),
+  {t:'max',c:[{t:'min',c:[{t:'max',c:[2,3]},{t:'max',c:[5,9]}]},{t:'min',c:[{t:'max',c:[0,1]},{t:'max',c:[7,5]}]}]},{mode:'practice'});
+GameTree.alphabeta(document.getElementById('pC'),
+  {t:'max',c:[{t:'min',c:[8,7,3]},{t:'min',c:[9,1,6]},{t:'min',c:[2,4,1]},{t:'min',c:[3,9,10]}]},{mode:'practice'});
+Quiz.mount(document.getElementById('quiz'),[
+  {q:'At a ▼ (MIN) node, when do you prune its remaining children?',options:['When v ≥ β','When v ≥ α','When v ≤ α','When v ≤ β'],answer:2,why:'MIN checks MAX’s bound α: if v ≤ α, MAX above already has something at least as good, so play never comes here.'},
+  {q:'Does alpha-beta ever change the minimax value at the root?',options:['Yes, pruning lowers the root value','No, the root value stays identical','Yes, pruning raises the root value','Only when move ordering is perfect'],answer:1,why:'It only skips branches that cannot affect the result. The value and the chosen move are the same as minimax.'},
+  {q:'Time complexity of alpha-beta with perfect move ordering?',options:['O(b^m)','O(b^(3m/4))','O(b^(m/2))','O(bm)'],answer:2,why:'Perfect ordering gives O(b^(m/2)), so it can search about twice as deep (slide 31). Random ordering gives O(b^(3m/4)).'},
+  {q:'What does α represent during the search?',options:['Best value MIN can already guarantee','Largest leaf value seen so far','Smallest leaf value seen so far','Best value MAX can already guarantee'],answer:3,why:'α is MAX’s guaranteed best along the current path (slide 27). It is not simply the largest leaf.'}
+]);
+</script>
+</body></html>

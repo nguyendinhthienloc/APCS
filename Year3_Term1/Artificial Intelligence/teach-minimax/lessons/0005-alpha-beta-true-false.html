@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alpha-Beta True or False</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/quiz.js"></script>
+</head><body><main>
+<div class="kicker">Lesson 5 · CS420 Adversarial Search · Exam Q2.2 drill</div>
+<h1>Alpha-beta: true or false?</h1>
+<p class="lede">The win for today: score 15/15 <em>and</em> be able to say the reason for each one. On the exam the reason is what earns the marks; the True/False alone is worth little.</p>
+
+<div class="box"><b>How to use this drill</b><br>
+1. Read the statement. <b>Say or write your reason first</b>, then click.<br>
+2. A correct answer with the wrong reason still counts as a miss. Mark it on paper.<br>
+3. Come back in 2–3 days and do it again cold. Spacing is what makes it stick.</div>
+
+<h2>Part A: the algorithm</h2>
+<div id="a"></div>
+
+<h2>Part B: efficiency (links to the Lesson 3 proof)</h2>
+<div id="b"></div>
+
+<h2>Part C: α-β in real games</h2>
+<p class="side">These mix in what we discussed about chess, AlphaZero and the Quoridor bot. Examiners like statements that compare α-β with other approaches.</p>
+<div id="c"></div>
+
+<h2>Reasons in one line each</h2>
+<table>
+<tr><td>Same value as minimax</td><td>Pruned branches are ≤ α or ≥ β, so they can’t change the choice.</td></tr>
+<tr><td>Speed depends on order</td><td>Best first O(b<sup>m/2</sup>), random ≈ O(b<sup>3m/4</sup>), worst O(b<sup>m</sup>).</td></tr>
+<tr><td>Who owns which bound</td><td>α belongs to MAX and rises; β belongs to MIN and falls. ▲ checks β, ▼ checks α.</td></tr>
+<tr><td>Still needs a heuristic</td><td>Real games are too deep, so search is cut off and EVAL is used.</td></tr>
+</table>
+
+<h2>Go deeper</h2>
+<p><b>Primary source:</b> <a href="../../2026-CS420-24TT/2025-CS420-Lecture2-P1-Minimax.pdf#page=26">your slides 26–38</a> and <a href="../../2026-CS420-24TT/Artificial-Intelligence-A-Modern-Approach-4th-Edition-1-compressed.pdf"><i>AIMA</i> 4e §5.2.3–5.3</a>. Revision: <a href="../reference/minimax-cheatsheet.html#alphabeta">cheat sheet → α-β</a>.</p>
+<div class="box">Missed some? <b>Tell me (Claude, your teacher) which numbers</b>, and I’ll explain them and put them into your next review.</div>
+
+<nav class="pager"><a href="0004-mcts-vs-alpha-beta.html">← Lesson 4: MCTS vs α-β</a><a href="0006-four-ply-alpha-beta.html">Next: 4-ply α-β trace →</a></nav>
+</main>
+<script>
+const T='True', F='False';
+Quiz.mount(document.getElementById('a'),[
+  {q:'α-β pruning can return a different root value than minimax.',options:[T,F],answer:1,why:'False. Pruned branches can’t affect the decision (they are ≤ α or ≥ β), so the root value is exactly the minimax value.'},
+  {q:'α is the best value found so far for MIN along the path.',options:[T,F],answer:1,why:'False. α is MAX’s best guaranteed value; β is MIN’s (slide 27).'},
+  {q:'A MIN node prunes its remaining children when v ≤ α.',options:[T,F],answer:0,why:'True. MAX above already has something at least as good, so play never reaches here.'},
+  {q:'A MAX node prunes its remaining children when v ≥ β.',options:[T,F],answer:0,why:'True. MIN above already has an option ≤ β, so it won’t let play reach here.'},
+  {q:'α and β are passed down to children, and only v is passed back up.',options:[T,F],answer:0,why:'True. The bounds go down; only the node’s value comes back up.'},
+  {q:'A MIN node whose first leaf is 5, under a MAX ancestor with α = 3, prunes immediately.',options:[T,F],answer:1,why:'False. Its value is only known to be ≤ 5, which could still be more than 3, so it must keep looking (5 ≤ 3 is false).'}
+]);
+Quiz.mount(document.getElementById('b'),[
+  {q:'α-β always examines fewer leaves than minimax.',options:[T,F],answer:1,why:'False. With the worst ordering it prunes nothing and examines all b^m leaves, like node D (14, 5, 2) in the Lesson 2 step-through.'},
+  {q:'With perfect move ordering, α-β examines O(b^(m/2)) leaves.',options:[T,F],answer:0,why:'True. Levels alternate between 1 child and b children: b^⌈m/2⌉ + b^⌊m/2⌋ − 1 (Knuth & Moore).'},
+  {q:'In the worst case, α-β is slower than minimax.',options:[T,F],answer:1,why:'False. Its worst case is O(b^m), the same as minimax, never worse in order of growth.'},
+  {q:'The order in which children are examined affects how much α-β prunes.',options:[T,F],answer:0,why:'True. Best first gives O(b^(m/2)), random about O(b^(3m/4)), worst O(b^m).'},
+  {q:'α-β can search about twice as deep as minimax in the same time, given perfect ordering.',options:[T,F],answer:0,why:'True. b^(m/2) = (√b)^m, so the effective branching factor is √b: about 6 instead of 35 for chess.'}
+]);
+Quiz.mount(document.getElementById('c'),[
+  {q:'Perfect move ordering is achievable in practice for chess.',options:[T,F],answer:1,why:'False. It would mean already knowing the best move. Captures first, killer moves and iterative deepening get within about a factor of 2 (AIMA §5.2.4).'},
+  {q:'α-β removes the need for an evaluation function in chess.',options:[T,F],answer:1,why:'False. Chess is far too deep to search to the end, so α-β cuts off at some depth and uses EVAL (slides 35–38).'},
+  {q:'A transposition table lets α-β reuse the value of a position reached by a different move order.',options:[T,F],answer:0,why:'True. Caching searched positions avoids re-searching them (slide 32); in chess it can roughly double the reachable depth (AIMA §5.2.4).'},
+  {q:'A learned evaluation function always beats a hand-crafted one inside α-β.',options:[T,F],answer:1,why:'False. It depends on training quality and speed: a slow or weakly trained network searches shallower in the same time limit and can lose.'}
+]);
+</script>
+</body></html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Minimax Cheat Sheet</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head><body><main>
+<div class="kicker">Reference · CS420 Adversarial Search</div>
+<h1>Minimax cheat sheet</h1>
+
+<h2>Rule</h2>
+<table>
+<tr><th>Node</th><th>Value</th></tr>
+<tr><td>Terminal / leaf</td><td>UTILITY(s) — given</td></tr>
+<tr><td><span class="max">▲ MAX</span></td><td>max of children</td></tr>
+<tr><td><span class="min">▼ MIN</span></td><td>min of children</td></tr>
+</table>
+<p>Compute bottom-up. Best move at root = child whose value equals root value.</p>
+
+<h2>Pseudocode (slide 20 / AIMA Fig. 5.3)</h2>
+<pre>MINIMAX-SEARCH(game, s):  v, move ← MAX-VALUE(game, s); return move
+
+MAX-VALUE(game, s):
+  if IS-TERMINAL(s): return UTILITY(s, player), null
+  v ← −∞
+  for a in ACTIONS(s):
+    v2, _ ← MIN-VALUE(game, RESULT(s, a))
+    if v2 > v: v, move ← v2, a
+  return v, move
+
+MIN-VALUE: same, with v ← +∞ and "v2 &lt; v", calling MAX-VALUE.</pre>
+
+<h2>Properties (slide 22)</h2>
+<table>
+<tr><td>Complete</td><td>Yes, if tree is finite</td></tr>
+<tr><td>Optimal</td><td>Yes, against an optimal opponent</td></tr>
+<tr><td>Time</td><td>O(b<sup>m</sup>)</td></tr>
+<tr><td>Space</td><td>O(bm) — depth-first</td></tr>
+<tr><td>Suboptimal MIN</td><td>MAX does at least as well (slide 21)</td></tr>
+</table>
+
+<h2 id="alphabeta">Alpha-beta pruning (slides 26–31)</h2>
+<table>
+<tr><td><b>α</b></td><td>MAX’s guaranteed best on the path. Starts at −∞, only rises.</td></tr>
+<tr><td><b>β</b></td><td>MIN’s guaranteed best on the path. Starts at +∞, only falls.</td></tr>
+<tr><td><span class="max">▲</span> after each child</td><td>v = max(v, child); α = max(α, v); <b>prune if v ≥ β</b></td></tr>
+<tr><td><span class="min">▼</span> after each child</td><td>v = min(v, child); β = min(β, v); <b>prune if v ≤ α</b></td></tr>
+<tr><td>Passing</td><td>α, β go <b>down</b>; only v comes <b>up</b>. Children left to right.</td></tr>
+<tr><td>Hook</td><td>▲ watches β, ▼ watches α. Ties prune.</td></tr>
+<tr><td>Result</td><td>Same root value and move as minimax.</td></tr>
+<tr><td>Time</td><td>Perfect ordering O(b<sup>m/2</sup>); random O(b<sup>3m/4</sup>); worst case O(b<sup>m</sup>)</td></tr>
+</table>
+
+<h2 id="efficiency">Proof of α-β efficiency (exam Q2.1)</h2>
+<table>
+<tr><td><b>Correctness</b></td><td>Prune only when v ≤ α (▼) or v ≥ β (▲). The node’s exact value can only move further in that direction, and an ancestor already has an option at least as good. So the root value equals minimax.</td></tr>
+<tr><td><b>Node types</b></td><td>exact: 1 exact child + (b−1) cut children · cut: <b>1</b> child (all-type) · all: <b>b</b> children (cut-type)</td></tr>
+<tr><td><b>Recurrence</b></td><td>T(d) = b·T(d−2) ⇒ leaves = b<sup>⌈m/2⌉</sup> + b<sup>⌊m/2⌋</sup> − 1 = O(b<sup>m/2</sup>) (Knuth &amp; Moore 1975)</td></tr>
+<tr><td><b>Meaning</b></td><td>Effective branching factor √b ⇒ twice the depth in the same time. Random ordering O(b<sup>3m/4</sup>); worst O(b<sup>m</sup>).</td></tr>
+</table>
+
+<h2 id="mcts">MCTS vs α-β (AIMA §5.4, exam Q2.2)</h2>
+<table>
+<tr><td><b>Loop</b></td><td>Selection (UCT) → Expansion → Simulation (playout) → Back-propagation. Return the move with the <b>most playouts</b>.</td></tr>
+<tr><td><b>UCB1</b></td><td>U(n)/N(n) + C·√(ln N(parent) / N(n)). C ≈ √2 in theory; larger C = more exploration.</td></tr>
+<tr><td><b>MCTS wins</b></td><td>huge b (Go) · no good eval function · new game, rules only · robust (averages many playouts) · playout cost O(depth)</td></tr>
+<tr><td><b>α-β wins</b></td><td>low b plus good eval (classic chess) · single critical move or trap · “obvious” wins that take long playouts to confirm</td></tr>
+</table>
+
+<h2>Glossary</h2>
+<table>
+<tr><td><b>Ply</b></td><td>One move by one player (a single level of the tree).</td></tr>
+<tr><td><b>Zero-sum</b></td><td>One player’s gain is exactly the other’s loss.</td></tr>
+<tr><td><b>Utility</b></td><td>Final score of a terminal state, from MAX’s viewpoint.</td></tr>
+<tr><td><b>Minimax value</b></td><td>Utility of a state assuming both sides play optimally from there.</td></tr>
+<tr><td><b>Backed-up value</b></td><td>Value passed up from children to parent.</td></tr>
+<tr><td><b>b, m</b></td><td>Branching factor; maximum depth.</td></tr>
+</table>
+<footer>Sources: CS420 Lecture 2-P1 slides 16–22; Russell &amp; Norvig, AIMA 4e §5.2. · <a href="../lessons/0001-minimax-values-by-hand.html">Lesson 1</a> · <a href="../lessons/0002-alpha-beta-pruning.html">Lesson 2</a> · <a href="../lessons/0003-alpha-beta-efficiency-proof.html">Lesson 3</a> · <a href="../lessons/0004-mcts-vs-alpha-beta.html">Lesson 4</a></footer>
+</main></body></html>
